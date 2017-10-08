@@ -1,0 +1,1 @@
+INSERT INTO SysSequenz(SEQUENZID, NAME, LETZTEBELEGTENR, INKREMENT, BESCHREIBUNG, ZULETZTBEARBEITETVON, ZULETZTGEAENDERTAM, SYSTEMDS, angelegtAm, angelegtVon) values(1, 'SysSequenz:SequenzID', 0, 1, 'Sequenzkey für die Sequenztabelle', 0, '09.10.2014', -1, '09.10.2014', 0)
