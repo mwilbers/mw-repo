@@ -1,2 +1,2 @@
 # mw-repo
-Repository for projects or Markus Wilbers (Germany)
+Repository for projects of Markus Wilbers (Germany)
