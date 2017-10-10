@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+
+		<!-- Ein Kommentar -->
+
+		<mapping class="de.mw.mwdata.core.domain.Sequence" />
+
+		<mapping class="de.mw.mwdata.core.test.domain.TestPerson" />
+		<mapping class="de.mw.mwdata.core.test.domain.TestGruppe" />
+		<mapping class="de.mw.mwdata.core.test.domain.TestGruppenTyp" />
+
+	</session-factory>
+</hibernate-configuration>

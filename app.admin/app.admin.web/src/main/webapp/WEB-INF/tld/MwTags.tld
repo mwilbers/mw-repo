@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE taglib PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+  <tlibversion>1.0</tlibversion>
+  <jspversion>2.0</jspversion>
+  <shortname>MW-Tag-Lib</shortname>
+  <uri>http://www.markus-wilbers.de/mwTags</uri>
+  <info>MW-Tag-Library</info>
+  
+  <!-- ................ paging-Tag ....................... -->
+  <tag>
+    <name>pager</name>
+    <tagclass>de.mw.mwdata.core.web.tags.PagingTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    <attribute>
+    	<name>paginatedList</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>servletSubPath</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <!-- ................ url-Tag ....................... -->
+  <tag>
+    <name>url</name>
+    <tagclass>de.mw.mwdata.core.web.tags.UrlTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    <attribute>
+    	<name>entityId</name>
+    	<required>false</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>servletSubPath</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>action</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>col</name>
+    	<required>false</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>asc</name>
+    	<required>false</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+    	<name>menue</name>
+    	<required>false</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <!-- ................ iconUrl-Tag ....................... -->
+  <tag>
+    <name>iconUrl</name>
+    <tagclass>de.mw.mwdata.core.web.tags.IconUrlTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    <attribute>
+    	<name>iconName</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+  </tag>
+  
+  <!-- ..................... Select-Tag ........................ -->
+  <tag>
+    <name>select</name>
+    <tagclass>de.mw.mwdata.core.web.tags.SelectTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    <attribute>
+    	<name>id</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>items</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>itemValue</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+  </tag>
+  
+  <!-- ..................... Boolean-Tag ........................ -->
+  <tag>
+    <name>boolean</name>
+    <tagclass>de.mw.mwdata.core.web.tags.BooleanTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    <attribute>
+    	<name>id</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>itemValue</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <!-- ..................... OfdbInput-Tag ........................ -->
+  <tag>
+    <name>ofdbInput</name>
+    <tagclass>de.mw.mwdata.core.web.tags.OfdbAwareTag</tagclass>
+    <bodycontent>EMPTY</bodycontent>
+    
+    <attribute>
+    	<name>entityTO</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    	<name>ofProp</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <!-- 
+    <attribute>
+    	<name>itemValue</name>
+    	<required>true</required>
+    	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+     -->
+  </tag>
+  
+</taglib> 

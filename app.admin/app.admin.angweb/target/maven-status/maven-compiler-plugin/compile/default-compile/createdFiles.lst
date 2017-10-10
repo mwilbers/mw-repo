@@ -1,0 +1,4 @@
+de\mw\mwdata\app\admin\angweb\control\JsonBasedTabDef.class
+de\mw\mwdata\app\admin\angweb\filter\AdminUserFilter.class
+de\mw\mwdata\app\admin\angweb\filter\CorsFilter.class
+de\mw\mwdata\app\admin\angweb\control\AngWebController.class

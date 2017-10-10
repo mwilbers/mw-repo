@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+
+		<!-- FIXME: should be set ... 5449 [main] INFO org.hibernate.cfg.SettingsFactory 
+			- Automatic flush during beforeCompletion(): disabled 5449 [main] INFO org.hibernate.cfg.SettingsFactory 
+			- Automatic session close at end of transaction: disabled -->
+
+		<!-- Ein Kommentar -->
+
+		<mapping class="de.mw.mwdata.core.domain.BenutzerBereich" />
+		<mapping class="de.mw.mwdata.core.domain.Benutzer" />
+		<mapping class="de.mw.mwdata.core.domain.BenutzerRecht" />
+		<mapping class="de.mw.mwdata.core.domain.Sequence" />
+
+		<mapping class="de.mw.mwdata.core.ofdb.domain.TabDef" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.TabSpeig" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.TabBez" />
+
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AnsichtDef" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AnsichtSpalten" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AnsichtOrderBy" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AnsichtTab" />
+
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AdAnsicht" />
+		<mapping class="de.mw.mwdata.core.ofdb.domain.AdAnsichtSpalte" />
+
+		<mapping class="de.mw.mwdata.core.ofdb.domain.Menue" />
+
+	</session-factory>
+</hibernate-configuration>
