@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/webflow-config
+	   	http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+	   	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
+
+	<bean id="enumDATENBANKEditor" class="de.mw.mwdata.core.web.validate.EnumPropertyEditor">
+		<constructor-arg value="#{ T(de.mw.mwdata.core.ofdb.domain.ITabDef$DATENBANK)}"/>
+	</bean>
+	<bean id="enumZEITTYPEditor" class="de.mw.mwdata.core.web.validate.EnumPropertyEditor">
+		<constructor-arg value="#{ T(de.mw.mwdata.core.ofdb.domain.ITabDef$ZEITTYP)}"/>
+	</bean>
+	<bean id="enumDBTYPEEditor" class="de.mw.mwdata.core.web.validate.EnumPropertyEditor">
+		<constructor-arg value="#{ T(de.mw.mwdata.core.ofdb.domain.ITabSpeig$DBTYPE)}"/>
+	</bean>
+	<bean id="enumMENUETYPEEditor" class="de.mw.mwdata.core.web.validate.EnumPropertyEditor">
+		<constructor-arg value="#{ T(de.mw.mwdata.core.ofdb.domain.IMenue$MENUETYP)}"/>
+	</bean>
+	<bean id="benutzerBereichEditor" class="de.mw.mwdata.core.web.validate.EntityPropertyEditor">
+		<constructor-arg value="#{ T(de.mw.mwdata.core.domain.BenutzerBereich)}"/>
+		<constructor-arg ref="crudService"/>
+	</bean>
+	
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>messages</value>
+		</property>
+	</bean>
+	
+	
+	<!-- .................... Tiles-Definition .................... -->
+	
+    
+    <bean id="controllerConfiguration" class="de.mw.mwdata.core.web.DefaultControllerConfiguration" >
+	    	<!-- <property name="ofdbService" ref="ofdbService"></property>
+	    	<property name="ofdbValidator" ref="ofdbValidator"></property>
+	    	 <property name="servletSubPath" value="admin"></property>  -->
+	    	
+	    	<property name="overwrittenControllerMap">
+		    	<map>
+<!-- 			    	<entry key="tabDef" value="#{ T(de.mw.mwdata.app.admin.web.control.TabDefController) }"  /> -->
+			    	<!-- value-ref="tabDefController" -->
+			    </map>
+	    	</property>
+	    	
+		</bean>    
+		
+		<bean id="applicationFactory" class="de.mw.mwdata.core.web.DefaultApplicationFactory" init-method="init">
+		 	<constructor-arg index="0"  value="admin" />		 	
+		 	<property name="ofdbService" ref="ofdbService"></property>
+		 	<property name="ofdbValidator" ref="ofdbValidator"></property>
+		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
+		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
+		</bean>
+		
+    
+	<bean id="mwBeanFactoryPostProcessor" class="de.mw.mwdata.core.web.ControllerBeanFactoryPostProcessor">
+    	<property name="applicationFactory" ref="applicationFactory"></property>
+    	<property name="controllerConfiguration" ref="controllerConfiguration"></property>
+    </bean>
+   
+   
+<!--    	<bean id="angularController" class="de.mw.mwdata.app.admin.angweb.control.AngWebController"> -->
+<!-- 	</bean> -->
+   
+	<!-- .................... Special Controller-Definitions .................... -->
+	 
+	<!-- .................... Ofdb-Controller-Configuration ..................... -->
+	
+	<!-- FIXME: scope prototype here not correct -->
+	<bean id="ofdbController" class="de.mw.mwdata.core.web.control.OfdbController" scope="singleton">
+		<property name="ofdbService" ref="ofdbService"></property>
+    </bean>
+  	   
+  	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">	    
+		<property name="messageConverters" >
+			<list>
+				<ref bean="jsonConverter"/>
+			</list>
+		</property>
+	</bean>
+  	
+	
+	<bean id="mwHandlerMapping" name="mwHandlerMapping" scope="singleton" class="de.mw.mwdata.core.web.OfdbProvidingHandlerMapping">
+		<property name="ofdbService" ref="ofdbService"></property>
+    </bean>
+
+  	
+	<!-- .................... annotationbased Controller-Configuration ..................... 
+	 
+	-->  	  
+	
+<!-- 	<mvc:annotation-driven /> -->
+	<context:annotation-config />
+	
+    <context:component-scan base-package="de.mw.mwdata.app.admin.angweb.control" >
+	</context:component-scan>
+	
+	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	<mvc:annotation-driven ignoreDefaultModelOnRedirect="true"  content-negotiation-manager="contentNegotiationManager" >
+	    <mvc:message-converters>
+	    <!-- 
+	        <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+	        <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
+	        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	         -->
+	         
+	         <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+<!-- 	        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/> -->
+	         
+	    </mvc:message-converters>
+    
+	</mvc:annotation-driven>
+	
+<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+     <property name="favorPathExtension" value="false" />
+     <property name="favorParameter" value="true" />
+     <property name="mediaTypes" >
+          <value>
+               json=application/json
+               xml=application/xml
+          </value>
+     </property>
+</bean>
+    
+   <!--  ...................... more snippets .............. -->
+</beans>

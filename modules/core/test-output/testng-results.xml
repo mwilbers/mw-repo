@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="4" passed="4">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="11654" started-at="2017-07-28T08:27:14Z" finished-at="2017-07-28T08:27:26Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="11654" started-at="2017-07-28T08:27:14Z" finished-at="2017-07-28T08:27:26Z">
+      <class name="de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextBeforeTestClass" is-config="true" duration-ms="11" started-at="2017-07-28T10:27:14Z" finished-at="2017-07-28T10:27:14Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestClass -->
+        <test-method name="springTestContextPrepareTestInstance" test-instance-name="" signature="springTestContextPrepareTestInstance()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" is-config="true" status="PASS" duration-ms="3542" finished-at="2017-07-28T10:27:18Z" started-at="2017-07-28T10:27:14Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextPrepareTestInstance -->
+        <test-method status="PASS" signature="setUp()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="setUp" is-config="true" duration-ms="280" started-at="2017-07-28T10:27:18Z" finished-at="2017-07-28T10:27:18Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="9" started-at="2017-07-28T10:27:18Z" finished-at="2017-07-28T10:27:18Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testEmptyRegistration() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="testEmptyRegistration()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="testEmptyRegistration" duration-ms="1595" started-at="2017-07-28T10:27:18Z" finished-at="2017-07-28T10:27:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEmptyRegistration -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="tearDown" is-config="true" duration-ms="119" started-at="2017-07-28T10:27:20Z" finished-at="2017-07-28T10:27:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextAfterTestMethod" is-config="true" duration-ms="5" started-at="2017-07-28T10:27:20Z" finished-at="2017-07-28T10:27:20Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testEmptyRegistration() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="4" started-at="2017-07-28T10:27:20Z" finished-at="2017-07-28T10:27:20Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegisterViewWithMissingFullClassName() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="testRegisterViewWithMissingFullClassName()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="testRegisterViewWithMissingFullClassName" duration-ms="1323" started-at="2017-07-28T10:27:20Z" finished-at="2017-07-28T10:27:21Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRegisterViewWithMissingFullClassName -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="tearDown" is-config="true" duration-ms="81" started-at="2017-07-28T10:27:21Z" finished-at="2017-07-28T10:27:21Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2017-07-28T10:27:21Z" finished-at="2017-07-28T10:27:21Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegisterViewWithMissingFullClassName() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="3" started-at="2017-07-28T10:27:21Z" finished-at="2017-07-28T10:27:21Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegisterViewWithMissingUrlPath() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="testRegisterViewWithMissingUrlPath()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="testRegisterViewWithMissingUrlPath" duration-ms="1297" started-at="2017-07-28T10:27:21Z" finished-at="2017-07-28T10:27:22Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRegisterViewWithMissingUrlPath -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="tearDown" is-config="true" duration-ms="80" started-at="2017-07-28T10:27:22Z" finished-at="2017-07-28T10:27:23Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextAfterTestMethod" is-config="true" duration-ms="5" started-at="2017-07-28T10:27:23Z" finished-at="2017-07-28T10:27:23Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegisterViewWithMissingUrlPath() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="3" started-at="2017-07-28T10:27:23Z" finished-at="2017-07-28T10:27:23Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegistration_And_1JoinResult() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="testRegistration_And_1JoinResult()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="testRegistration_And_1JoinResult" duration-ms="3032" started-at="2017-07-28T10:27:23Z" finished-at="2017-07-28T10:27:26Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRegistration_And_1JoinResult -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="tearDown" is-config="true" duration-ms="179" started-at="2017-07-28T10:27:26Z" finished-at="2017-07-28T10:27:26Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2017-07-28T10:27:26Z" finished-at="2017-07-28T10:27:26Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest.testRegistration_And_1JoinResult() throws de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="tearDownAfterClass()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="tearDownAfterClass" is-config="true" duration-ms="52" started-at="2017-07-28T10:27:26Z" finished-at="2017-07-28T10:27:26Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownAfterClass -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest@25930632]" test-instance-name="" name="springTestContextAfterTestClass" is-config="true" duration-ms="3" started-at="2017-07-28T10:27:26Z" finished-at="2017-07-28T10:27:26Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
+      </class> <!-- de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

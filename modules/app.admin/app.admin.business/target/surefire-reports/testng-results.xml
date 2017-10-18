@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="0" passed="0">
+  <reporter-output>
+  </reporter-output>
+  <suite name="suite" duration-ms="2" started-at="2017-07-27T08:58:53Z" finished-at="2017-07-27T08:58:53Z">
+    <groups>
+    </groups>
+    <test name="ofdbTest" duration-ms="2" started-at="2017-07-27T08:58:53Z" finished-at="2017-07-27T08:58:53Z">
+    </test> <!-- ofdbTest -->
+  </suite> <!-- suite -->
+</testng-results>
