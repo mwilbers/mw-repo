@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0           http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.mw.mwdata</groupId>
+	<artifactId>mwdata-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>MW Data Parent POM</name>
+	<url>http://www.markus-wilbers.de</url>
+
+	<licenses>
+		<license>
+			<name>Markus Wilbers</name>
+			<url>http://www.markus-wilbers.de</url>
+			<distribution>repo</distribution>
+			<comments>Markus Wilbers</comments>
+		</license>
+	</licenses>
+	
+	<organization>
+		<name>Markus Wilbers</name>
+		<url>http://www.markus-wilbers.de</url>
+	</organization>
+	
+	<developers>
+		<developer>
+			<id>mwilbers</id>
+			<name>Markus Wilbers</name>
+			<email>mwilbers@gmx.de</email>
+			<url>http://www.markus-wilbers.de.vu</url>
+			<organization>Markus Wilbers</organization>
+			<organizationUrl>http://www.markus-wilbers.de</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>../common-utils</module>
+    	<module>../common-testframework</module>
+		<module>../mwdata.ofdb-api</module>
+		<module>../mwdata.core</module>
+		
+		<module>../mwdata.core.rights</module>  
+    	<module>../mwdata.core.web</module>
+    	<module>../mwdata.ui-api</module>
+<!--     	<module>../mwdata.ui-springweb</module> -->
+		<module>../mwdata.app.admin</module>
+		
+    </modules>
+    
+<!-- 3.0.2.RELEASE -->
+
+	<properties>
+<!-- 		<spring.version>4.2.4.RELEASE</spring.version> -->
+		<spring.version>4.3.1.RELEASE</spring.version>
+		<!-- 4.2.4.RELEASE 3.2.8.RELEASE -->
+		<java.version>1.7</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<apachetiles.version>3.0.5</apachetiles.version>
+		<jackson.version>2.7.5</jackson.version>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+			
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.10</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>true</downloadJavadocs>						
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.4.2</version>
+				</plugin>
+<!-- 				<plugin> -->
+<!-- 					<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 					<artifactId>maven-eclipse-plugin</artifactId> -->
+<!-- 					<version>2.10</version> -->
+<!-- 					<configuration> -->
+<!-- 						<downloadSources>true</downloadSources> -->
+<!-- 						<downloadJavadocs>true</downloadJavadocs> -->
+<!-- 					</configuration> -->
+<!-- 				</plugin> -->
+
+
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-compiler-plugin
+										</artifactId>
+										<versionRange>
+											[3.3,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencyManagement>
+		<dependencies>
+		
+			<dependency>
+				<groupId>commons-lang</groupId>
+	            <artifactId>commons-lang</artifactId>
+	            <version>2.5</version>
+			</dependency>
+			<dependency>
+			  <groupId>commons-collections</groupId>
+			  <artifactId>commons-collections</artifactId>
+			  <version>3.2.1</version>
+			</dependency>
+			
+			<dependency>
+		    	<groupId>ch.qos.logback</groupId>
+		    	<artifactId>logback-classic</artifactId>
+		    	<version>1.1.3</version>
+		    </dependency>
+		    <dependency>                                    
+		    	<groupId>org.slf4j</groupId>                
+		    	<artifactId>jcl-over-slf4j</artifactId>     
+		    	<version>1.7.21</version>  
+		    </dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>log4j</groupId> -->
+<!-- 				<artifactId>log4j</artifactId> -->
+<!-- 				<version>1.2.14</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 		    	<groupId>org.slf4j</groupId> -->
+<!-- 		    	<artifactId>slf4j-api</artifactId> -->
+<!-- 		    	<version>1.5.10</version> -->
+<!-- 		    </dependency> -->
+<!-- 		    <dependency> -->
+<!-- 				<groupId>org.slf4j</groupId> -->
+<!-- 				<artifactId>slf4j-simple</artifactId> -->
+<!-- 				<version>1.5.10</version> -->
+<!-- 			</dependency> -->
+			
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc5</artifactId>
+				<version>11.2.0.1.0</version>
+			</dependency>
+			
+			<!-- For spring 4 hibernate 4 configuration see http://www.baeldung.com/hibernate-4-spring -->
+			
+			<dependency>
+				<groupId>javassist</groupId>
+				<artifactId>javassist</artifactId>
+<!-- 				<version>3.8.0.GA</version> -->
+				<version>3.18.2-GA</version>
+			</dependency>
+			
+			
+			<dependency>
+			  <groupId>org.hibernate.javax.persistence</groupId>
+<!--  			  <artifactId>hibernate-jpa-2.0-api</artifactId>  -->
+<!--  			  <version>1.0.1.Final</version> -->
+			  <artifactId>hibernate-jpa-2.1-api</artifactId>
+			  <version>1.0.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+<!-- 				<version>3.5.6-Final</version> -->
+				<version>4.3.6.Final</version> 
+<!-- 				<version>4.2.21.Final</version> 				 -->
+			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.hibernate</groupId> -->
+<!-- 				<artifactId>hibernate-annotations</artifactId> -->
+<!-- 				<version>3.5.6-Final</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!--                 <groupId>org.hibernate</groupId> -->
+<!--                 <artifactId>hibernate-commons-annotations</artifactId> -->
+<!--                 <version>3.2.0.Final</version> -->
+<!--             </dependency> -->
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-core</artifactId>
+			    <version>${jackson.version}</version>
+			</dependency>
+
+            <dependency>
+            	<groupId>org.apache.tomcat</groupId>
+            	<artifactId>tomcat-dbcp</artifactId>
+            	<version>7.0.55</version>
+            </dependency>
+            <dependency>
+            	<groupId>org.apache.tomcat</groupId>
+            	<artifactId>tomcat-jdbc</artifactId>
+            	<version>7.0.19</version>
+            </dependency>
+            <dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.3</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+		    	<groupId>org.springframework</groupId>
+		    	<artifactId>spring-context</artifactId>
+		    	<version>${spring.version}</version>
+		    	<exclusions>
+		    	   <exclusion>
+		    		  <groupId>commons-logging</groupId>
+		    		  <artifactId>commons-logging</artifactId>
+		    	   </exclusion>
+		    	</exclusions>
+		    </dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency> 
+			
+			<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>core</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+		 	<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>core-rights</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.admin</groupId>
+				<artifactId>app.admin.business</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+						
+			
+			<!--  web -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency> 
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+		         <groupId>taglibs</groupId>
+		         <artifactId>standard</artifactId>
+		         <version>1.1.2</version>
+		     </dependency>
+
+			<!-- javax.servlet -->
+			 <dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+	<!-- 			<version>2.5</version> -->
+				<version>3.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>2.2</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+		     
+<!-- 		     <dependency> -->
+<!-- 			    <groupId>org.apache.tiles</groupId> -->
+<!-- 			    <artifactId>tiles-extras</artifactId> -->
+<!-- 			    <version>2.2.2</version>	     -->
+<!-- 			  </dependency> -->
+
+			<!-- spring 4, tiles 3.0.5 migration -->
+			<dependency>
+	            <groupId>org.apache.tiles</groupId>
+	            <artifactId>tiles-core</artifactId>
+	            <version>${apachetiles.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.tiles</groupId>
+	            <artifactId>tiles-api</artifactId>
+	            <version>${apachetiles.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.tiles</groupId>
+	            <artifactId>tiles-servlet</artifactId>
+	            <version>${apachetiles.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.tiles</groupId>
+	            <artifactId>tiles-jsp</artifactId>
+	            <version>${apachetiles.version}</version>
+	        </dependency>
+
+			  
+			  <dependency>
+				<groupId>de.mw.common</groupId>
+				<artifactId>common-utils</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			  
+			  
+			  <dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>core-web</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+		    
+		    <dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>ofdb-api</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			  
+			<dependency>
+				<groupId>de.mw.mwdata.ui</groupId>
+				<artifactId>ui-api</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			
+			<dependency>
+		         <groupId>org.hsqldb</groupId>
+		         <artifactId>hsqldb</artifactId>
+		         <version>2.3.3</version>
+<!-- 		         <version>1.8.0.10</version> -->
+<!-- 		         <version>2.2.8</version>   -->
+		      </dependency>
+			
+			<!--  testing  -->
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>6.9.10</version>
+<!-- 				<scope>test</scope> -->
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-test-mvc</artifactId>
+			    <version>1.0.0.M2</version>
+			    <scope>test</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>de.mw.common</groupId>
+				<artifactId>common-testframework</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+		         <groupId>org.easymock</groupId>
+		         <artifactId>easymock</artifactId>
+		         <version>2.4</version>
+		         <scope>test</scope>
+		     </dependency>
+		     <dependency>
+			<groupId>p6spy</groupId>
+			<artifactId>p6spy</artifactId>
+			<version>1.3</version>
+<!-- 			<version>2.0.0</version> -->
+		</dependency>
+			
+		</dependencies>
+	</dependencyManagement>
+
+</project>
