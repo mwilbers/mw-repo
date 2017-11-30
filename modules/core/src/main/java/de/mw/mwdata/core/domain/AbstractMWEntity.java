@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.mw.mwdata.core.Constants;
 
 /**
@@ -29,6 +29,7 @@ import de.mw.mwdata.core.Constants;
  * @since MWData 0.1
  *
  */
+@JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @TypeDefs({ @TypeDef(name = "fxboolean", typeClass = de.mw.mwdata.core.db.FxBooleanType.class) })
 @MappedSuperclass
 public abstract class AbstractMWEntity implements Serializable, IEntity {
@@ -57,7 +58,7 @@ public abstract class AbstractMWEntity implements Serializable, IEntity {
 	private String				ofdb;
 
 	@Column(name = Constants.SYS_COL_SYSTEM, columnDefinition = "NUMBER(1) default -1", updatable = false, nullable = false)
-	@Type(type = "fxboolean")
+	@org.hibernate.annotations.Type(type = "fxboolean")
 	private Boolean				system;
 
 	public AbstractMWEntity() {
@@ -65,14 +66,19 @@ public abstract class AbstractMWEntity implements Serializable, IEntity {
 
 	// abstract methods
 
+	@Override
 	public abstract String getSequenceKey();
 
+	@Override
 	public abstract Long getId();
 
+	@Override
 	public abstract void setId( final Long id );
 
+	@Override
 	public abstract String getName();
 
+	@Override
 	public abstract void setName( final String name );
 
 	@Override
@@ -82,6 +88,7 @@ public abstract class AbstractMWEntity implements Serializable, IEntity {
 
 	// implementations ...
 
+	@Override
 	public boolean isInDB() {
 		// NOTE: SequenceGenerator is called before Interceptor
 		return (this.getId() != null);

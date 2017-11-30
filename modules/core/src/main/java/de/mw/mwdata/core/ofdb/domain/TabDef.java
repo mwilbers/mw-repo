@@ -30,6 +30,9 @@ import de.mw.mwdata.core.domain.BenutzerBereich;
  * @since July, 2010
  *
  */
+// @JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY,
+// property = "type")
+// @JsonTypeName("tabDef")
 @TypeDefs({ @TypeDef(name = "fxenum", typeClass = de.mw.mwdata.core.ofdb.domain.enums.TypeZEITTYP.class),
 		@TypeDef(name = "fxdatenbank", typeClass = de.mw.mwdata.core.ofdb.domain.enums.TypeDATENBANK.class) })
 @Entity
@@ -146,18 +149,22 @@ public class TabDef extends AbstractMWEntity implements ITabDef {
 		this.eindeutigerSchluessel = eindeutigerSchluessel;
 	}
 
+	@Override
 	public void setZeittyp( final ZEITTYP zeittyp ) {
 		this.zeittyp = zeittyp;
 	}
 
+	@Override
 	public ZEITTYP getZeittyp() {
 		return this.zeittyp;
 	}
 
+	@Override
 	public void setDatenbank( final DATENBANK datenbank ) {
 		this.datenbank = datenbank;
 	}
 
+	@Override
 	public DATENBANK getDatenbank() {
 		return this.datenbank;
 	}
@@ -166,14 +173,17 @@ public class TabDef extends AbstractMWEntity implements ITabDef {
 		this.alias = alias;
 	}
 
+	@Override
 	public String getAlias() {
 		return this.alias;
 	}
 
+	@Override
 	public void setFullClassName( final String fullClassName ) {
 		this.fullClassName = fullClassName;
 	}
 
+	@Override
 	public String getFullClassName() {
 		return this.fullClassName;
 	}

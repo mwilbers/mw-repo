@@ -7,16 +7,14 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
         require: '?ngModel',
         restrict: 'E',
         replace: true,
-		// controller: 'EntityController',
-        template: '<div></div>',
-        link: function($scope, element, attrs) {
+		template: '<div></div>',
+		link: function($scope, element, attrs) {
             
             var grid;
             var data = [];
-			var controller;
-			// var injector = angular.injector([ 'ng', 'angWebApp' ]);
-			// var controller = injector.get('entityController');
-            //SETUP GRID COLUMN HEADERS
+			var controller = $scope.ctrl;
+			
+			//SETUP GRID COLUMN HEADERS
             var columns = [{
                 id: "id",
                 name: "ID",
@@ -36,7 +34,8 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
                 id: "name",
                 name: "Name",
                 field: "name",
-                editor: Slick.Editors.Text},
+                editor: Slick.Editors.Text
+			},
             {
                 id: "bezeichnung",
                 name: "Bezeichnung",
@@ -44,7 +43,8 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
                 width: 80,
                 resizable: false,
                 // formatter: Slick.Formatters.PercentCompleteBar,
-                editor: Slick.Editors.Text},
+                editor: Slick.Editors.Text
+			},
             ];
 
             //SETUP GRID OPTIONS
@@ -58,9 +58,8 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
             
             grid = new Slick.Grid("#angSlickGrid", [], columns, options);
             grid.setSelectionModel(new Slick.CellSelectionModel());
-            
-            console.log("Created Grid");
-            console.log(grid);
+            // console.log("Created Grid");
+            // console.log(grid);
 
             grid.onAddNewRow.subscribe(function(e, args) {
                 console.log("onAddNewRow");
@@ -75,7 +74,7 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
                 console.log("onCellChange");
                 $scope.state.rows = grid.getData();
 				controller = $scope.ctrl;
-				controller.initialize( grid.getData()[grid.getSelectedRows()[0]].id );
+				controller.initialize( grid.getData()[grid.getSelectedRows()[0]].id, grid.getData()[grid.getSelectedRows()[0]] );
 				controller.setRowDirty();
 				
 				if( controller.hasRowChanged() && controller.isRowDirty() ) {
@@ -84,23 +83,13 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
 				}
 				
 				
-                $scope.$apply();
+                //$scope.$apply();
             });
-			/**
-			grid.onBeforeEditCell.subscribe(function(e, args) {
-                console.log("onBeforeEditCell");
-                $scope.$apply();
-            });
-			grid.onSelectedRowsChanged.subscribe(function(e, args) {
-                console.log("onSelectedRowsChanged");
-                $scope.$apply();
-            });
-			**/
+			
 			
 			grid.onClick.subscribe(function(e, args) {
                 console.log("onClick");
-                // $scope.state.rows = grid.getData();
-				controller = $scope.ctrl;
+                controller = $scope.ctrl;
 					
 				controller.setCurrentRowIndex( args.row );
 				
@@ -108,32 +97,10 @@ angular.module('angWebApp').directive('slickgridjs',  function(  ) {
 					controller.submit();
 					controller.reset();
 				}
-				// controller.initialize( grid.getData()[grid.getSelectedRows()[0]].id );
+				
                 $scope.$apply();
             });
 			
-			/**
-			grid.onKeyDown.subscribe(function(e) {
-                console.log("onKeyDown");
-                // $scope.state.rows = grid.getData();
-				controller = $scope.ctrl;
-				// controller.initialize( grid.getData()[grid.getSelectedRows()[0]].id );
-                $scope.$apply();
-            });
-			
-			
-			
-			grid.onSelectedRowsChanged.subscribe(function(e) {
-                console.log("onSelectedRowsChanged");
-                // $scope.state.rows = grid.getData();
-				controller = $scope.ctrl;
-				// if(controller.isRowDirty()) {
-				// 	controller.submit();
-				// 	controller.reset();
-				// }
-                // $scope.$apply();
-            });
-          **/
             var redraw = function(newScopeData) {
                 console.log("redraw");
 

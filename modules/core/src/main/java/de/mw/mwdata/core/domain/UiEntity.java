@@ -1,28 +1,26 @@
-package de.mw.mwdata.ui;
-
-import de.mw.mwdata.core.domain.IEntity;
+package de.mw.mwdata.core.domain;
 
 /**
  * Wrapper class for transporting array types of {@link IEntity} to UI<br>
  * FIXME: class really needed ? @see EntityTO
- * 
+ *
  * @author wilbersm
  *
  */
-// @Deprecated
+@Deprecated
 public class UiEntity {
 
 	private Object[] entityArray;
 
-	public UiEntity(Object[] entityArray) {
-		this.setEntityArray(entityArray);
+	public UiEntity(final Object[] entityArray) {
+		this.setEntityArray( entityArray );
 	}
 
 	public Object[] getEntityArray() {
-		return entityArray;
+		return this.entityArray;
 	}
 
-	public void setEntityArray(Object[] entityArray) {
+	public void setEntityArray( final Object[] entityArray ) {
 		this.entityArray = entityArray;
 	}
 

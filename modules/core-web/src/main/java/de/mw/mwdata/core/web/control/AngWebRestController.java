@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.domain.UiEntityList;
 import de.mw.mwdata.core.ofdb.def.CRUD;
 import de.mw.mwdata.core.ofdb.def.OfdbField;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
@@ -32,7 +33,6 @@ import de.mw.mwdata.core.web.navigation.NavigationManager;
 import de.mw.mwdata.core.web.navigation.NavigationState;
 import de.mw.mwdata.core.web.util.RestbasedMwUrl;
 import de.mw.mwdata.core.web.util.SessionUtils;
-import de.mw.mwdata.ui.UiEntityList;
 
 /**
  * FIXME rename controller i.e. to RestCrudController
@@ -40,20 +40,15 @@ import de.mw.mwdata.ui.UiEntityList;
 @RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/admin/**")
-public class AngWebRestController<E extends IEntity> {
+public class AngWebRestController<E extends AbstractMWEntity> {
 
 	protected List<IEntity> entities;
 
-	// @Autowired
 	private IPagingEntityService entityService;
 
 	private IOfdbService ofdbService;
 
-	// @Autowired
 	private NavigationManager navigationManager;
-
-	// // @Autowired
-	// private OfdbCacheManager ofdbCacheManager;
 
 	private OfdbController ofdbController;
 
@@ -67,10 +62,6 @@ public class AngWebRestController<E extends IEntity> {
 		this.ofdbController = ofdbController;
 	}
 
-	// @Autowired
-	// UserService userService; // Service which will do all data
-	// // retrieval/manipulation work
-
 	public void setOfdbService(IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
 	}
@@ -82,10 +73,6 @@ public class AngWebRestController<E extends IEntity> {
 	public void setCrudService(ICrudService<? extends IEntity> crudService) {
 		this.crudService = crudService;
 	}
-
-	// public void setOfdbCacheManager(OfdbCacheManager ofdbCacheManager) {
-	// this.ofdbCacheManager = ofdbCacheManager;
-	// }
 
 	// -------------------Retrieve All
 	// Users--------------------------------------------------------
@@ -101,8 +88,8 @@ public class AngWebRestController<E extends IEntity> {
 	// }
 
 	/**
-	 * Populates the empty filterObject for spring-web-binding. Spring does set
-	 * the properties of the choosen filter-options.
+	 * Populates the empty filterObject for spring-web-binding. Spring does set the
+	 * properties of the choosen filter-options.
 	 * 
 	 */
 	@ModelAttribute("filterSet")
@@ -115,29 +102,14 @@ public class AngWebRestController<E extends IEntity> {
 		return null;
 	}
 
-	// private RestbasedMwUrl getUrl() {
-	//
-	// HttpServletRequest request = ((ServletRequestAttributes)
-	// RequestContextHolder.getRequestAttributes())
-	// .getRequest();
-	// RestbasedMwUrl mwUrl = null;
-	// try {
-	// mwUrl = new RestbasedMwUrl(request.getRequestURL().toString());
-	// } catch (MalformedURLException e) {
-	// String msg = MessageFormat.format("Invalid url {0} in MWData
-	// application.",
-	// request.getRequestURL().toString());
-	// throw new NavigationException(msg);
-	// }
-	//
-	// return mwUrl;
-	// }
-
 	@RequestMapping(value = "/tabDef/", method = RequestMethod.GET)
-	public ResponseEntity<UiEntityList> listAllTabDefs() {
-
+	public ResponseEntity<UiEntityList<E>> listAllTabDefs() {
+		// UiEntityList<E>
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
+
+		// ... Rückgabetype geändert von UiEntityList<E> nach TabDef -> dann
+		// funktioniert json-convertierung
 
 		// initialize navigation state
 		HttpSession session = request.getSession();
@@ -160,20 +132,33 @@ public class AngWebRestController<E extends IEntity> {
 					pageIndex, state.getSorting());
 		}
 
-		UiEntityList uiEntities = new UiEntityList(entityResult.getItems(), ofdbFieldList);
+		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
+		// FIXME: remove next rows
+		// uiEntities.getOfdbFields().clear();
+		// uiEntities.getEntityTOs().clear();
 
-		return new ResponseEntity<UiEntityList>(uiEntities, HttpStatus.OK);
+		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
+
+		// E res = (E) uiEntities.getUiEntities().get(0).getEntityArray()[0];
+		// return new ResponseEntity<E>(res, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<IEntity> updateEntity(@PathVariable("id") long id, @RequestBody IEntity entity) {
+	@RequestMapping(value = "/tabDef/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<EntityTO> updateEntity(@PathVariable("id") long id, @RequestBody E entity) {
 		System.out.println("Updating Entity " + id);
+
+		// ...
+		// generic type von UIEntityList auf AbstractMWEntity geändert, überall
+		// angepasst,
+		// jetzt neu bauen und testen
+		// ansonsten @see
+		// http://www.davismol.net/2015/03/05/jackson-json-deserialize-a-list-of-objects-of-subclasses-of-an-abstract-class/
 
 		Object foundEntity = this.crudService.findById(entity.getClass(), id);
 
 		if (foundEntity == null) {
-			System.out.println("User with id " + id + " not found");
-			return new ResponseEntity<IEntity>(HttpStatus.NOT_FOUND);
+			System.out.println("Entity with id " + id + " not found");
+			return new ResponseEntity<EntityTO>(HttpStatus.NOT_FOUND);
 		}
 
 		// currentEntity.setUsername(user.getUsername());
@@ -181,7 +166,9 @@ public class AngWebRestController<E extends IEntity> {
 		// currentEntity.setEmail(user.getEmail());
 
 		this.crudService.update(entity);
-		return new ResponseEntity<IEntity>(entity, HttpStatus.OK);
+		EntityTO<E> entityTO = new EntityTO<E>(entity);
+		// FIXME: mapValues not set in entityTO
+		return new ResponseEntity<EntityTO>(entityTO, HttpStatus.OK);
 	}
 
 	// -------------------Retrieve Single

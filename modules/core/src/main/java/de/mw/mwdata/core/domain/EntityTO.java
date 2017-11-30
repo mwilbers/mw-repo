@@ -55,6 +55,7 @@ public class EntityTO<E extends AbstractMWEntity> implements Serializable {
 	}
 
 	public void setMap( final Map<String, MapValue> map ) {
+		// FIXME: bad style: setting map ...
 		this.map = map;
 	}
 

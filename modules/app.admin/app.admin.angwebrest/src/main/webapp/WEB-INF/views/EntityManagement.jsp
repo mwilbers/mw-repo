@@ -36,7 +36,7 @@
      
   </head>
   <body ng-app="angWebApp" class="ng-cloak">
-      <div class="generic-container" ng-controller="EntityController as ctrl">
+      <div class="generic-container" ng-controller="EntityController as ctrl" id="controllerScope">
           <div class="panel panel-default">
               <div class="panel-heading"><span class="lead">Entity Registration Form </span></div>
               <div class="formcontainer">
@@ -120,14 +120,16 @@
           </div>
           
           <!-- slickgrid grid -->
-          <div id="myGrid" style="width:600px;height:500px;">
+		  inner grid
+          <div id="innerGrid" style="width:600px;height:500px;">
           
-          </div>
-slickgrid based on angularjs
+          </div>  <!-- -->
+slickgrid based on angularjshhh
 		  <!-- slickgrid angularjs variant -->		
 		  <slickgridjs id="angSlickGrid" style="height: 70%;" data="state.rows"></slickgridjs>
-          
       </div>
+	  
+	   
       
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
 	  <script src="<c:url value='/static/jQuery/jquery-1.7.min.js' />"></script>
@@ -152,30 +154,7 @@ slickgrid based on angularjs
 	  
 	  
 	  <script>
-		  var grid;
-		  var columns = [
-		    {id: "id", name: "ID", field: "id"},
-		    {id: "name", name: "Name", field: "name"},
-		    {id: "tabelle", name: "Tabelle", field: "tabelle"},
-		    {id: "benutzerBereich", name: "BenutzerBereich", field: "benutzerBereich"}
-
-		  ];
-		  var options = {
-		    enableCellNavigation: true,
-		    enableColumnReorder: false
-		  };
-		  $(function () {
-		    var data = [];
-		    for (var i = 0; i < 20; i++) {
-		      data[i] = {
-		        id: "Task " + i,
-		        name: "5 days",
-		        tabelle: "myTable",
-		        benutzerBereich: "myBenutzerBereich"
-		      };
-		    }
-		    grid = new Slick.Grid("#myGrid", data, columns, options);
-		  })
+	  
 	</script>
 	  
   </body>

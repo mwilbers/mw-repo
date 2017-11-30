@@ -3,6 +3,8 @@
  */
 package de.mw.mwdata.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * Common interface for persistable entities in MWData. Every entity has an
  * unique id and an unique name. The unique name is important for mapping same
@@ -14,6 +16,7 @@ package de.mw.mwdata.core.domain;
  * @since Mar, 2011
  * 
  */
+// @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public interface IEntity {
 
 	/**

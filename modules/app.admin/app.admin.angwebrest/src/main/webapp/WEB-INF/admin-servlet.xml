@@ -29,13 +29,11 @@
 		</bean>
 		
 		<!-- resources exclusions from servlet mapping -->
-<!-- 		location=classpath:/META-INF/resources/webjars/ -->
     	<mvc:resources mapping="/static/**" location="/static/"/>
-    	
+    	  
     	<mvc:annotation-driven>
 		   <mvc:message-converters>
-		            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
-		            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+           		<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
@@ -47,7 +45,16 @@
 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 		</bean>
 
-	<bean id="requestMappingHandlerAdapter" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">	    
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<!-- 
+		<property name="messageConverters">
+			<list>
+				<bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		            	<property name="objectMapper" ref="jacksonObjectMapper" />
+		            </bean>	
+			</list>
+		</property>	    
+		 -->
 	</bean>
   	<bean id="requestMappingHandlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
   	</bean>
