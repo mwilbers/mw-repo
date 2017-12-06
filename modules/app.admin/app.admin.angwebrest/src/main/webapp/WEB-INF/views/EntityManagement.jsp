@@ -154,7 +154,32 @@ slickgrid based on angularjshhh
 	  
 	  
 	  <script>
-	  
+	  /*
+		  var grid;
+		  var columns = [
+		    {id: "id", name: "ID", field: "id"},
+		    {id: "name", name: "Name", field: "name"},
+		    {id: "tabelle", name: "Tabelle", field: "tabelle"},
+		    {id: "benutzerBereich", name: "BenutzerBereich", field: "benutzerBereich"}
+
+		  ];
+		  var options = {
+		    enableCellNavigation: true,
+		    enableColumnReorder: false
+		  };
+		  $(function () {
+		    var data = [];
+		    for (var i = 0; i < 20; i++) {
+		      data[i] = {
+		        id: "Task " + i,
+		        name: "5 days",
+		        tabelle: "myTable",
+		        benutzerBereich: "myBenutzerBereich"
+		      };
+		    }
+		    grid = new Slick.Grid("#myGrid", data, columns, options);
+		  })
+		  */
 	</script>
 	  
   </body>
