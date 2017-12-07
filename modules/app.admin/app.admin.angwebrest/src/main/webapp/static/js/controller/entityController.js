@@ -1,36 +1,114 @@
 'use strict';
 
-var gridView = {
-	grid: {},
-	columns: [],
-	data: [],
+function SelectCellEditor(args) {
+	var $select;
+	var defaultValue;
+	var scope = this;
 
-	options: {},
-	scope: {},
+	this.init = function() {
 
-	initialize: function( ofdbFields ) {
-		console.log("gridView initialize");
-		// this.scope = angular.element($("#controllerScope")).scope();
-		
-		this.columns = [];
-		
-		//for(var i = 0; i < ofdbFields.length; i++) {
-		for(var i = 0; i < ofdbFields.length; i++) {
-			this.columns[i] = {};
-			this.columns[i] = {id: ofdbFields[i].propOfdbName, name: ofdbFields[i].columnTitle, field: ofdbFields[i].propName};
+		var opt_values = [];
+		if(args.column.options){
+		  opt_values = args.column.options.split(',');
+		}else{
+		  opt_values ="yes,no".split(',');
 		}
-		/*
-		this.columns = [
-			
-			{id: ofdbFields[0].propOfdbName, name: ofdbFields[0].columnTitle, field: ofdbFields[0].propName},
-			{id: ofdbFields[1].propOfdbName, name: ofdbFields[1].columnTitle, field: ofdbFields[1].propName}
-			//{id: "duration", name: "Duration", field: "duration"}//,
-			//{id: "%", name: "% Complete", field: "percentComplete", editor: Slick.Editors.Text},
-			//{id: "start", name: "Start", field: "start"},
-			//{id: "finish", name: "Finish", field: "finish"},
-			//{id: "effort-driven", name: "Effort Driven", field: "effortDriven"}
-		],
-		  */
+		var option_str = ""
+		for( var i in opt_values ){
+		  var v = opt_values[i];
+		  option_str += "<OPTION value='"+v+"'>"+v+"</OPTION>";
+		}
+		$select = $("<SELECT tabIndex='0' class='editor-select'>"+ option_str +"</SELECT>");
+		$select.appendTo(args.container);
+		$select.focus();
+	};
+
+	this.destroy = function() {
+		$select.remove();
+	};
+
+	this.focus = function() {
+		$select.focus();
+	};
+
+	this.loadValue = function(item) {
+		defaultValue = item[args.column.field];
+		$select.val(defaultValue);
+	};
+
+	this.serializeValue = function() {
+		if(args.column.options){
+		  return $select.val();
+		}else{
+		  return ($select.val() == "yes");
+		}
+	};
+
+	this.applyValue = function(item,state) {
+		item[args.column.field] = state;
+	};
+
+	this.isValueChanged = function() {
+		return ($select.val() != defaultValue);
+	};
+
+	this.validate = function() {
+		return {
+			valid: true,
+			msg: null
+		};
+	};
+	
+	this.init();
+}
+
+function gridView() {
+	var grid = {};
+	var columns = [];
+	this.data = [];
+
+	var options = {};
+	var scope = {};
+
+	/* private functions */
+	
+	function buildColumns( ofdbFields ) {
+		
+		for(var i = 0; i < ofdbFields.length; i++) {
+			if(ofdbFields[i].mapped) {
+				columns[i] = {};
+				
+				columns[i]["id"] = ofdbFields[i].propOfdbName;
+				columns[i]["name"] = ofdbFields[i].columnTitle;
+				columns[i]["field"] = ofdbFields[i].propName;
+				
+				if(undefined != ofdbFields[i].listOfValues && null != ofdbFields[i].listOfValues) {
+					var result = "";
+					for(var l=0; l<ofdbFields[i].listOfValues.length; l++) {
+						result += ofdbFields[i].listOfValues[l] + ",";
+					}
+					result = result.substring(0, result.length - 1);
+					columns[i]["options"] = result;
+					columns[i]["editor"] = SelectCellEditor;
+				}
+				
+				// this.columns[i] = {id: ofdbFields[i].propOfdbName, name: ofdbFields[i].columnTitle, field: ofdbFields[i].propName};
+			}
+		}
+		
+	}
+	
+	/* public functions */
+	
+	this.getColumns = function () {
+		return columns;
+	};
+	
+	this.initialize = function( ofdbFields ) {
+		console.log("gridView initialize");
+		
+		buildColumns( ofdbFields );
+
 		this.options = {
 			enableCellNavigation: true,
 			enableColumnReorder: true,
@@ -40,24 +118,15 @@ var gridView = {
 		},
 		
 		$(function () {
-			var data = [];
+			//var data = [];
 			console.log("gridView $function ");
-			//gridView.data = {};
-			
-			
 
-			this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.columns, gridView.options);
-			
-			//this.grid.setSelectionModel(new Slick.CellSelectionModel());
-			// grid.registerPlugin( new Slick.AutoTooltips({ enableForHeaderCells: true }) );
-			//this.grid.render();
-			//console.log(this.grid);
+			this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
 			
 			this.grid.onClick.subscribe(function(e, args) {
 				console.log("onClick");
 				this.scope = angular.element($("#controllerScope")).scope(); //$scope.ctrl;
 				var controller = this.scope.ctrl;
-					
 				controller.setCurrentRowIndex( args.row );
 				
 				if( controller.hasRowChanged() && controller.isRowDirty() ) {
@@ -88,71 +157,30 @@ var gridView = {
 		});
 		
 		
-	},
+	};
 	
-	load: function( rows, ofdbFields ) {
-			console.log("gridView load");
-			
-			for (var i = 0; i < rows.length; i++) {
-				gridView.data[i] = {};
-				
-				for(var j=0; j < ofdbFields.length; j++) {
+	this.load = function( rows, ofdbFields ) {
+		console.log("gridView load");
+		
+		for (var i = 0; i < rows.length; i++) {
+			gridView.data[i] = {};
+			for(var j=0; j < ofdbFields.length; j++) {
+				if(ofdbFields[j].mapped) {
 					gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
-					//gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
 				}
-				/*
-				gridView.data[i] = {
-					
-					alias: "xxx",
-					//title: "Task " + i,
-					duration: "5 days",
-					percentComplete: Math.round(Math.random() * 100),
-					start: "01/01/2009",
-					finish: "01/05/2009",
-					effortDriven: (i % 5 == 0)
-					
-				};
-				*/
 			}
+		}
+		
+		this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
+		this.grid.setSelectionModel(new Slick.CellSelectionModel());
+		this.grid.render();
+		console.log(this.grid);
 			
-			//for (var i = 0; i < rows.length; i++) {
-				
-				
-				
-				/*
-				gridView.data[i] = {
-					Tabelle: "yyy",
-					Alias: "xxx"
-				}
-				*/
-				//gridView.data[i] = new Array(); //gridView.data[i];
-				//for(var j = 0; j < 2; j++) {
-					
-				//	gridView.data[i][ofdbFields[j].propOfdbName] = rows[i][ofdbFields[j].propName];
-						/*
-						duration: "5 days",
-						percentComplete: Math.round(Math.random() * 100),
-						start: "01/01/2009",
-						finish: "01/05/2009",
-						effortDriven: (i % 5 == 0)
-						*/
-					
-				//}
-				
-			   
-			//}
-			
-			this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.columns, gridView.options);
-			this.grid.setSelectionModel(new Slick.CellSelectionModel());
-			// grid.registerPlugin( new Slick.AutoTooltips({ enableForHeaderCells: true }) );
-			this.grid.render();
-			console.log(this.grid);
-			
-	}
+	};
 	
 }
 
-// gridView.initialize();
+var gridView = new gridView();
 
 angular.module('angWebApp').controller('EntityController', ['$scope', 'EntityService', function($scope, entityService) {
     console.log("entityController");
@@ -183,21 +211,20 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 
     fetchAllEntities();
 	
-	/*
-	function initializeColumns( ofdbFields ) {
-		
-		for(var i = 0; i < ofdbFields.length; i++){            
+    function loadSlickAngularjsGrid( entityTOs, ofdbFields ){
     	
-		}
-		
-	}
-	*/
-	
-    function loadSlickAngularjsGrid( entities ){
-    	
-    	for(var i = 0; i < entities.entityTOs.length; i++){            
-    		var entityTO = entities.entityTOs[i].item;
-    		var row = { "id": entityTO.id, "alias": entityTO.alias, "name": entityTO.name, "bezeichnung": entityTO.bezeichnung};
+    	for(var i = 0; i < entityTOs.length; i++){            
+    		var entityTO = entityTOs[i].item;
+			
+			var row = {};
+			for(var j = 0; j < ofdbFields.length; j++) {
+				if(ofdbFields[j].mapped) {
+					row[ofdbFields[j].propName] = entityTO[ofdbFields[j].propName];
+				}
+				//gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
+			}
+			
+    		//var row = { "id": entityTO.id, "alias": entityTO.alias, "name": entityTO.name, "bezeichnung": entityTO.bezeichnung, "datenbank": entityTO.datenbank};
     		$scope.state.rows.push(row);    		
         }    	
     	
@@ -210,7 +237,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
                 console.log("ctrl.fetchAllEntities");
 				
 				gridView.initialize( d.ofdbFields );
-				self.loadSlickAngularjsGrid( d );
+				self.loadSlickAngularjsGrid( d.entityTOs, d.ofdbFields );
 				gridView.load( $scope.state.rows, d.ofdbFields );
 				
             },
