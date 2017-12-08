@@ -46,6 +46,10 @@ function SelectCellEditor(args) {
 
 	this.applyValue = function(item,state) {
 		item[args.column.field] = state;
+		
+		var controller = angular.element($("#controllerScope")).scope().ctrl;
+		controller.processChange( item["id"], item );
+		
 	};
 
 	this.isValueChanged = function() {
@@ -96,6 +100,11 @@ function gridView() {
 			}
 		}
 		
+		columns[ofdbFields.length] = {};
+		columns[ofdbFields.length]["id"] = "type";
+		columns[ofdbFields.length]["name"] = "type";
+		columns[ofdbFields.length]["field"] = "type";
+		
 	}
 	
 	/* public functions */
@@ -123,7 +132,31 @@ function gridView() {
 
 			this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
 			
-			this.grid.onClick.subscribe(function(e, args) {
+			
+			
+		});
+		
+		
+	};
+	
+	this.load = function( rows, ofdbFields ) {
+		console.log("gridView load");
+		
+		for (var i = 0; i < rows.length; i++) {
+			gridView.data[i] = {};
+			for(var j=0; j < ofdbFields.length; j++) {
+				if(ofdbFields[j].mapped) {
+					gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
+				}
+			}
+			gridView.data[i]["type"] = rows[i]["type"];
+			
+		}
+		
+		this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
+		this.grid.setSelectionModel(new Slick.CellSelectionModel());
+		
+		this.grid.onClick.subscribe(function(e, args) {
 				console.log("onClick");
 				this.scope = angular.element($("#controllerScope")).scope(); //$scope.ctrl;
 				var controller = this.scope.ctrl;
@@ -143,6 +176,9 @@ function gridView() {
 				this.scope = angular.element($("#controllerScope")).scope();
                 this.scope.state.rows = args.grid.getData();
 				var controller = this.scope.ctrl;
+				
+				controller.processChange( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
+				/*
 				controller.initialize( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
 				controller.setRowDirty();
 				
@@ -150,29 +186,10 @@ function gridView() {
 					controller.submit();
 					controller.reset();
 				}
-				
+				*/
                 //$scope.$apply();
             });
-			
-		});
 		
-		
-	};
-	
-	this.load = function( rows, ofdbFields ) {
-		console.log("gridView load");
-		
-		for (var i = 0; i < rows.length; i++) {
-			gridView.data[i] = {};
-			for(var j=0; j < ofdbFields.length; j++) {
-				if(ofdbFields[j].mapped) {
-					gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
-				}
-			}
-		}
-		
-		this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
-		this.grid.setSelectionModel(new Slick.CellSelectionModel());
 		this.grid.render();
 		console.log(this.grid);
 			
@@ -200,6 +217,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	self.isRowDirty = isRowDirty;
 	self.setCurrentRowIndex = setCurrentRowIndex;
 	self.hasRowChanged = hasRowChanged;
+	self.processChange = processChange;
 	
     self.entity = { id:null, name:'', alias:'', benutzerbereich:'' };
     var rowDirty = false;
@@ -223,6 +241,8 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 				}
 				//gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
 			}
+			
+			row["type"] = entityTO.type;
 			
     		//var row = { "id": entityTO.id, "alias": entityTO.alias, "name": entityTO.name, "bezeichnung": entityTO.bezeichnung, "datenbank": entityTO.datenbank};
     		$scope.state.rows.push(row);    		
@@ -282,6 +302,18 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
             }
         );
     }
+	
+	function processChange( entityId, entity ) {
+	
+		initialize( entityId, entity );
+		setRowDirty();
+		
+		if( hasRowChanged() && isRowDirty() ) {
+			submit();
+			reset();
+		}
+	
+	}
 	
 	function createEntity( entity ){
     	entityService.createEntity(user)
