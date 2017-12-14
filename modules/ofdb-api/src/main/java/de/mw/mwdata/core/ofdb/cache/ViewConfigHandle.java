@@ -14,14 +14,15 @@ import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ordb.query.OfdbQueryModel;
 
 /**
- * Handler-class for managing logic of whole ViewConfiguration-object. Has package-access to ViewConfigration-object.
+ * Handler-class for managing logic of whole ViewConfiguration-object. Has
+ * package-access to ViewConfigration-object.
  *
  * @author mwilbers
  *
  */
-public class ViewConfigHandle  {
+public class ViewConfigHandle {
 
-	private ViewConfiguration	viewConfig;
+	private ViewConfiguration viewConfig;
 
 	ViewConfigHandle(final ViewConfiguration viewConf) {
 		this.viewConfig = viewConf;
@@ -32,22 +33,72 @@ public class ViewConfigHandle  {
 		return this.viewConfig;
 	}
 
-	public List<ITabSpeig> getTableProps( final ITabDef tableDef ) {
-		return this.viewConfig.getTableProps( tableDef );
+	public List<ITabSpeig> getTableProps(final ITabDef tableDef) {
+		return this.viewConfig.getTableProps(tableDef);
 	}
 
 	public Map<String, OfdbPropMapper> getPropertyMap() {
 		return this.viewConfig.getPropertyMap();
 	}
 
-	
+	private OfdbPropMapper findOfdbPropMapperByProperty(final String propertyName) {
+
+		Map<String, OfdbPropMapper> propertyMap = getPropertyMap();
+		for (Map.Entry<String, OfdbPropMapper> entry : propertyMap.entrySet()) {
+			if (entry.getValue().getPropertyName().equals(propertyName)) {
+				return entry.getValue();
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param tableDef
+	 * @param propertyName
+	 * @return table property found by searching property mapping
+	 */
+	public ITabSpeig findTablePropByProperty(final ITabDef tableDef, final String propertyName) {
+
+		OfdbPropMapper propMapper = findOfdbPropMapperByProperty(propertyName);
+		List<ITabSpeig> tableProps = getTableProps(tableDef);
+
+		for (ITabSpeig tabProp : tableProps) {
+			if (tabProp.getSpalte().toUpperCase().equals(propMapper.getColumnName().toUpperCase())) {
+				return tabProp;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Finds the {@link OfdbPropMapper } given by {@link ITabSpeig}}
+	 * 
+	 * @param tableProp
+	 * @return can be null if ITabSpeig is not mapped
+	 */
+	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
+
+		for (Map.Entry<String, OfdbPropMapper> entry : this.getPropertyMap().entrySet()) {
+			OfdbPropMapper mapper = entry.getValue();
+			if (mapper.getColumnName().toUpperCase().equals(tableProp.getSpalte().toUpperCase())) {
+				return mapper;
+			}
+		}
+
+		return null;
+	}
+
 	public OfdbQueryModel getQueryModel() {
 		return this.viewConfig.getQueryModel();
 	}
 
 	/**
-	 * Returns the main underlying AnsichtTab-object of the configuration. That is the AnsichtTab with the table where
-	 * to persist the underlying table-data (Jointype 'x').
+	 * Returns the main underlying AnsichtTab-object of the configuration. That is
+	 * the AnsichtTab with the table where to persist the underlying table-data
+	 * (Jointype 'x').
 	 *
 	 * @param viewName
 	 * @return
@@ -56,10 +107,10 @@ public class ViewConfigHandle  {
 
 		List<IAnsichtTab> ansichtTabList = this.viewConfig.getViewTabs(); // .ofdbCacheManager.getAnsichtTabList(
 		// viewName );
-		for ( IAnsichtTab ansichtTab : ansichtTabList ) {
+		for (IAnsichtTab ansichtTab : ansichtTabList) {
 
 			// FIXME: refactor expression x, do in ofdbvalidator
-			if ( ansichtTab.getJoinTyp().equalsIgnoreCase( "x" ) ) {
+			if (ansichtTab.getJoinTyp().equalsIgnoreCase("x")) {
 				return ansichtTab;
 			}
 		}
@@ -75,9 +126,9 @@ public class ViewConfigHandle  {
 		return this.viewConfig.getViewTabs();
 	}
 
-	public ITabDef getTableByName( final String tableName ) {
-		for ( ITabDef tabDef : this.viewConfig.getTableDefs() ) {
-			if ( tabDef.getName().equals( tableName ) ) {
+	public ITabDef getTableByName(final String tableName) {
+		for (ITabDef tabDef : this.viewConfig.getTableDefs()) {
+			if (tabDef.getName().equals(tableName)) {
 				return tabDef;
 			}
 		}
@@ -93,23 +144,23 @@ public class ViewConfigHandle  {
 		return this.viewConfig.getViewColumns();
 	}
 
-	public ITabSpeig findTabSpeigByAnsichtSpalte( final IAnsichtSpalte ansichtSpalte ) {
+	public ITabSpeig findTabSpeigByAnsichtSpalte(final IAnsichtSpalte ansichtSpalte) {
 
-		IAnsichtTab viewTab = findAnsichtTabByTabAKey( ansichtSpalte.getTabAKey() );
-		if ( null == viewTab ) {
+		IAnsichtTab viewTab = findAnsichtTabByTabAKey(ansichtSpalte.getTabAKey());
+		if (null == viewTab) {
 			return null;
 		}
 
-		return this.findTabSpeigByTabAKeyAndSpalteAKey( viewTab.findTableName(), ansichtSpalte.getSpalteAKey() );
+		return this.findTabSpeigByTabAKeyAndSpalteAKey(viewTab.findTableName(), ansichtSpalte.getSpalteAKey());
 	}
 
-	public ITabSpeig findTabSpeigByTabAKeyAndSpalteAKey( final String tabAKey, final String spalteAKey ) {
+	public ITabSpeig findTabSpeigByTabAKeyAndSpalteAKey(final String tabAKey, final String spalteAKey) {
 
-		IAnsichtTab viewTab = findAnsichtTabByTabAKey( tabAKey );
-		List<ITabSpeig> tabSpeigs = this.viewConfig.getTableProps( viewTab.getTabDef() );
+		IAnsichtTab viewTab = findAnsichtTabByTabAKey(tabAKey);
+		List<ITabSpeig> tabSpeigs = this.viewConfig.getTableProps(viewTab.getTabDef());
 
-		for ( ITabSpeig tabSpeig : tabSpeigs ) {
-			if ( tabSpeig.getSpalte().equals( spalteAKey ) ) {
+		for (ITabSpeig tabSpeig : tabSpeigs) {
+			if (tabSpeig.getSpalte().equals(spalteAKey)) {
 				return tabSpeig;
 			}
 		}
@@ -117,11 +168,10 @@ public class ViewConfigHandle  {
 		return null;
 	}
 
-	
-	public IAnsichtTab findAnsichtTabByTabAKey( final String tabelleName ) {
+	public IAnsichtTab findAnsichtTabByTabAKey(final String tabelleName) {
 
-		for ( IAnsichtTab ansichtTab : this.getViewTabs() ) {
-			if ( ansichtTab.getTabAKey().equals( tabelleName ) ) {
+		for (IAnsichtTab ansichtTab : this.getViewTabs()) {
+			if (ansichtTab.getTabAKey().equals(tabelleName)) {
 				return ansichtTab;
 			}
 		}
@@ -134,11 +184,11 @@ public class ViewConfigHandle  {
 		return this.viewConfig.getOfdbFieldList();
 	}
 
-	public ITabSpeig findTabSpeigByAnsichtOrderBy( final IAnsichtOrderBy ansichtOrderBy ) {
+	public ITabSpeig findTabSpeigByAnsichtOrderBy(final IAnsichtOrderBy ansichtOrderBy) {
 
 		// findAnsichtTabByTabAKey( ansichtOrderBy.getTabAKey() );
-		return findTabSpeigByTabAKeyAndSpalteAKey( ansichtOrderBy.getAnsichtTab().findTableName(),
-				ansichtOrderBy.getSpalteAKey() );
+		return findTabSpeigByTabAKeyAndSpalteAKey(ansichtOrderBy.getAnsichtTab().findTableName(),
+				ansichtOrderBy.getSpalteAKey());
 
 	}
 }

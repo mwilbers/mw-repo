@@ -72,8 +72,8 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		private Object			value;
 		private ValueType		valueType;
 
-		private WhereRestriction(final TableColumnPair tableColumnPair, final OperatorEnum operator,
-				final Object value, final ValueType valueType) {
+		private WhereRestriction(final TableColumnPair tableColumnPair, final OperatorEnum operator, final Object value,
+				final ValueType valueType) {
 			this.tableColumnPair = tableColumnPair;
 			this.operator = operator;
 			this.value = value;
@@ -107,11 +107,13 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder setCount( final boolean count ) {
 		this.count = count;
 		return this;
 	}
 
+	@Override
 	public String buildSQL() throws InvalidQueryConfigurationException {
 
 		StringBuffer sbFrom = new StringBuffer();
@@ -162,7 +164,7 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 			// add joins
 			sbFrom.append( " inner join " );
 			sbFrom.append( this.mainTableAlias ).append( "." ).append( joinEntry.getKey() ).append( " as " )
-			.append( joinEntry.getValue() );
+					.append( joinEntry.getValue() );
 
 		}
 
@@ -191,11 +193,16 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 			sbWhere.append( " and " ).append( pair.tableName ).append( "." ).append( pair.columnName ).append( " " );
 
 			switch ( whereRes.operator ) {
-				case Eq: {
+				case Eq:
+				case NotEq: {
 					if ( ValueType.BOOLEAN.equals( whereRes.valueType ) ) {
 						Boolean bVal = (Boolean) whereRes.value;
 
-						sbWhere.append( " = " );
+						if ( whereRes.operator.equals( OperatorEnum.Eq ) ) {
+							sbWhere.append( " = " );
+						} else {
+							sbWhere.append( " != " );
+						}
 						if ( bVal ) {
 							// sbWhere.append( " is true " );
 							sbWhere.append( "'" ).append( Integer.valueOf( Constants.SYS_VAL_TRUE ) ).append( "'" );
@@ -206,7 +213,11 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 					} else {
 
-						sbWhere.append( " = " );
+						if ( whereRes.operator.equals( OperatorEnum.Eq ) ) {
+							sbWhere.append( " = " );
+						} else {
+							sbWhere.append( " != " );
+						}
 						if ( whereRes.isString() ) {
 							sbWhere.append( "'" ).append( whereRes.value ).append( "'" );
 						} else {
@@ -258,6 +269,7 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder selectTable( final String tableName, final String tableAlias ) {
 		// this.mainTable = tableName;
 		this.selectTableAliasItems.put( tableName, tableAlias );
@@ -265,12 +277,14 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder joinTable( final String tableName, final String tableAlias ) {
 		this.joinTables.put( tableName, tableAlias );
 		return this;
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder whereJoin( final String join1Table, final String join1Column, final String join2Table,
 			final String join2Column ) {
 		this.joinRestrictions.add( new JoinRestriction( new TableColumnPair( join1Table, join1Column ),
@@ -278,6 +292,7 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		return this;
 	}
 
+	@Override
 	public OfdbQueryBuilder fromTable( final String tableName, final String tableAlias ) {
 		this.mainTable = tableName;
 		this.mainTableAlias = tableAlias;
@@ -285,11 +300,13 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder selectAlias( final String tableAlias, final String columnAlias ) {
 		this.selectColumnAliasItems.put( tableAlias, columnAlias );
 		return this;
 	}
 
+	@Override
 	public OfdbQueryBuilder andWhereRestriction( final String tableAlias, final String columnAlias,
 			final OperatorEnum operator, final Object value, final ValueType valueType ) {
 
@@ -301,12 +318,14 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	// @Override
+	@Override
 	public OfdbQueryBuilder orderBy( final String tableAlias, final String columnAlias, final String orderDirection ) {
 
 		this.orderSet.add( new OrderSet( new TableColumnPair( tableAlias, columnAlias ), orderDirection ) );
 		return this;
 	}
 
+	@Override
 	public void reset() {
 		this.count = false;
 		this.mainTable = null;
@@ -320,6 +339,7 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 	}
 
+	@Override
 	public OfdbQueryBuilder joinEntity( final String entityName, final String entityAlias ) {
 		this.joinEntities.put( entityName, entityAlias );
 		return this;

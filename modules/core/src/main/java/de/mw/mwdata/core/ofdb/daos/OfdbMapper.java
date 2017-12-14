@@ -39,7 +39,7 @@ public class OfdbMapper extends HibernateDaoSupport {
 	public Map<String, OfdbPropMapper> init( final Class<? extends AbstractMWEntity> type, final String tableName ) {
 
 		AbstractEntityPersister persister = getEntityPersister( type );
-		ClassMetadata meta = this.getHibernateTemplate().getSessionFactory().getClassMetadata( type );
+		ClassMetadata meta = this.getSessionFactory().getClassMetadata( type );
 		// NOTE: the property with the @Id-Annotation stays undocumented here
 		// this.props = meta.getPropertyNames();
 
@@ -74,6 +74,11 @@ public class OfdbMapper extends HibernateDaoSupport {
 			if ( persister.getPropertyColumnNames( i ).length > 0 && !isAssociatedCollection( props[i] ) ) {
 
 				Type[] propertyTypes = persister.getPropertyTypes();
+
+				if ( propertyTypes[i] instanceof ManyToOneType ) {
+					continue; // we imply for manytoone-types there is an additional id property,
+					// e.g.: for TabDef.Bereich there is TabDef.BereichsId
+				}
 
 				// if ( !isAssociationType( propertyTypes[i] ) ) {
 

@@ -120,7 +120,7 @@ function gridView() {
 
 		this.options = {
 			enableCellNavigation: true,
-			enableColumnReorder: true,
+			enableColumnReorder: false,
 			asyncEditorLoading: false,
             autoEdit: true, 
 			editable: true
@@ -142,8 +142,14 @@ function gridView() {
 	this.load = function( rows, ofdbFields ) {
 		console.log("gridView load");
 		
+		// NOTE: because gridView.data references memory of rows we must not reinitialize data objects by '{}' every time
+		if(rows.length > 0 && undefined == gridView.data[0]) {
+			for (var i = 0; i < rows.length; i++) {
+				gridView.data[i] = {};			
+			}
+		}
+		
 		for (var i = 0; i < rows.length; i++) {
-			gridView.data[i] = {};
 			for(var j=0; j < ofdbFields.length; j++) {
 				if(ofdbFields[j].mapped) {
 					gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
@@ -187,7 +193,7 @@ function gridView() {
 					controller.reset();
 				}
 				*/
-                //$scope.$apply();
+                this.scope.$apply();
             });
 		
 		this.grid.render();

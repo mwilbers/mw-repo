@@ -364,9 +364,14 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		// tList.add( tabSpeigMock );
 		// tList.add( tabSpeigId );
 		// IOfdbService oService = this.ofdbService;
-		OfdbPropMapper propMapMock = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigMock );
+		ViewConfigHandle viewHandle = this.ofdbCacheManager
+				.findViewConfigByTableName( tabSpeigMock.getTabDef().getName() );
+
+		OfdbPropMapper propMapMock = viewHandle.findPropertyMapperByTabProp( tabSpeigMock );
+		// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigMock );
 		String propNameMock = propMapMock.getPropertyName();
-		OfdbPropMapper propMapId = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigId );
+		OfdbPropMapper propMapId = viewHandle.findPropertyMapperByTabProp( tabSpeigId );
+		// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigId );
 		String propNameId = propMapId.getPropertyName();
 		// Map<String, OfdbPropMapper> propMap = oService.loadPropertyMapping( tList );
 

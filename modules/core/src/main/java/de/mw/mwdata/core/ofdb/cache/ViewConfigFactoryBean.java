@@ -67,6 +67,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		}
 	}
 
+	@Override
 	public ViewConfigHandle createViewConfiguration( final String viewName ) {
 
 		// initialize AnsichtDef
@@ -101,12 +102,9 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			// check if table is already registered. possible because one table can belong to several views
 			ITabDef tabDef = this.ofdbCacheManager.findRegisteredTableDef( tableName );
 			List<ITabSpeig> tabSpeigs = null;
-			if ( null == tabDef ) {
-				tabDef = ansichtTab.getTabDef();
-				tabSpeigs = this.ofdbService.loadTablePropListByTableName( tableName );
-			} else {
-				tabSpeigs = this.ofdbCacheManager.findRegisteredTabSpeigs( tableName );
-			}
+			tabDef = ansichtTab.getTabDef();
+			tabSpeigs = this.ofdbService.loadTablePropListByTableName( tableName );
+
 			partSet = this.ofdbValidator.isTableValid( tabDef );
 			set.merge( partSet );
 			if ( set.hasErrors() ) {
@@ -118,50 +116,32 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 						tableName );
 				LOGGER.warn( msg );
 			}
-			partSet = this.validateTabSpeigList( tabSpeigs );
+			partSet = validateTabSpeigList( tabSpeigs );
 			set.merge( partSet );
 			if ( set.hasErrors() ) {
-				this.handleValidationErrors( set );
+				handleValidationErrors( set );
 			}
 
-			// viewHandle.addTableDef( tabDef );
 			builder.addTableDef( tabDef );
-			// viewHandle.addTableProps( tableName, tabSpeigs );
 			builder.addTableProps( tabDef, tabSpeigs );
 
 			// // initialize TabBez
 			// List<TabBez> tabBez = this.ofdbDao.findTabBezByTable( tableName );
 			// // FIXME: do validation-check of all tabBezs
-			//
-			// this.ofdbCache.addTabBez( tabBez );
-			// if ( LOGGER.isInfoEnabled() && null != tabBez ) {
-			// for ( TabBez tb : tabBez ) {
-			// LOGGER.info( "Tabellen-Beziehung " + tb.getTabelleEig() + " -> " + tb.getTabelleDef()
-			// + " registered." );
-			// }
-			// }
 
-			// viewHandle.addViewTab( ansichtTab );
 			builder.addViewTab( ansichtTab );
 
 			tableName = ansichtTab.getTabDef().getName();
+
+			// if table props are called for first time, than do initialize properties and add them to cache
 			if ( CollectionUtils.isEmpty( this.ofdbCacheManager.getPropertyMap( tableName ) ) ) {
 
-				String fullClassName = ansichtTab.getTabDef().getFullClassName();
-				Class<? extends AbstractMWEntity> entityClassType = null;
-				try {
-					entityClassType = ClassNameUtils.getClassType( fullClassName );
-				} catch ( ClassNotFoundException e ) {
-					// do nothing. Conversion already checked in OfdbValidator.
-					String msg = MessageFormat.format(
-							"Invalid TabDef-configuration: Field fullClassName {0} of TabDef {1} not valid: ",
-							fullClassName, ansichtTab.getTabDef() );
-					LOGGER.error( msg );
-					throw new OfdbInvalidConfigurationException( msg );
-				}
-
+				Class<? extends AbstractMWEntity> entityClassType = checkFullClassName( ansichtTab.getTabDef() );
 				Map<String, OfdbPropMapper> propertyMap = this.ofdbService.initializeMapping( entityClassType,
 						tableName, builder.getTableProps( ansichtTab.getTabDef() ) );
+
+				checkMappingTabSpeig2Property( tabSpeigs, propertyMap );
+
 				builder.setPropertyMap( propertyMap );
 
 				if ( builder.buildHandle().getMainAnsichtTab().getTabDef().equals( tabDef ) ) {
@@ -197,17 +177,49 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		}
 
 		if ( set.hasErrors() ) {
-			this.handleValidationErrors( set );
+			handleValidationErrors( set );
 		}
 		builder.setViewColumns( ansichtSpalten );
 
 		// ... FIXME: no mainAnsichtTab for ADAnsichtenDef
-		this.initQueryModel( viewName, builder );
+		initQueryModel( viewName, builder );
 
 		List<OfdbField> ofFieldList = createOfdbFields( builder.buildHandle(), CRUD.SELECT, mainPropertyMap );
 		builder.setOfdbFields( ofFieldList );
 
 		return builder.buildHandle();
+	}
+
+	private void checkMappingTabSpeig2Property( final List<ITabSpeig> tabSpeigs,
+			final Map<String, OfdbPropMapper> propertyMap ) {
+
+		for ( ITabSpeig tabProp : tabSpeigs ) {
+
+			OfdbPropMapper ofdbPropMapper = propertyMap.get( tabProp.getSpalte().toUpperCase() );
+			if ( null == ofdbPropMapper ) {
+				String msg = MessageFormat.format( "Table property {0} of table {1} could not be mapped to property.",
+						tabProp.getSpalte(), tabProp.getTabDef().getName() );
+				LOGGER.warn( msg );
+			}
+
+		}
+
+	}
+
+	private Class<? extends AbstractMWEntity> checkFullClassName( final ITabDef tabDef )
+			throws OfdbInvalidConfigurationException {
+		Class<? extends AbstractMWEntity> entityClassType = null;
+		try {
+			entityClassType = ClassNameUtils.getClassType( tabDef.getFullClassName() );
+		} catch ( ClassNotFoundException e ) {
+			// do nothing. Conversion already checked in OfdbValidator.
+			String msg = MessageFormat.format(
+					"Invalid TabDef-configuration: Field fullClassName {0} of TabDef {1} not valid: ",
+					tabDef.getFullClassName(), tabDef );
+			LOGGER.error( msg );
+			throw new OfdbInvalidConfigurationException( msg );
+		}
+		return entityClassType;
 	}
 
 	// FIXMEi: remove method
@@ -233,8 +245,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 		IAnsichtTab ansichtTab = builder.buildHandle().getMainAnsichtTab();
 		if ( null == ansichtTab ) {
-			String msg = LocalizedMessages
-					.getString( Constants.BUNDLE_NAME_OFDB, "missingAnsichtTabJoinTypX", viewName );
+			String msg = LocalizedMessages.getString( Constants.BUNDLE_NAME_OFDB, "missingAnsichtTabJoinTypX",
+					viewName );
 			throw new OfdbInvalidConfigurationException( msg );
 		}
 
@@ -333,17 +345,16 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			if ( !StringUtils.isEmpty( ansichtSpalte.getAnsichtSuchen() ) ) {
 
 				// zu 1.:
-				ViewConfigHandle viewHandleSuchen = this.ofdbCacheManager.getViewConfig( ansichtSpalte
-						.getAnsichtSuchen() );
+				ViewConfigHandle viewHandleSuchen = this.ofdbCacheManager
+						.getViewConfig( ansichtSpalte.getAnsichtSuchen() );
 
 				IAnsichtTab ansichtTab = viewHandle.findAnsichtTabByTabAKey( ansichtSpalte.getSuchwertAusTabAKey() );
 
 				// FIXME: null-check no more needed when we use db-foreign-keys on ansichtDefId
 				if ( null == ansichtTab ) {
-					String msg = MessageFormat
-							.format(
-									"Fehlende Tabelle für Verknüpfung in FX_AnsichtTab_K zum Feld FX_AnsichtSpalten_K.SuchWertAusTabAKey für Ansicht: {0}, Spalte: {1}",
-									ansichtSpalte.getAnsichtDef().getName(), ansichtSpalte.getSpalteAKey() );
+					String msg = MessageFormat.format(
+							"Fehlende Tabelle für Verknüpfung in FX_AnsichtTab_K zum Feld FX_AnsichtSpalten_K.SuchWertAusTabAKey für Ansicht: {0}, Spalte: {1}",
+							ansichtSpalte.getAnsichtDef().getName(), ansichtSpalte.getSpalteAKey() );
 					throw new OfdbInvalidConfigurationException( msg );
 				}
 
@@ -398,7 +409,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 					if ( tabSpeig.getTabDef().equals( suchWertTabSpeig.getTabDef() ) ) {
 						suchPropMapper = mainPropertyMap.get( suchWertTabSpeig.getSpalte().toUpperCase() );
 					} else {
-						suchPropMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
+						suchPropMapper = viewHandleSuchen.findPropertyMapperByTabProp( suchWertTabSpeig );
+						// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
 					}
 
 					String listPropValueName = suchPropMapper.getPropertyName();
@@ -415,7 +427,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 						if ( tabSpeig.getTabDef().equals( suchWertTabSpeig.getTabDef() ) ) {
 							mapper = mainPropertyMap.get( suchWertTabSpeig.getSpalte().toUpperCase() );
 						} else {
-							mapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
+							mapper = viewHandleSuchen.findPropertyMapperByTabProp( suchWertTabSpeig );
+							// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
 						}
 
 						// OfdbPropMapper mapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig

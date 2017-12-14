@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.db.FxBooleanType;
@@ -340,7 +341,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 				Object entityValue = null;
 				try {
-					OfdbPropMapper propMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+					OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp( tabSpeig );
+					// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
 					if ( null == propMapper ) {
 						// FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg durch Id /
 						// verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich)
@@ -545,7 +547,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		IAnsichtDef viewDef = this.findAnsichtByUrlPath( urlPath );
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewDef.getName() );
 		IAnsichtTab viewToTable = viewHandle.getMainAnsichtTab();
-		String tableName = viewToTable.getTabDef().getName();
 
 		List<ITabSpeig> tabSpeigs = viewHandle.getTableProps( viewToTable.getTabDef() );
 		for ( ITabSpeig tabSpeig : tabSpeigs ) {
@@ -553,18 +554,23 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			Object value = null;
 			try {
 
-				OfdbPropMapper propMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+				OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp( tabSpeig );
+				// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+				if ( null == propMapper ) {
+					continue;
+				}
+
 				value = this.getOfdbDao().getEntityValue( entity, propMapper.getPropertyIndex() );
 				if ( null == value ) {
 					value = getOfdbDefault( tabSpeig );
 					if ( null != value ) {
-						Object result = this.getOfdbDao().setEntityValue( entity, value, tabSpeig, propMapper );
+						this.getOfdbDao().setEntityValue( entity, value, tabSpeig, propMapper );
 						// changedEntity.setNewValue( propMapper.getPropertyName(), result );
 						// ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewName );
 						// String mainTableName = viewHandle.getMainAnsichtTab().getTabDef().getName();
 						// this.getMainAnsichtTab( viewName ).getTabDef().getName();
-						LOGGER.info( "Default Value set for Table " + tableName + ", TabSpeig " + tabSpeig.getSpalte()
-								+ ", defaultvalue: " + value );
+						LOGGER.info( "Default Value set for Table " + viewToTable.getTabDef().getName() + ", TabSpeig "
+								+ tabSpeig.getSpalte() + ", defaultvalue: " + value );
 					}
 
 				}
@@ -672,7 +678,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 		boolean isEmpty = true;
 		for ( ITabSpeig tabSpeig : tabSpeigs ) {
-			OfdbPropMapper propMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+			OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp( tabSpeig );
+			// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
 			if ( null == propMapper ) {
 				// FIXME: should not happen. happens e.g. for TabDef.bereich but should be removed in future because of
 				// mapping bereichId / BenutzerBereich.name
@@ -805,7 +812,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 				ViewConfigHandle viewHandle = this.ofdbCacheManager
 						.getViewConfig( ansichtOrderBy.getAnsichtTab().getAnsichtDef().getName() );
 				ITabSpeig tabProp = viewHandle.findTabSpeigByAnsichtOrderBy( ansichtOrderBy );
-				OfdbPropMapper propMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabProp );
+				OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp( tabProp );
+				// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabProp );
 				// OfdbPropMapper propMapper = this.getOfdbDao().mapTabSpeigToProperty( tabProp );
 				String asc = (ansichtOrderBy.getAufsteigend() ? "asc" : "desc");
 
@@ -849,66 +857,87 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 				continue;
 			}
 
-			// // if no changes on property no unique check
-			// if ( !changedEntity.hasChanged( propertyName ) ) {
-			// continue;
-			// }
-
-			ITabSpeig uniqueTabSpeig = this.ofdbCacheManager.findTablePropByProperty( tabDef.getName(),
-					propMapper.getPropertyName() );
-
-			if ( null == uniqueTabSpeig ) {
+			ITabSpeig tableProp = viewHandle.findTablePropByProperty( tabDef, propMapper.getPropertyName() );
+			if ( null == tableProp ) {
 				continue; // e.g. TabSpeig.getName() runs here ...
 			}
 
-			checkUnique( uniqueTabSpeig, entity );
+			checkUnique( tableProp, entity );
 
 		} // end for
 
 	}
 
 	@Override
-	public void checkUnique( final ITabSpeig uniqueTabSpeig, final AbstractMWEntity entity )
+	public void checkUnique( final ITabSpeig tableProp, final AbstractMWEntity entity )
 			throws OfdbUniqueConstViolationException {
 
-		ITabDef tabDef = uniqueTabSpeig.getTabDef();
-		if ( uniqueTabSpeig.isEindeutig() ) {
+		ITabDef tabDef = tableProp.getTabDef();
+		if ( tableProp.isEindeutig() ) {
 
 			// 4. vergleichen mit den dirty feldern und unique prüfung durchführen
 			// ViewConfigHandle viewHandle = ofdbCacheManager.findViewConfigByTableName( tabDef.getName() );
-			UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket(
-					this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
-			List<ITabSpeig> uniqueTabSpeigs = uniqueMap.getTabSpeigsByUniqueIdentifier( uniqueTabSpeig.getEindeutig() );
+
+			// FIXME: zu technisch: Bucket-klasse und methoden wie getTAbSpeigByUniqueIdentifier nach ViewConfigHandle
+			// verschieben. Bucket-Klasse sollte innere klasse werden
+			// desweiteren findREgisteredTabSpeigs nach ViewConfigHandle verschieben
+
+			ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName( tabDef.getName() );
+			List<ITabSpeig> tableProps = viewHandle.getTableProps( tabDef );
+
+			UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket( tableProps );
+			// this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
+			List<ITabSpeig> uniqueTabSpeigs = uniqueMap.getTabSpeigsByUniqueIdentifier( tableProp.getEindeutig() );
 
 			Map<String, OfdbPropMapper> propMap = this.ofdbCacheManager.getPropertyMap( tabDef.getName() );
 
-			OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-			b.selectTable( entity.getClass().getSimpleName(), "tAlias" ).fromTable( entity.getClass().getSimpleName(),
-					"tAlias" );
+			OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
+			builder.selectTable( entity.getClass().getSimpleName(), "tAlias" )
+					.fromTable( entity.getClass().getSimpleName(), "tAlias" );
 
+			boolean uniquePropsToCheck = false;
 			for ( ITabSpeig tabSpeig : uniqueTabSpeigs ) {
 				// FIXME: if more than one unique prop, than this check is only needed for one of all
 
 				Object entityValue = null;
-				OfdbPropMapper propMapper = propMap.get( tabSpeig.getSpalte() );
+				OfdbPropMapper propMapper = propMap.get( tabSpeig.getSpalte().toUpperCase() );
 				String uniquePropNameItem = propMapper.getPropertyName();
 				try {
 					entityValue = this.ofdbDao.getEntityValue( entity, propMapper.getPropertyIndex() );
+
+					if ( ObjectUtils.isEmpty( entityValue ) ) {
+						if ( tabSpeig.getEingabeNotwendig() ) {
+							String msg = MessageFormat.format( "Column {0} of table {1} must not be null.",
+									tabSpeig.getSpalte(), tabSpeig.getTabDef().getName() );
+							throw new OfdbNullValueException( msg );
+						} else {
+							continue;
+						}
+					}
+
+					QueryValue queryValue = convertValueToQueryValue( entityValue, tabSpeig );
+					builder = builder.andWhereRestriction( "tAlias", uniquePropNameItem, OperatorEnum.Eq,
+							queryValue.getData(), ValueType.STRING );
+					uniquePropsToCheck = true;
+
 				} catch ( OfdbMissingMappingException e ) {
-					// TODO Auto-generated catch block
+					// FIXME implement exception
 					e.printStackTrace();
 				}
-				QueryValue queryValue = convertValueToQueryValue( entityValue, tabSpeig );
-				b = b.andWhereRestriction( "tAlias", uniquePropNameItem, OperatorEnum.Eq, queryValue.getData(),
-						ValueType.STRING );
 			}
 
-			String sql = b.buildSQL();
-			List<IEntity[]> results = executeQuery( sql );
-			if ( results.size() > 0 ) {
-				String message = "Unique violation. TableDef: " + tabDef.getName() + ", tableProperty: "
-						+ uniqueTabSpeig.getSpalte();
-				throw new OfdbUniqueConstViolationException( message );
+			if ( uniquePropsToCheck ) {
+
+				builder = builder.andWhereRestriction( "tAlias", Constants.SYS_PROP_ID, OperatorEnum.NotEq,
+						entity.getId(), ValueType.NUMBER );
+
+				String sql = builder.buildSQL();
+				List<IEntity[]> results = executeQuery( sql );
+				if ( results.size() > 0 ) {
+					String message = "Unique violation. TableDef: " + tabDef.getName() + ", tableProperty: "
+							+ tableProp.getSpalte();
+					throw new OfdbUniqueConstViolationException( message );
+				}
 			}
 
 		}
@@ -920,10 +949,23 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	public void doChainCheck( final AbstractMWEntity entity, final CRUD crud ) throws OfdbInvalidCheckException {
 
 		try {
+
+			// implement: build object ChangedEntity with list of objects holding propertyname, flag changed and index
+			// ...
+
+			// OfdbPropMapper propMapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+			// if ( null == propMapper ) {
+			// // FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg durch Id /
+			// // verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich)
+			// throw new OfdbMissingMappingException( "Given TabSpeig not mapped by property." );
+			// }
+			// entityValue = this.getOfdbDao().getEntityValue( filterEntityTO.getItem(),
+			// propMapper.getPropertyIndex() );
+
 			checkAllUniques( entity, crud );
 
 		} catch ( OfdbUniqueConstViolationException e ) {
-			throw new OfdbInvalidCheckException( "Unique check violation.", e );
+			throw new OfdbInvalidCheckException( "Unique check violation: " + e.getLocalizedMessage(), e );
 		}
 
 		if ( null != this.nextChainItem ) {

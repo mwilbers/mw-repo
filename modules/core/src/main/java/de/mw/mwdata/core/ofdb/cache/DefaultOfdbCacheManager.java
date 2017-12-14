@@ -1,7 +1,6 @@
 package de.mw.mwdata.core.ofdb.cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import de.mw.mwdata.core.ofdb.def.OfdbPropMapper;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.ITabDef;
-import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 
 public class DefaultOfdbCacheManager implements OfdbCacheManager {
@@ -28,10 +26,12 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	 * @param tableName
 	 * @return a map containing the key = tabSpeig.spalte and value = propertyname of the requested tableName
 	 */
+	@Override
 	public Map<String, OfdbPropMapper> getPropertyMap( final String tableName ) {
 		return this.ofdbCache.getPropertyMap( tableName );
 	}
 
+	@Override
 	public void registerView( final ViewConfigHandle viewHandle ) throws OfdbMissingMappingException {
 		this.addViewConfiguration( viewHandle );
 
@@ -57,6 +57,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	}
 
 	// @Override
+	@Override
 	public void unregisterView( final String viewName ) {
 
 		ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
@@ -88,6 +89,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	}
 
 	// @Override
+	@Override
 	public boolean isViewRegistered( final String viewName ) {
 
 		ViewConfigHandle viewHandle = this.getViewConfig( viewName );
@@ -109,10 +111,12 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 
 	}
 
+	@Override
 	public ViewConfigHandle getViewConfig( final String viewName ) {
 		return this.ofdbCache.getViewConfig( viewName );
 	}
 
+	@Override
 	public ITabDef findRegisteredTableDef( final String tableName ) {
 
 		for ( String viewName : this.ofdbCache ) {
@@ -129,23 +133,6 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		return null;
 	}
 
-	public List<ITabSpeig> findRegisteredTabSpeigs( final String tableName ) {
-
-		for ( String viewName : this.ofdbCache ) {
-			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
-
-			IAnsichtTab viewTab = viewHandle.getMainAnsichtTab();
-			if ( viewTab.getTabDef().getName().equals( tableName ) ) {
-				return viewHandle.getTableProps( viewTab.getTabDef() );
-			}
-
-		}
-
-		return Collections.emptyList();
-
-	}
-
-	// FIXME: move method to OfdbCacheManager
 	private boolean isReferencedByCachedAnsichtTab( final ITabDef tabDef, final IAnsichtTab ansichtTabToIgnore ) {
 
 		for ( String viewName : this.ofdbCache ) {
@@ -167,6 +154,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		return false;
 	}
 
+	@Override
 	public ViewConfigHandle findViewConfigByTableName( final String tableName ) {
 
 		for ( String viewName : this.ofdbCache ) {
@@ -179,6 +167,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		return null;
 	}
 
+	@Override
 	public List<ViewConfigHandle> getRegisteredViewConfigs() {
 
 		List<ViewConfigHandle> viewConfigs = new ArrayList<ViewConfigHandle>();
@@ -188,48 +177,6 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		}
 
 		return viewConfigs;
-	}
-
-	public ITabSpeig findTablePropByProperty( final String tableName, final String propertyName ) {
-
-		Map<String, OfdbPropMapper> propMap = this.getPropertyMap( tableName );
-		ITabSpeig tabSpeig = null;
-		for ( Map.Entry<String, OfdbPropMapper> entry : propMap.entrySet() ) {
-			if ( entry.getValue().getPropertyName().equals( propertyName ) ) {
-				String spalte = entry.getKey();
-				tabSpeig = findTablePropBySpalteName( tableName, spalte );
-				break;
-			}
-		}
-
-		return tabSpeig;
-	}
-
-	private ITabSpeig findTablePropBySpalteName( final String tableName, final String spalte ) {
-		List<ITabSpeig> tabSpeigs = findRegisteredTabSpeigs( tableName );
-		for ( ITabSpeig tabSpeig : tabSpeigs ) {
-			if ( tabSpeig.getSpalte().equals( spalte ) ) {
-				return tabSpeig;
-			}
-		}
-
-		return null;
-	}
-
-	public OfdbPropMapper findPropertyMapperByTabSpeig( final ITabSpeig suchWertTabSpeig ) {
-
-		Map<String, OfdbPropMapper> propMap = getPropertyMap( suchWertTabSpeig.getTabDef().getName() );
-
-		OfdbPropMapper propMapper = propMap.get( suchWertTabSpeig.getSpalte().toUpperCase() );
-
-		return propMapper; // this.findPropertyNameByTabSpeig( tabSpeig );
-
-		// List<TabSpeig> tList = new ArrayList<TabSpeig>();
-		// tList.add( suchWertTabSpeig );
-		// Map<String, OfdbPropMapper> propMap = this.ofdbService.loadPropertyMapping( tList );
-		//
-		// return propMap.get( suchWertTabSpeig.getSpalte() ).getPropertyName();
-
 	}
 
 }

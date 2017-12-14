@@ -82,6 +82,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T insert( final T entity ) {
 
@@ -108,6 +109,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 		return entity;
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T update( final T entity ) {
 
@@ -125,7 +127,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 			// }
 
 		} catch ( OfdbInvalidCheckException e ) {
-			LOGGER.error( "Invalid ofdb check" + e.getLocalizedMessage() );
+			LOGGER.error( "Invalid ofdb check" + e.getLocalizedMessage(), e );
 
 			throw new OfdbRuntimeException( "Invalid ofdb check", e );
 		}
@@ -137,6 +139,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 		return entity;
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void delete( final T entity ) {
 
@@ -155,28 +158,34 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 
 	}
 
+	@Override
 	public T findById( final Class<T> clazz, final Long id ) {
 
 		return this.crudDao.findById( clazz, id );
 	}
 
+	@Override
 	public List<T> findAll( final Class<T> clazz, final Map<String, String>... sortColumns ) {
 		return this.crudDao.findAll( clazz, sortColumns );
 	}
 
+	@Override
 	public T findByName( final Class<T> clazz, final String name ) {
 		return this.findByName( clazz, name );
 	}
 
+	@Override
 	public void registerCrudInterceptor( final CrudChain crudChainItem ) {
 		this.additionalCrudChainItems.add( crudChainItem );
 
 	}
 
+	@Override
 	public void doActionsBeforeCheck( final AbstractMWEntity entity, final CRUD crud ) {
 		this.crudChain.doChainActionsBeforeCheck( entity, crud );
 	}
 
+	@Override
 	public void doCheck( final AbstractMWEntity entity, final CRUD crud ) throws OfdbInvalidCheckException {
 		this.crudChain.doChainCheck( entity, crud );
 	}
