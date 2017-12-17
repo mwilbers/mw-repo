@@ -1,5 +1,7 @@
 package de.mw.mwdata.core.ofdb.cache;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -191,4 +193,52 @@ public class ViewConfigHandle {
 				ansichtOrderBy.getSpalteAKey());
 
 	}
+
+	private class UniqueTabSpeigBucket {
+
+		private List<ITabSpeig> tableProps;
+		private Map<Long, List<ITabSpeig>> uniqueMap = new HashMap<Long, List<ITabSpeig>>();
+
+		public UniqueTabSpeigBucket(final List<ITabSpeig> tableProps) {
+			this.tableProps = tableProps;
+			init();
+		}
+
+		private void init() {
+
+			for (ITabSpeig tabSpeig : this.tableProps) {
+
+				if (null != tabSpeig.getEindeutig()) {
+
+					List<ITabSpeig> entries = this.uniqueMap.get(tabSpeig.getEindeutig());
+					if (org.springframework.util.CollectionUtils.isEmpty(entries)) {
+						entries = new ArrayList<ITabSpeig>();
+						this.uniqueMap.put(tabSpeig.getEindeutig(), entries);
+					}
+
+					entries.add(tabSpeig);
+
+				}
+
+			}
+
+		}
+
+		private List<ITabSpeig> getUniqueTableProps(final Long uniqueIdent) {
+			return this.uniqueMap.get(uniqueIdent);
+		}
+
+	}
+
+	public List<ITabSpeig> getTabSpeigsByUniqueIdentifier(final Long uniqueIdent, ITabDef tabDef) {
+
+		List<ITabSpeig> tableProps = getTableProps(tabDef);
+		UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket(tableProps);
+		// this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
+		// List<ITabSpeig> uniqueTabSpeigs =
+		// uniqueMap.getTabSpeigsByUniqueIdentifier(uniqueIdent);
+
+		return uniqueMap.getUniqueTableProps(uniqueIdent);
+	}
+
 }

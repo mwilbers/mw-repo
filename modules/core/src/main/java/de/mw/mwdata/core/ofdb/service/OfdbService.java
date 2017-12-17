@@ -17,7 +17,6 @@ import org.springframework.util.ObjectUtils;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.db.FxBooleanType;
-import de.mw.mwdata.core.db.UniqueTabSpeigBucket;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
@@ -878,16 +877,13 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			// 4. vergleichen mit den dirty feldern und unique prüfung durchführen
 			// ViewConfigHandle viewHandle = ofdbCacheManager.findViewConfigByTableName( tabDef.getName() );
 
-			// FIXME: zu technisch: Bucket-klasse und methoden wie getTAbSpeigByUniqueIdentifier nach ViewConfigHandle
-			// verschieben. Bucket-Klasse sollte innere klasse werden
-			// desweiteren findREgisteredTabSpeigs nach ViewConfigHandle verschieben
-
 			ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName( tabDef.getName() );
-			List<ITabSpeig> tableProps = viewHandle.getTableProps( tabDef );
+			List<ITabSpeig> uniqueTabSpeigs = viewHandle.getTabSpeigsByUniqueIdentifier( tableProp.getEindeutig(),
+					tabDef );
 
-			UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket( tableProps );
-			// this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
-			List<ITabSpeig> uniqueTabSpeigs = uniqueMap.getTabSpeigsByUniqueIdentifier( tableProp.getEindeutig() );
+			// UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket( tableProps );
+			// // this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
+			// List<ITabSpeig> uniqueTabSpeigs = uniqueMap.getTabSpeigsByUniqueIdentifier( tableProp.getEindeutig() );
 
 			Map<String, OfdbPropMapper> propMap = this.ofdbCacheManager.getPropertyMap( tabDef.getName() );
 
