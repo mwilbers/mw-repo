@@ -140,6 +140,7 @@ slickgrid based on angularjshhh
 	  <script src="<c:url value='/static/slickgrid/slick.core.js' />"></script>
 	  <script src="<c:url value='/static/slickgrid/slick.grid.js' />"></script>
 	  <script src="<c:url value='/static/slickgrid/slick.editors.js' />"></script>
+	  <script src="<c:url value='/static/js/slickgrid_addons/slick.selectcelleditor.js' />"></script>
 	  <script src="<c:url value='/static/slickgrid/slick.formatters.js' />"></script>
 	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangedecorator.js' />"></script>
 	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangeselector.js' />"></script>
@@ -153,35 +154,6 @@ slickgrid based on angularjshhh
       <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
 	  <script src="<c:url value='/static/js/controller/slickgridDirective.js' />"></script>
 	  
-	  
-	  <script>
-	  /*
-		  var grid;
-		  var columns = [
-		    {id: "id", name: "ID", field: "id"},
-		    {id: "name", name: "Name", field: "name"},
-		    {id: "tabelle", name: "Tabelle", field: "tabelle"},
-		    {id: "benutzerBereich", name: "BenutzerBereich", field: "benutzerBereich"}
-
-		  ];
-		  var options = {
-		    enableCellNavigation: true,
-		    enableColumnReorder: false
-		  };
-		  $(function () {
-		    var data = [];
-		    for (var i = 0; i < 20; i++) {
-		      data[i] = {
-		        id: "Task " + i,
-		        name: "5 days",
-		        tabelle: "myTable",
-		        benutzerBereich: "myBenutzerBereich"
-		      };
-		    }
-		    grid = new Slick.Grid("#myGrid", data, columns, options);
-		  })
-		  */
-	</script>
 	  
   </body>
 </html>

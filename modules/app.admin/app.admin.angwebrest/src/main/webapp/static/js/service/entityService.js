@@ -7,12 +7,8 @@ angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($h
 
     var factory = {
         fetchAllEntities: fetchAllEntities,
-
-//        fetchOfdbFields: fetchOfdbFields,
         createEntity: createEntity,
         updateEntity:updateEntity,
-
-
         deleteUser:deleteUser
     };
 

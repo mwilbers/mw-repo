@@ -1,71 +1,5 @@
 'use strict';
 
-function SelectCellEditor(args) {
-	var $select;
-	var defaultValue;
-	var scope = this;
-
-	this.init = function() {
-
-		var opt_values = [];
-		if(args.column.options){
-		  opt_values = args.column.options.split(',');
-		}else{
-		  opt_values ="yes,no".split(',');
-		}
-		var option_str = ""
-		for( var i in opt_values ){
-		  var v = opt_values[i];
-		  option_str += "<OPTION value='"+v+"'>"+v+"</OPTION>";
-		}
-		$select = $("<SELECT tabIndex='0' class='editor-select'>"+ option_str +"</SELECT>");
-		$select.appendTo(args.container);
-		$select.focus();
-	};
-
-	this.destroy = function() {
-		$select.remove();
-	};
-
-	this.focus = function() {
-		$select.focus();
-	};
-
-	this.loadValue = function(item) {
-		defaultValue = item[args.column.field];
-		$select.val(defaultValue);
-	};
-
-	this.serializeValue = function() {
-		if(args.column.options){
-		  return $select.val();
-		}else{
-		  return ($select.val() == "yes");
-		}
-	};
-
-	this.applyValue = function(item,state) {
-		item[args.column.field] = state;
-		
-		var controller = angular.element($("#controllerScope")).scope().ctrl;
-		controller.processChange( item["id"], item );
-		
-	};
-
-	this.isValueChanged = function() {
-		return ($select.val() != defaultValue);
-	};
-
-	this.validate = function() {
-		return {
-			valid: true,
-			msg: null
-		};
-	};
-	
-	this.init();
-}
-
 function gridView() {
 	var grid = {};
 	var columns = [];
@@ -89,16 +23,11 @@ function gridView() {
 				columns[i]["field"] = ofdbFields[i].propName;
 				
 				if(undefined != ofdbFields[i].listOfValues && null != ofdbFields[i].listOfValues) {
-					var result = "";
-					for(var l=0; l<ofdbFields[i].listOfValues.length; l++) {
-						result += ofdbFields[i].listOfValues[l] + ",";
-					}
-					result = result.substring(0, result.length - 1);
+					var result = buildListOfValuesString( ofdbFields[i].listOfValues );
 					columns[i]["options"] = result;
 					columns[i]["editor"] = SelectCellEditor;
 				}
 				
-				// this.columns[i] = {id: ofdbFields[i].propOfdbName, name: ofdbFields[i].columnTitle, field: ofdbFields[i].propName};
 			}
 		}
 		
@@ -107,6 +36,18 @@ function gridView() {
 		columns[ofdbFields.length]["name"] = "type";
 		columns[ofdbFields.length]["field"] = "type";
 		
+	}
+	
+	function buildListOfValuesString( listOfValuesArray ) {
+		var result = "";
+		for(var l=0; l<listOfValuesArray.length; l++) {
+			result += listOfValuesArray[l] + ",";
+		}
+		return result.substring(0, result.length - 1);	
+	}
+	
+	function getControllerScope() {
+		return angular.element($("#controllerScope")).scope();
 	}
 	
 	/* public functions */
@@ -136,29 +77,26 @@ function gridView() {
 		},
 		
 		$(function () {
-			//var data = [];
 			console.log("gridView $function ");
 
 			this.dataView = new Slick.Data.DataView();
 			this.grid = new Slick.Grid("#innerGrid", this.dataView, gridView.getColumns(), gridView.options);
-			
-			
-			
 		});
 		
 		
 	};
 	
 	this.filter = function (item) {
-		for (var columnId in gridView.getColumnFilters() ) {
+		
+		var gridFiltersArray = gridView.getColumnFilters();
+		for (var columnId in gridFiltersArray ) {
 			
-		  if (columnId !== undefined && gridView.getColumnFilters()[columnId] !== "") {
-			var c = gridView.grid.getColumns()[gridView.grid.getColumnIndex(columnId)];
-			
-			if ( item[c.field].indexOf( gridView.getColumnFilters()[columnId] ) === -1  ) {
-			  return false;
-			}
-		  }
+		    if (columnId !== undefined && gridFiltersArray[columnId] !== "") {
+				var c = gridView.grid.getColumns()[gridView.grid.getColumnIndex(columnId)];			
+				if ( item[c.field].indexOf( gridFiltersArray[columnId] ) === -1  ) {
+				    return false;
+				}
+		    }
 		  
 		}
 		return true;
@@ -190,7 +128,7 @@ function gridView() {
 		
 		this.grid.onClick.subscribe(function(e, args) {
 			console.log("onClick");
-			this.scope = angular.element($("#controllerScope")).scope(); //$scope.ctrl;
+			this.scope = getControllerScope();
 			var controller = this.scope.ctrl;
 			controller.setCurrentRowIndex( args.row );
 			
@@ -205,11 +143,12 @@ function gridView() {
 		this.grid.onCellChange.subscribe(function(e, args) {
 			console.log("onCellChange");
 			
-			this.scope = angular.element($("#controllerScope")).scope();
-			this.scope.state.rows = args.grid.getData();
-			var controller = this.scope.ctrl;
+			this.scope = getControllerScope();
+			var dataview = args.grid.getData();
+			this.scope.state.rows = dataview.getItems();
 			
-			controller.processChange( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
+			var controller = this.scope.ctrl;
+			controller.processChange( args.item.id, args.item );
 			
 			this.scope.$apply();
 		});
@@ -245,7 +184,6 @@ function gridView() {
 		this.dataView.setFilter(this.filter);
 		this.dataView.endUpdate();
 		
-		
 		this.grid.render();
 		console.log(this.grid);
 			
@@ -259,15 +197,14 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     console.log("entityController");
 	
 	var self = this;
-    self.user={id:null,username:'',address:'',email:''};
-    self.users=[];
+    //self.user={id:null,username:'',address:'',email:''};
+    //self.users=[];
 	
     self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;
     self.remove = remove;
     self.reset = reset;
     self.loadSlickAngularjsGrid = loadSlickAngularjsGrid;
-	// self.initializeColumns = initializeColumns;
 	self.initialize = initialize;
 	self.setRowDirty = setRowDirty;
 	self.isRowDirty = isRowDirty;
@@ -275,7 +212,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	self.hasRowChanged = hasRowChanged;
 	self.processChange = processChange;
 	
-    self.entity = { id:null, name:'', alias:'', benutzerbereich:'' };
+    self.entity = {};
     var rowDirty = false;
 	var currentRowIndex = 0;
 	var rowChanged = false;
@@ -300,7 +237,8 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 			
 			row["type"] = entityTO.type;
 			
-    		//var row = { "id": entityTO.id, "alias": entityTO.alias, "name": entityTO.name, "bezeichnung": entityTO.bezeichnung, "datenbank": entityTO.datenbank};
+			//console.log("in loadSlick: " + i);
+			
     		$scope.state.rows.push(row);    		
         }    	
     	
@@ -311,6 +249,8 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
             .then(
             function(d) {
                 console.log("ctrl.fetchAllEntities");
+				
+				$scope.state.rows = [];
 				
 				gridView.initialize( d.ofdbFields );
 				self.loadSlickAngularjsGrid( d.entityTOs, d.ofdbFields );
@@ -372,7 +312,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	}
 	
 	function createEntity( entity ){
-    	entityService.createEntity(user)
+    	entityService.createEntity(entity)
             .then(
             fetchAllEntities,
             function(errResponse){
@@ -381,16 +321,6 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
         );
     }
 
-    function updateUser(user, id){
-    	entityService.updateUser(user, id)
-            .then(
-            fetchAllUsers,
-            function(errResponse){
-                console.error('Error while updating User');
-            }
-        );
-    }
-	
 	function updateEntity( entity, id){
     	entityService.updateEntity( entity, id)
             .then(
@@ -444,8 +374,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 
 
     function reset(){
-        // self.user={id:null,username:'',address:'',email:''};
-		self.entity = { id:null, name:'', alias:'', benutzerbereich:'' };
+		self.entity = {};
         $scope.myForm.$setPristine(); //reset Form
 		rowDirty = false;
 		rowChanged = false;
