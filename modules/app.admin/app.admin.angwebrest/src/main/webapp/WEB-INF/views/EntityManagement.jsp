@@ -120,6 +120,9 @@
           </div>
           
           <!-- slickgrid grid -->
+		  
+		  
+		  
 		  inner grid
           <div id="innerGrid" style="width:600px;height:500px;">
           
@@ -152,7 +155,6 @@ slickgrid based on angularjshhh
 	  <script src="<c:url value='/static/slickgrid/slick.dataview.js' />"></script>
       <script src="<c:url value='/static/js/service/entityService.js' />"></script>
       <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
-	  <script src="<c:url value='/static/js/controller/slickgridDirective.js' />"></script>
 	  
 	  
   </body>

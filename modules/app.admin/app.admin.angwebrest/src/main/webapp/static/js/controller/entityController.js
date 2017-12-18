@@ -204,7 +204,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     self.edit = edit;
     self.remove = remove;
     self.reset = reset;
-    self.loadSlickAngularjsGrid = loadSlickAngularjsGrid;
+    self.loadGridRows = loadGridRows;
 	self.initialize = initialize;
 	self.setRowDirty = setRowDirty;
 	self.isRowDirty = isRowDirty;
@@ -222,7 +222,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 
     fetchAllEntities();
 	
-    function loadSlickAngularjsGrid( entityTOs, ofdbFields ){
+    function loadGridRows( entityTOs, ofdbFields ){
     	
     	for(var i = 0; i < entityTOs.length; i++){            
     		var entityTO = entityTOs[i].item;
@@ -232,12 +232,9 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 				if(ofdbFields[j].mapped) {
 					row[ofdbFields[j].propName] = entityTO[ofdbFields[j].propName];
 				}
-				//gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
 			}
 			
 			row["type"] = entityTO.type;
-			
-			//console.log("in loadSlick: " + i);
 			
     		$scope.state.rows.push(row);    		
         }    	
@@ -249,11 +246,10 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
             .then(
             function(d) {
                 console.log("ctrl.fetchAllEntities");
-				
 				$scope.state.rows = [];
 				
 				gridView.initialize( d.ofdbFields );
-				self.loadSlickAngularjsGrid( d.entityTOs, d.ofdbFields );
+				self.loadGridRows( d.entityTOs, d.ofdbFields );
 				gridView.load( $scope.state.rows, d.ofdbFields );
 				
             },
