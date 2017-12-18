@@ -69,7 +69,9 @@ function SelectCellEditor(args) {
 function gridView() {
 	var grid = {};
 	var columns = [];
+	var columnFilters = {};
 	this.data = [];
+	var dataView;
 
 	var options = {};
 	var scope = {};
@@ -113,6 +115,10 @@ function gridView() {
 		return columns;
 	};
 	
+	this.getColumnFilters = function() {
+		return columnFilters;
+	};
+	
 	this.initialize = function( ofdbFields ) {
 		console.log("gridView initialize");
 		
@@ -122,6 +128,9 @@ function gridView() {
 			enableCellNavigation: true,
 			enableColumnReorder: false,
 			asyncEditorLoading: false,
+			showHeaderRow: true,
+			headerRowHight: 30,
+			explicitInitialization: true,
             autoEdit: true, 
 			editable: true
 		},
@@ -130,13 +139,29 @@ function gridView() {
 			//var data = [];
 			console.log("gridView $function ");
 
-			this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
+			this.dataView = new Slick.Data.DataView();
+			this.grid = new Slick.Grid("#innerGrid", this.dataView, gridView.getColumns(), gridView.options);
 			
 			
 			
 		});
 		
 		
+	};
+	
+	this.filter = function (item) {
+		for (var columnId in gridView.getColumnFilters() ) {
+			
+		  if (columnId !== undefined && gridView.getColumnFilters()[columnId] !== "") {
+			var c = gridView.grid.getColumns()[gridView.grid.getColumnIndex(columnId)];
+			
+			if ( item[c.field].indexOf( gridView.getColumnFilters()[columnId] ) === -1  ) {
+			  return false;
+			}
+		  }
+		  
+		}
+		return true;
 	};
 	
 	this.load = function( rows, ofdbFields ) {
@@ -159,42 +184,67 @@ function gridView() {
 			
 		}
 		
-		this.grid = new Slick.Grid("#innerGrid", gridView.data, gridView.getColumns(), gridView.options);
+		this.dataView = new Slick.Data.DataView();
+		this.grid = new Slick.Grid("#innerGrid", this.dataView, gridView.getColumns(), gridView.options);
 		this.grid.setSelectionModel(new Slick.CellSelectionModel());
 		
 		this.grid.onClick.subscribe(function(e, args) {
-				console.log("onClick");
-				this.scope = angular.element($("#controllerScope")).scope(); //$scope.ctrl;
-				var controller = this.scope.ctrl;
-				controller.setCurrentRowIndex( args.row );
-				
-				if( controller.hasRowChanged() && controller.isRowDirty() ) {
-					controller.submit();
-					controller.reset();
-				}
-				
-				this.scope.$apply();
-			});
+			console.log("onClick");
+			this.scope = angular.element($("#controllerScope")).scope(); //$scope.ctrl;
+			var controller = this.scope.ctrl;
+			controller.setCurrentRowIndex( args.row );
 			
-			this.grid.onCellChange.subscribe(function(e, args) {
-                console.log("onCellChange");
-				
-				this.scope = angular.element($("#controllerScope")).scope();
-                this.scope.state.rows = args.grid.getData();
-				var controller = this.scope.ctrl;
-				
-				controller.processChange( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
-				/*
-				controller.initialize( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
-				controller.setRowDirty();
-				
-				if( controller.hasRowChanged() && controller.isRowDirty() ) {
-					controller.submit();
-					controller.reset();
-				}
-				*/
-                this.scope.$apply();
-            });
+			if( controller.hasRowChanged() && controller.isRowDirty() ) {
+				controller.submit();
+				controller.reset();
+			}
+			
+			this.scope.$apply();
+		});
+			
+		this.grid.onCellChange.subscribe(function(e, args) {
+			console.log("onCellChange");
+			
+			this.scope = angular.element($("#controllerScope")).scope();
+			this.scope.state.rows = args.grid.getData();
+			var controller = this.scope.ctrl;
+			
+			controller.processChange( args.grid.getData()[args.grid.getSelectedRows()[0]].id, args.grid.getData()[args.grid.getSelectedRows()[0]] );
+			
+			this.scope.$apply();
+		});
+			
+		this.dataView.onRowCountChanged.subscribe(function (e, args) {
+			gridView.grid.updateRowCount();
+			gridView.grid.render();
+		});
+		this.dataView.onRowsChanged.subscribe(function (e, args) {
+		  gridView.grid.invalidateRows(args.rows);
+		  gridView.grid.render();
+		});
+		$(this.grid.getHeaderRow()).delegate(":input", "change keyup", function (e) {
+		  var columnId = $(this).data("columnId");
+		  if (columnId != null) {
+			gridView.getColumnFilters()[columnId] = $.trim($(this).val());
+			gridView.dataView.refresh();
+		  }
+		});
+		this.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
+			
+			if(args.column.id !== undefined) {
+				$(args.node).empty();
+				$("<input type='text'>")
+				   .data("columnId", args.column.id)
+				   .val(gridView.getColumnFilters()[args.column.id])
+				   .appendTo(args.node);
+			}
+		});
+		this.grid.init();
+		this.dataView.beginUpdate();
+		this.dataView.setItems(gridView.data);
+		this.dataView.setFilter(this.filter);
+		this.dataView.endUpdate();
+		
 		
 		this.grid.render();
 		console.log(this.grid);
