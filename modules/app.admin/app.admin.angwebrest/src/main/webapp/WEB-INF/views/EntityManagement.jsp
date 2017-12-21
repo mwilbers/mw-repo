@@ -120,11 +120,14 @@
           </div>
           
           <!-- slickgrid grid -->
-		  
-		  
-		  
+		  <div>
+			  innerGrid Properties<br>
+			  <input type="checkbox" ng-model="gridPropertiesModel.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
+			  Show not mapped columns and values<br>
+		  </div>
+		  <br>
 		  inner grid
-          <div id="innerGrid" style="width:600px;height:500px;">
+          <div id="innerGrid" style="width:800px;height:300px;">
           
           </div>  <!-- -->
 slickgrid based on angularjshhh

@@ -9,32 +9,43 @@ function gridView() {
 
 	var options = {};
 	var scope = {};
-
+	
 	/* private functions */
 	
-	function buildColumns( ofdbFields ) {
+	function buildColumns( ofdbFields, gridPropertiesModel ) {
 		
+		var columnCounter = 0;
+		columns = [];	// FIXME: why to clear local columns array here ?
 		for(var i = 0; i < ofdbFields.length; i++) {
-			if(ofdbFields[i].mapped) {
-				columns[i] = {};
+			var ofdbField = ofdbFields[i];
+			
+			if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
+				columns[columnCounter] = {};
 				
-				columns[i]["id"] = ofdbFields[i].propOfdbName;
-				columns[i]["name"] = ofdbFields[i].columnTitle;
-				columns[i]["field"] = ofdbFields[i].propName;
+				columns[columnCounter]["id"] = ofdbField.propOfdbName;
+				columns[columnCounter]["name"] = ofdbField.columnTitle;
+				columns[columnCounter]["field"] = ofdbField.propName;
 				
-				if(undefined != ofdbFields[i].listOfValues && null != ofdbFields[i].listOfValues) {
-					var result = buildListOfValuesString( ofdbFields[i].listOfValues );
-					columns[i]["options"] = result;
-					columns[i]["editor"] = SelectCellEditor;
+				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
+					var result = buildListOfValuesString( ofdbField.listOfValues );
+					columns[columnCounter]["options"] = result;
+					columns[columnCounter]["editor"] = SelectCellEditor;
 				}
 				
+				columnCounter++;
+			} else {
+				//columns[i] = {};
+				//columns[i]["id"] = ofdbField.propOfdbName;
+				//columns[i]["name"] = ofdbField.columnTitle;
+				//columns[i]["field"] = ofdbField.propName;
 			}
 		}
 		
-		columns[ofdbFields.length] = {};
-		columns[ofdbFields.length]["id"] = "type";
-		columns[ofdbFields.length]["name"] = "type";
-		columns[ofdbFields.length]["field"] = "type";
+		columns[columnCounter] = {};
+		columns[columnCounter]["id"] = "type";
+		columns[columnCounter]["name"] = "type";
+		columns[columnCounter]["field"] = "type";
+		columnCounter++;
 		
 	}
 	
@@ -50,6 +61,10 @@ function gridView() {
 		return angular.element($("#controllerScope")).scope();
 	}
 	
+	function isShowColumn( ofdbField, gridPropertiesModel) {
+		
+	}
+	
 	/* public functions */
 	
 	this.getColumns = function () {
@@ -60,10 +75,8 @@ function gridView() {
 		return columnFilters;
 	};
 	
-	this.initialize = function( ofdbFields ) {
+	this.initialize = function() {
 		console.log("gridView initialize");
-		
-		buildColumns( ofdbFields );
 
 		this.options = {
 			enableCellNavigation: true,
@@ -102,28 +115,35 @@ function gridView() {
 		return true;
 	};
 	
-	this.load = function( rows, ofdbFields ) {
+	this.load = function( rows, ofdbFields, gridPropertiesModel ) {
 		console.log("gridView load");
 		
+		buildColumns( ofdbFields, gridPropertiesModel );
+		
 		// NOTE: because gridView.data references memory of rows we must not reinitialize data objects by '{}' every time
-		if(rows.length > 0 && undefined == gridView.data[0]) {
+		if(rows.length > 0 && undefined == this.data[0]) {
 			for (var i = 0; i < rows.length; i++) {
-				gridView.data[i] = {};			
+				this.data[i] = {};			
 			}
 		}
 		
 		for (var i = 0; i < rows.length; i++) {
+			
+			//var columnCounter = 0;
 			for(var j=0; j < ofdbFields.length; j++) {
-				if(ofdbFields[j].mapped) {
-					gridView.data[i][ofdbFields[j].propName] = rows[i][ofdbFields[j].propName];
+				var ofdbField = ofdbFields[j];
+				//if(ofdbFields[j].mapped) {
+				if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
+					this.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
 				}
+				
 			}
-			gridView.data[i]["type"] = rows[i]["type"];
+			this.data[i]["type"] = rows[i]["type"];
 			
 		}
 		
 		this.dataView = new Slick.Data.DataView();
-		this.grid = new Slick.Grid("#innerGrid", this.dataView, gridView.getColumns(), gridView.options);
+		this.grid = new Slick.Grid("#innerGrid", this.dataView, this.getColumns(), this.options);
 		this.grid.setSelectionModel(new Slick.CellSelectionModel());
 		
 		this.grid.onClick.subscribe(function(e, args) {
@@ -144,10 +164,9 @@ function gridView() {
 			console.log("onCellChange");
 			
 			this.scope = getControllerScope();
-			var dataview = args.grid.getData();
-			this.scope.state.rows = dataview.getItems();
+			this.scope.state.rows = args.grid.getData().getItems();
 			
-			var controller = this.scope.ctrl;
+			var controller = this.scope.ctrl;			
 			controller.processChange( args.item.id, args.item );
 			
 			this.scope.$apply();
@@ -180,7 +199,7 @@ function gridView() {
 		});
 		this.grid.init();
 		this.dataView.beginUpdate();
-		this.dataView.setItems(gridView.data);
+		this.dataView.setItems(this.data);
 		this.dataView.setFilter(this.filter);
 		this.dataView.endUpdate();
 		
@@ -189,9 +208,34 @@ function gridView() {
 			
 	};
 	
+	this.clear = function() {
+		gridView.data = [];
+		var cols = gridView.getColumns();
+		cols = [];
+		columnFilters = {};
+	}
+	
 }
 
-var gridView = new gridView();
+function OfdbFieldEvaluator() {
+	
+	this.isShowColumn = function( ofdbField, gridPropertiesModel ) {
+		
+		if(ofdbField.mapped) {
+			return true;
+		} else {
+			if(gridPropertiesModel.showNotMappedColumns) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+	};
+	
+}
+
+
 
 angular.module('angWebApp').controller('EntityController', ['$scope', 'EntityService', function($scope, entityService) {
     console.log("entityController");
@@ -219,6 +263,15 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     
     $scope.state = {};
     $scope.state.rows = [];
+	
+	$scope.gridPropertiesModel = {
+		showNotMappedColumns: false
+	};
+	
+	$scope.reloadGrid = function() {
+        gridView.clear();
+		fetchAllEntities();
+    };
 
     fetchAllEntities();
 	
@@ -231,6 +284,8 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 			for(var j = 0; j < ofdbFields.length; j++) {
 				if(ofdbFields[j].mapped) {
 					row[ofdbFields[j].propName] = entityTO[ofdbFields[j].propName];
+				} else {
+					row[j] = "-";
 				}
 			}
 			
@@ -248,9 +303,9 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
                 console.log("ctrl.fetchAllEntities");
 				$scope.state.rows = [];
 				
-				gridView.initialize( d.ofdbFields );
-				self.loadGridRows( d.entityTOs, d.ofdbFields );
-				gridView.load( $scope.state.rows, d.ofdbFields );
+				gridView.initialize();
+				loadGridRows( d.entityTOs, d.ofdbFields );
+				gridView.load( $scope.state.rows, d.ofdbFields, $scope.gridPropertiesModel );
 				
             },
             function(errResponse){
@@ -377,3 +432,6 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     }
 
 }]);
+
+var gridView = new gridView();
+var evaluator = new OfdbFieldEvaluator(  );
