@@ -1,6 +1,8 @@
 package de.mw.mwdata.core.web.util.test;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,7 +41,8 @@ public class MwUrlTest {
 	@Test
 	public void testRestbasedMwUrl() throws MalformedURLException {
 
-		RestbasedMwUrl aURL = new RestbasedMwUrl("http://localhost:8080/app.admin.web/admin/tabDef/42"); // /list.htm
+		List<String> excludedPaths = new ArrayList<>();
+		RestbasedMwUrl aURL = new RestbasedMwUrl("http://localhost:8080/app.admin.web/admin/tabDef/42", excludedPaths); // /list.htm
 
 		System.out.println("protocol = " + aURL.getProtocol());
 		Assert.assertEquals(aURL.getProtocol(), "http");

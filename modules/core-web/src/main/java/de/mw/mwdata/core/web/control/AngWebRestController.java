@@ -89,7 +89,8 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 
 	/**
 	 * Populates the empty filterObject for spring-web-binding. Spring does set the
-	 * properties of the choosen filter-options.
+	 * properties of the choosen filter-options. <br>
+	 * FIXME: filter method still needed ? filtering in slickgrid clientside ...
 	 * 
 	 */
 	@ModelAttribute("filterSet")
@@ -102,7 +103,7 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 		return null;
 	}
 
-	@RequestMapping(value = "/tabDef/", method = RequestMethod.GET)
+	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	public ResponseEntity<UiEntityList<E>> listAllTabDefs() {
 		// UiEntityList<E>
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())

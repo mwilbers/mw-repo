@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
@@ -59,6 +60,7 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	private Long				hauptMenueId;
 
 	// @Transient()
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY)
 	// ... hier foreign key von untermenue.DSID auf FX_Menues_K.DSID in DAtenbank anlegen und association ändern
 	@JoinColumn(name = "HAUPTMENUEID", referencedColumnName = "DSID", insertable = false, updatable = false)
@@ -85,14 +87,14 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	@Column(name = "BEREICHSID", insertable = true, updatable = true, nullable = true, unique = false)
 	private Long			bereichsId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BEREICHSID", referencedColumnName = "BEREICHSID", insertable = false, updatable = false, nullable = true)
 	private BenutzerBereich	bereich;
 
 	@Column(name = "ANSICHTDEFID", insertable = true, updatable = true, nullable = true, unique = false)
 	private Long			ansichtDefId;
 	//
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
 	// @PrimaryKeyJoinColumn
 	// @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "ANSICHTDEFID", referencedColumnName = "DSID", updatable = false, insertable = false, nullable = true)

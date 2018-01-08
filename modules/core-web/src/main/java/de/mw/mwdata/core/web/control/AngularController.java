@@ -16,6 +16,7 @@ import de.mw.mwdata.core.ofdb.service.IOfdbService;
 import de.mw.mwdata.core.service.IPagingEntityService;
 import de.mw.mwdata.core.utils.PaginatedList;
 
+// FIXME: remove class
 @Controller
 @RequestMapping(value = "/adminAngular/**")
 public class AngularController {

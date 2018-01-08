@@ -1,6 +1,6 @@
 'use strict';
 
-function gridView() {
+function mwGrid() {
 	var grid = {};
 	var columns = [];
 	var columnFilters = {};
@@ -12,7 +12,7 @@ function gridView() {
 	
 	/* private functions */
 	
-	function buildColumns( ofdbFields, gridPropertiesModel ) {
+	function initializeColumns( ofdbFields, gridPropertiesModel ) {
 		
 		var columnCounter = 0;
 		columns = [];	// FIXME: why to clear local columns array here ?
@@ -33,12 +33,7 @@ function gridView() {
 				}
 				
 				columnCounter++;
-			} else {
-				//columns[i] = {};
-				//columns[i]["id"] = ofdbField.propOfdbName;
-				//columns[i]["name"] = ofdbField.columnTitle;
-				//columns[i]["field"] = ofdbField.propName;
-			}
+			} 
 		}
 		
 		columns[columnCounter] = {};
@@ -61,9 +56,7 @@ function gridView() {
 		return angular.element($("#controllerScope")).scope();
 	}
 	
-	function isShowColumn( ofdbField, gridPropertiesModel) {
-		
-	}
+	
 	
 	/* public functions */
 	
@@ -76,7 +69,7 @@ function gridView() {
 	};
 	
 	this.initialize = function() {
-		console.log("gridView initialize");
+		console.log("mwGrid initialize");
 
 		this.options = {
 			enableCellNavigation: true,
@@ -90,10 +83,10 @@ function gridView() {
 		},
 		
 		$(function () {
-			console.log("gridView $function ");
+			console.log("mwGrid $function ");
 
 			this.dataView = new Slick.Data.DataView();
-			this.grid = new Slick.Grid("#innerGrid", this.dataView, gridView.getColumns(), gridView.options);
+			this.grid = new Slick.Grid("#innerGrid", this.dataView, mwGrid.getColumns(), mwGrid.options);
 		});
 		
 		
@@ -101,12 +94,14 @@ function gridView() {
 	
 	this.filter = function (item) {
 		
-		var gridFiltersArray = gridView.getColumnFilters();
+		var gridFiltersArray = mwGrid.getColumnFilters();
 		for (var columnId in gridFiltersArray ) {
 			
 		    if (columnId !== undefined && gridFiltersArray[columnId] !== "") {
-				var c = gridView.grid.getColumns()[gridView.grid.getColumnIndex(columnId)];			
-				if ( item[c.field].indexOf( gridFiltersArray[columnId] ) === -1  ) {
+				var c = mwGrid.grid.getColumns()[mwGrid.grid.getColumnIndex(columnId)];			
+				if (item[c.field] === null) {
+					return false;
+				} else if( item[c.field].indexOf( gridFiltersArray[columnId] ) === -1  ) {
 				    return false;
 				}
 		    }
@@ -116,11 +111,11 @@ function gridView() {
 	};
 	
 	this.load = function( rows, ofdbFields, gridPropertiesModel ) {
-		console.log("gridView load");
+		console.log("mwGrid load");
 		
-		buildColumns( ofdbFields, gridPropertiesModel );
+		initializeColumns( ofdbFields, gridPropertiesModel );
 		
-		// NOTE: because gridView.data references memory of rows we must not reinitialize data objects by '{}' every time
+		// NOTE: because mwGrid.data references memory of rows we must not reinitialize data objects by '{}' every time
 		if(rows.length > 0 && undefined == this.data[0]) {
 			for (var i = 0; i < rows.length; i++) {
 				this.data[i] = {};			
@@ -173,18 +168,18 @@ function gridView() {
 		});
 			
 		this.dataView.onRowCountChanged.subscribe(function (e, args) {
-			gridView.grid.updateRowCount();
-			gridView.grid.render();
+			mwGrid.grid.updateRowCount();
+			mwGrid.grid.render();
 		});
 		this.dataView.onRowsChanged.subscribe(function (e, args) {
-		  gridView.grid.invalidateRows(args.rows);
-		  gridView.grid.render();
+		  mwGrid.grid.invalidateRows(args.rows);
+		  mwGrid.grid.render();
 		});
 		$(this.grid.getHeaderRow()).delegate(":input", "change keyup", function (e) {
 		  var columnId = $(this).data("columnId");
 		  if (columnId != null) {
-			gridView.getColumnFilters()[columnId] = $.trim($(this).val());
-			gridView.dataView.refresh();
+			mwGrid.getColumnFilters()[columnId] = $.trim($(this).val());
+			mwGrid.dataView.refresh();
 		  }
 		});
 		this.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
@@ -193,7 +188,7 @@ function gridView() {
 				$(args.node).empty();
 				$("<input type='text'>")
 				   .data("columnId", args.column.id)
-				   .val(gridView.getColumnFilters()[args.column.id])
+				   .val(mwGrid.getColumnFilters()[args.column.id])
 				   .appendTo(args.node);
 			}
 		});
@@ -209,8 +204,8 @@ function gridView() {
 	};
 	
 	this.clear = function() {
-		gridView.data = [];
-		var cols = gridView.getColumns();
+		mwGrid.data = [];
+		var cols = mwGrid.getColumns();
 		cols = [];
 		columnFilters = {};
 	}
@@ -241,9 +236,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     console.log("entityController");
 	
 	var self = this;
-    //self.user={id:null,username:'',address:'',email:''};
-    //self.users=[];
-	
+    
     self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;
     self.remove = remove;
@@ -269,7 +262,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	};
 	
 	$scope.reloadGrid = function() {
-        gridView.clear();
+        mwGrid.clear();
 		fetchAllEntities();
     };
 
@@ -303,9 +296,9 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
                 console.log("ctrl.fetchAllEntities");
 				$scope.state.rows = [];
 				
-				gridView.initialize();
+				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.ofdbFields );
-				gridView.load( $scope.state.rows, d.ofdbFields, $scope.gridPropertiesModel );
+				mwGrid.load( $scope.state.rows, d.ofdbFields, $scope.gridPropertiesModel );
 				
             },
             function(errResponse){
@@ -433,5 +426,5 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 
 }]);
 
-var gridView = new gridView();
+var mwGrid = new mwGrid();
 var evaluator = new OfdbFieldEvaluator(  );

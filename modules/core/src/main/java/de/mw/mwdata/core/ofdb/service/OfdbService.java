@@ -102,6 +102,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	@Override
 	public ITree findMenues() {
+		// FIXME: method still needed ?
 		return this.menueDao.findMenues();
 		// return this.getOfdbDao().findMenues();
 	}
@@ -158,15 +159,15 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		String sql = b.selectTable( ConfigOfdb.T_VIEWDEF, "v" ).fromTable( ConfigOfdb.T_VIEWDEF, "v" )
 				.andWhereRestriction( "v", "name", OperatorEnum.Eq, viewName, ValueType.STRING ).buildSQL();
 
-		List<IEntity[]> result = this.executeQuery( sql );
+		List<IEntity[]> result = executeQuery( sql );
 
 		if ( null == result ) {
 			String message = MessageFormat.format( "ViewDef {0} is not found. ", viewName );
 			throw new OfdbMissingObjectException( message );
 		}
 
-		Object o = result.get( 0 );
-		return (AnsichtDef) o;
+		IEntity[] entityArray = result.get( 0 );
+		return (AnsichtDef) entityArray[0];
 
 	}
 

@@ -17,7 +17,7 @@ public class ConfigOfdb {
 	 * constant for fx-ofdb-Spring-Application-Context
 	 */
 	@Deprecated
-	public static final String	APPCONTEXT_OFDB	= "appContext-ofdb.xml";
+	public static final String APPCONTEXT_OFDB = "appContext-ofdb.xml";
 
 	/**
 	 * method for getting xml-based fx-ofdb-application-context
@@ -36,5 +36,6 @@ public class ConfigOfdb {
 	public static final String	T_VIEWORDERBY			= "AnsichtOrderBy";
 	public static final String	T_TABDEF				= "TabDef";
 	public static final String	T_TABPROPS				= "TabSpeig";
+	public static final String	T_MENU					= "Menue";
 
 }

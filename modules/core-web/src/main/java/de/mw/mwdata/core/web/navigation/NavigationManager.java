@@ -1,5 +1,7 @@
 package de.mw.mwdata.core.web.navigation;
 
+import java.util.List;
+
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.web.util.RestbasedMwUrl;
@@ -17,9 +19,8 @@ public interface NavigationManager {
 	public void doList(final String urlPath, final Integer pageIndex, final String menue, final NavigationState state);
 
 	/**
-	 * Does a simple filter-navigation with the given filterSet-Object
-	 * containing the entity and additional view-data mapped by the current
-	 * view-definition.
+	 * Does a simple filter-navigation with the given filterSet-Object containing
+	 * the entity and additional view-data mapped by the current view-definition.
 	 * 
 	 * @param filterSet
 	 *            the entity-object with the values to filter for
@@ -41,8 +42,8 @@ public interface NavigationManager {
 	 *            the id of the entity which has to be edited. Can be null, that
 	 *            case new entity has to be inserted
 	 * @param filterSet
-	 *            the filterSet for predefinition of empty fields if new entity
-	 *            has to be inserted
+	 *            the filterSet for predefinition of empty fields if new entity has
+	 *            to be inserted
 	 */
 	public void doEdit(final Long entityId, final EntityTO<? extends AbstractMWEntity> filterSet,
 			final NavigationState state);
@@ -65,11 +66,17 @@ public interface NavigationManager {
 	 */
 	public void applyUrlPath(final String requestUrl, final NavigationState state) throws NavigationException;
 
+	/**
+	 * 
+	 * @return a list of all url paths that are excluded from url check for REST-API
+	 */
+	public List<String> getExcludedPaths();
+
 	public EntityTO<? extends AbstractMWEntity> createEmptyEntity(final String servletSubPath);
 
 	/**
-	 * Can read the url of the underlying servlet request and parse all
-	 * necessary url tokens for navigation rules
+	 * Can read the url of the underlying servlet request and parse all necessary
+	 * url tokens for navigation rules
 	 * 
 	 * @return
 	 */

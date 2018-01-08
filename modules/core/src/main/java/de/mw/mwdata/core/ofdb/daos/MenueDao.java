@@ -16,16 +16,20 @@ import de.mw.mwdata.core.utils.TreeItem;
 import de.mw.mwdata.core.utils.TreeList;
 
 /**
+ * FIXME: class and class ITree , ITreeItem still needed ?
+ *
  * @author mwilbers
  *
  */
+@Deprecated
 public class MenueDao extends GenericDao<Menue> implements IMenueDao {
 
 	public MenueDao() {
 		super( Menue.class );
 	}
 
-	// @Override
+	// @Override FIXME: method still needed ?
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public ITree<IMenue> findMenues() {
 

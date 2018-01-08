@@ -2,7 +2,10 @@ package de.mw.mwdata.core.web.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -27,9 +30,9 @@ import org.apache.commons.lang.StringUtils;
 public class RestbasedMwUrl {
 
 	/**
-	 * Example: protocol | host | port | contextpath | servletpath |
-	 * servletsuppath http:// localhost: | 8080/ | app.admin.web/ | admin/ |
-	 * tabDef/ | {tabDefId}, with HTTP-METHOD
+	 * Example: protocol | host | port | contextpath | servletpath | servletsuppath
+	 * http:// localhost: | 8080/ | app.admin.web/ | admin/ | tabDef/ | {tabDefId},
+	 * with HTTP-METHOD
 	 * 
 	 */
 
@@ -43,11 +46,11 @@ public class RestbasedMwUrl {
 
 	// private String action; // /list.htm
 
-	public RestbasedMwUrl(final String absoluteUrl) throws MalformedURLException {
-		parse(absoluteUrl);
+	public RestbasedMwUrl(final String absoluteUrl, final List<String> excludedPaths) throws MalformedURLException {
+		parse(absoluteUrl, excludedPaths);
 	}
 
-	private void parse(final String absoluteUrl) throws MalformedURLException {
+	private void parse(final String absoluteUrl, final List<String> excludedPaths) throws MalformedURLException {
 
 		// e.g. "http://localhost:8080/app.admin.web/admin/tabDef/list.htm"
 		URL aURL = new URL(absoluteUrl);
@@ -55,7 +58,7 @@ public class RestbasedMwUrl {
 		this.host = aURL.getHost();
 		this.port = aURL.getPort();
 
-		parsePath(aURL.getPath());
+		parsePath(aURL.getPath(), excludedPaths);
 
 		// System.out.println("protocol = " + aURL.getProtocol());
 		// System.out.println("authority = " + aURL.getAuthority());
@@ -68,7 +71,7 @@ public class RestbasedMwUrl {
 
 	}
 
-	private void parsePath(String path) throws MalformedURLException {
+	private void parsePath(String path, final List<String> excludedPaths) throws MalformedURLException {
 		// e.g. /app.admin.web/admin/tabDef/{tabDefId}
 
 		if (StringUtils.isBlank(path)) {
@@ -84,6 +87,12 @@ public class RestbasedMwUrl {
 		this.contextPath = pathTokens[0];
 		this.servletPath = pathTokens[1];
 		if (pathTokens.length >= 3) {
+
+			if (!CollectionUtils.isEmpty(excludedPaths) && excludedPaths.contains(pathTokens[2])) {
+				String message = MessageFormat.format("Given url-path {0} will be ignored for REST-API.", path);
+				throw new IgnoredUrlException(message);
+			}
+
 			this.entityName = pathTokens[2];
 			if (pathTokens.length == 3) {
 				return;

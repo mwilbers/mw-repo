@@ -3,7 +3,7 @@
 angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($http, $q){
 
 	// FIXME: build dynamic restbased url
-    var REST_SERVICE_URI = 'http://localhost:8080/app.admin.angwebrest/admin/tabDef/';
+    var REST_SERVICE_URI = 'http://localhost:8080/app.admin.angwebrest/admin/menues/';
 
     var factory = {
         fetchAllEntities: fetchAllEntities,

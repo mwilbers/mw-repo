@@ -288,8 +288,8 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		List<TabDef> tabDefs = new ArrayList<TabDef>();
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			tabDefs.add( (TabDef) o );
+			IEntity[] entityArray = results.get( i );
+			tabDefs.add( (TabDef) entityArray[0] );
 		}
 
 		Assert.assertEquals( tabDefs.size(), 1 );
@@ -306,8 +306,8 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		tabDefs = new ArrayList<TabDef>();
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			tabDefs.add( (TabDef) o );
+			IEntity[] entityArray = results.get( i );
+			tabDefs.add( (TabDef) entityArray[0] );
 		}
 
 		Assert.assertEquals( tabDefs.size(), 1 );
@@ -326,8 +326,8 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		results = this.getOfdbDao().executeQuery( sql );
 		tabSpeigs.clear();
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			tabSpeigs.add( (TabSpeig) o );
+			IEntity[] entityArray = results.get( i );
+			tabSpeigs.add( (TabSpeig) entityArray[0] );
 		}
 
 		Assert.assertEquals( tabSpeigs.size(), 1 );

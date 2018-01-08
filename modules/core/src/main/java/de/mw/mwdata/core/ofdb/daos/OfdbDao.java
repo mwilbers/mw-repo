@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Query;
+import org.hibernate.type.ManyToOneType;
+import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,13 +148,13 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.joinTable( ConfigOfdb.T_TABDEF, "tDef" ).whereJoin( "tSpeig", "tabDefId", "tDef", "id" )
 				.andWhereRestriction( "tDef", "name", OperatorEnum.Eq, table, ValueType.STRING )
 				.orderBy( "tSpeig", "reihenfolge", "ASC" ).buildSQL();
-		List<IEntity[]> tabProps = this.executeQuery( sql );
+		List<IEntity[]> tabProps = executeQuery( sql );
 
 		List<ITabSpeig> props = new ArrayList<ITabSpeig>();
 		for ( int i = 0; i < tabProps.size(); i++ ) {
 			// Object o = tabProp;
-			Object o = tabProps.get( i );
-			props.add( (TabSpeig) o );
+			IEntity[] entityArray = tabProps.get( i );
+			props.add( (TabSpeig) entityArray[0] );
 		}
 
 		return props;
@@ -164,16 +166,16 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsicht( final long ansichtId ) {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable( ConfigOfdb.T_VIEWPROPS, "aSpalten" )
-				.fromTable( ConfigOfdb.T_VIEWPROPS, "aSpalten" ).andWhereRestriction( "aSpalten", "ansichtDefId",
-						OperatorEnum.Eq, new Long( ansichtId ).toString(), ValueType.NUMBER )
+		String sql = b.selectTable( ConfigOfdb.T_VIEWPROPS, "aSpalten" ).fromTable( ConfigOfdb.T_VIEWPROPS, "aSpalten" )
+				.andWhereRestriction( "aSpalten", "ansichtDefId", OperatorEnum.Eq, new Long( ansichtId ).toString(),
+						ValueType.NUMBER )
 				.orderBy( "aSpalten", "indexGrid", "asc" ).buildSQL();
-		List<IEntity[]> results = this.executeQuery( sql );
+		List<IEntity[]> results = executeQuery( sql );
 
 		Map<String, IAnsichtSpalte> map = new HashMap<String, IAnsichtSpalte>( results.size() );
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			IAnsichtSpalte aSpalte = (IAnsichtSpalte) o; // ansichtSpalten.get( i );
+			IEntity[] entityArray = results.get( i );
+			IAnsichtSpalte aSpalte = (IAnsichtSpalte) entityArray[0]; // ansichtSpalten.get( i );
 			map.put( aSpalte.getSpalteAKey().toUpperCase(), aSpalte );
 		}
 		return map;
@@ -200,8 +202,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 			throw new OfdbMissingObjectException( message );
 		}
 
-		Object o = result.get( 0 );
-		return (TabDef) o;
+		IEntity[] entityArray = result.get( 0 );
+		return (TabDef) entityArray[0];
 	}
 
 	// @Override
@@ -234,17 +236,17 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable( ConfigOfdb.T_VIEWORDERBY, "aOrder" ).fromTable( ConfigOfdb.T_VIEWORDERBY, "aOrder" )
-				.joinTable( ConfigOfdb.T_VIEWTAB, "aTab" )
-				.whereJoin( "aOrder", "ansichtTabId", "aTab", "id" ).andWhereRestriction( "aTab", "ansichtDefId",
-						OperatorEnum.Eq, new Long( ansichtId ).toString(), ValueType.NUMBER )
+				.joinTable( ConfigOfdb.T_VIEWTAB, "aTab" ).whereJoin( "aOrder", "ansichtTabId", "aTab", "id" )
+				.andWhereRestriction( "aTab", "ansichtDefId", OperatorEnum.Eq, new Long( ansichtId ).toString(),
+						ValueType.NUMBER )
 				.orderBy( "aOrder", "reihenfolge", "asc" ).buildSQL();
 		List<IEntity[]> results = this.executeQuery( sql );
 
 		List<AnsichtOrderBy> orders = new ArrayList<AnsichtOrderBy>();
 
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			orders.add( (AnsichtOrderBy) o );
+			IEntity[] entityArray = results.get( i );
+			orders.add( (AnsichtOrderBy) entityArray[0] );
 		}
 
 		return orders;
@@ -256,16 +258,16 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	public List<AnsichtTab> findAnsichtTabAnsichtId( final long ansichtId ) {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable( "AnsichtTab", "aTab" )
-				.fromTable( "AnsichtTab", "aTab" ).andWhereRestriction( "aTab", "ansichtDefId", OperatorEnum.Eq,
-						new Long( ansichtId ).toString(), ValueType.NUMBER )
+		String sql = b
+				.selectTable( "AnsichtTab", "aTab" ).fromTable( "AnsichtTab", "aTab" ).andWhereRestriction( "aTab",
+						"ansichtDefId", OperatorEnum.Eq, new Long( ansichtId ).toString(), ValueType.NUMBER )
 				.orderBy( "aTab", "reihenfolge", "asc" ).buildSQL();
-		List<IEntity[]> results = this.executeQuery( sql );
+		List<IEntity[]> results = executeQuery( sql );
 
 		List<AnsichtTab> aTabs = new ArrayList<AnsichtTab>();
 		for ( int i = 0; i < results.size(); i++ ) {
-			Object o = results.get( i );
-			aTabs.add( (AnsichtTab) o );
+			IEntity[] entityArray = results.get( i );
+			aTabs.add( (AnsichtTab) entityArray[0] );
 		}
 
 		return aTabs;
@@ -324,8 +326,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 		for ( int i = 0; i < results.size(); i++ ) {
 			// Object o = view;
-			Object o = results.get( i );
-			views.add( (AnsichtDef) o );
+			IEntity[] entityArray = results.get( i );
+			views.add( (AnsichtDef) entityArray[0] );
 			// views.add( item );
 		}
 
@@ -339,10 +341,40 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 		Query query = this.getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery( sql );
 		// query.setFlushMode( FlushMode.MANUAL );
-		List<IEntity[]> result = query.list();
+
+		List<IEntity[]> arrayResults = null;
+		Type[] types = query.getReturnTypes();
+		if ( types.length == 1 && types[0] instanceof ManyToOneType ) {
+
+			List<IEntity> result = query.list();
+			arrayResults = new ArrayList<IEntity[]>( result.size() );
+
+			for ( IEntity item : result ) {
+				IEntity[] arrayResult = new IEntity[1];
+				arrayResult[0] = item;
+				arrayResults.add( arrayResult );
+			}
+
+		} else {
+			List<IEntity[]> result = query.list();
+			arrayResults = new ArrayList<IEntity[]>( result );
+		}
+
+		// List<IEntity> result = query.list();
 		// query.setFlushMode( FlushMode.NEVER );
 
-		return result;
+		// List<IEntity[]> convertedResults = new ArrayList<IEntity[]>();
+		// if(!result.get(0 ).getClass().isArray()) {
+		//
+		// for(IEntity[] item : result) {
+		// IEntity[] entityArray = new IEntity[1];
+		// entityArray[0] = item;
+		// }
+		// } else {
+		// convertedResults = result;
+		// }
+
+		return arrayResults;
 
 	}
 

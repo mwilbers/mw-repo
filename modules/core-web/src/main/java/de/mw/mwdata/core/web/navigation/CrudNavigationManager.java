@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.ofdb.SortKey;
@@ -24,6 +27,7 @@ import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.core.ofdb.service.IOfdbService;
 import de.mw.mwdata.core.utils.ClassNameUtils;
+import de.mw.mwdata.core.web.util.IgnoredUrlException;
 import de.mw.mwdata.core.web.util.RestbasedMwUrl;
 
 public class CrudNavigationManager implements NavigationManager, Serializable {
@@ -38,6 +42,12 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 	private IOfdbService ofdbService;
 	private OfdbCacheManager ofdbCacheManager;
 
+	private List<String> excludedPaths = new ArrayList<>();
+
+	public CrudNavigationManager(final List<String> excludedPaths) {
+		this.excludedPaths = excludedPaths;
+	}
+
 	public void setOfdbService(IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
 	}
@@ -49,7 +59,7 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 	@Override
 	public CrudNavigationState createNavigationState(final String requestedUrl,
 			final EntityTO<? extends AbstractMWEntity> filterSet) {
-		return new CrudNavigationState(requestedUrl, filterSet);
+		return new CrudNavigationState(requestedUrl, filterSet, getExcludedPaths());
 
 	}
 
@@ -69,7 +79,7 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 	@Override
 	public void doList(final String urlPath, final Integer pageIndex, final String menue, final NavigationState state) {
 
-//		state.setUrlPath(urlPath);
+		// state.setUrlPath(urlPath);
 
 		state.setUrlPath(urlPath);
 		state.setEntityId(0);
@@ -119,15 +129,14 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 
 		RestbasedMwUrl mwUrl = null;
 		try {
-			mwUrl = new RestbasedMwUrl(requestUrl);
-		} catch (MalformedURLException e) {
-
-			String msg = MessageFormat.format("Requested url {0} is not valid for application MWDATA.", requestUrl);
-			log.error(msg);
-			throw new NavigationException(msg);
+			mwUrl = parseUrl(requestUrl);
+		} catch (IgnoredUrlException ue) {
+			return; // FIXME: write at least logging here
 		}
 
-		if (!mwUrl.hasEntityName()) {
+		if (isExcluded(mwUrl)) {
+			return;
+		} else if (!mwUrl.hasEntityName()) {
 			return; // is default url (.../admin/), not xmlhttprequest based
 					// entity url from angularjs
 		}
@@ -138,13 +147,40 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 
 			state.setUrlPath(mwUrl.getEntityName());
 			state.setFiltered(false);
-			EntityTO<? extends AbstractMWEntity> emptyEntity = this.createEmptyEntity(mwUrl.getEntityName());
+			EntityTO<? extends AbstractMWEntity> emptyEntity = createEmptyEntity(mwUrl.getEntityName());
 			state.setFilterSet(emptyEntity);
 			state.setPageIndex(1);
 			state.setSorting(new ArrayList<SortKey>());
 
 		}
 
+	}
+
+	private boolean isExcluded(final RestbasedMwUrl url) {
+
+		if (CollectionUtils.isEmpty(getExcludedPaths())) {
+			return false;
+		}
+
+		if (this.getExcludedPaths().contains(url.getEntityName())) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private RestbasedMwUrl parseUrl(String requestUrl) {
+		RestbasedMwUrl mwUrl = null;
+		try {
+			mwUrl = new RestbasedMwUrl(requestUrl, getExcludedPaths());
+		} catch (MalformedURLException e) {
+
+			String msg = MessageFormat.format("Requested url {0} is not valid for application {1}.", requestUrl,
+					Constants.APPLICATION_NAME);
+			log.error(msg);
+			throw new NavigationException(msg);
+		}
+		return mwUrl;
 	}
 
 	@Override
@@ -154,7 +190,7 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 				.getRequest();
 		RestbasedMwUrl mwUrl = null;
 		try {
-			mwUrl = new RestbasedMwUrl(request.getRequestURL().toString());
+			mwUrl = new RestbasedMwUrl(request.getRequestURL().toString(), getExcludedPaths());
 		} catch (MalformedURLException e) {
 			String msg = MessageFormat.format("Invalid url {0} in MWData application.",
 					request.getRequestURL().toString());
@@ -162,6 +198,11 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 		}
 
 		return mwUrl;
+	}
+
+	@Override
+	public List<String> getExcludedPaths() {
+		return this.excludedPaths;
 	}
 
 }

@@ -36,20 +36,21 @@ public class CrudNavigationState implements NavigationState {
 	 */
 	protected List<SortKey> sortKeys = new ArrayList<SortKey>();
 
-	public CrudNavigationState(final String requestedUrl, final EntityTO<? extends AbstractMWEntity> filterSet) {
+	public CrudNavigationState(final String requestedUrl, final EntityTO<? extends AbstractMWEntity> filterSet,
+			List<String> excludedPaths) {
 		this.pageIndex = 1;
 		this.action = NAVIGATIONACTION.LIST;
 		this.filterSet = filterSet; // here empty filterSet
 
-		initUrl(requestedUrl);
+		initUrl(requestedUrl, excludedPaths);
 
 	}
 
-	private void initUrl(final String requestedUrl) {
+	private void initUrl(final String requestedUrl, List<String> excludedPaths) {
 
 		RestbasedMwUrl url = null;
 		try {
-			url = new RestbasedMwUrl(requestedUrl);
+			url = new RestbasedMwUrl(requestedUrl, excludedPaths);
 		} catch (MalformedURLException e) {
 			String msg = MessageFormat.format("Invalid url {0} for MWData application.", requestedUrl);
 			throw new NavigationException(msg);

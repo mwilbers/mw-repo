@@ -152,7 +152,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		List<IEntity[]> entities = this.entityService.loadView( TestConstants.TABLENAME_TABDEF );
 		Assert.assertEquals( entities.size(), 2 );
-		Assert.assertEquals( entities.get( 0 ), aTabBenutzerBereich.getTabDef() );
+		Assert.assertEquals( entities.get( 0 )[0], aTabBenutzerBereich.getTabDef() );
 
 		Map<String, IAnsichtSpalte> viewPropMap = this.ofdbService
 				.findAnsichtSpaltenMapByAnsichtId( aTabTabDef.getAnsichtDef().getId() );

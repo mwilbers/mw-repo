@@ -15,19 +15,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class Constants {
 
-	public static final String	DB_SCHEMA		= "KD_RRE_PROD";			// KD_RRE_PROD // Config.getString(
+	public static final String	APPLICATION_NAME	= "MWDATA";
+
+	public static final String	DB_SCHEMA			= "KD_RRE_PROD";		// KD_RRE_PROD // Config.getString(
 	// Config.CONFIG_BUNDLE,
 	// "db.schemaname" );
 
 	/**
 	 * constant for core-Spring-Application-Context
 	 */
-	public static final String	APPCONTEXT_CORE	= "appContext-core.xml";
+	public static final String	APPCONTEXT_CORE		= "appContext-core.xml";
 
 	/**
 	 * constant for fx-model-Spring-Application-Context
 	 */
-	public static final String	APPCONTEXT_OFDB	= "appContext-ofdb.xml";
+	public static final String	APPCONTEXT_OFDB		= "appContext-ofdb.xml";
 
 	/**
 	 * method for getting xml-based core-application-context
@@ -46,6 +48,8 @@ public final class Constants {
 	}
 
 	/* ************************ SYS-TABLE-COLUMNS ************************** */
+
+	public static final String	SYS_TAB_MENUS			= "FX_Menues_K";
 
 	/**
 	 * global constant for sys-column ANGELEGTAM
@@ -112,7 +116,7 @@ public final class Constants {
 
 	/*
 	 * Code-Idee:
-	 * 
+	 *
 	 * public enum TESTENUM { ITEM1, ITEM2, ITEM3; public String namexx() { switch(this) { case ITEM1: return "ITEM1";
 	 * case ITEM2: return "ITEM2"; case ITEM3: return "ITEM3"; default: return ""; } } }
 	 */
@@ -135,7 +139,7 @@ public final class Constants {
 		USERID("#mwdata#userid") //
 		;
 
-		private String	name;
+		private String name;
 
 		private MWDATADEFAULT(final String name) {
 			this.name = name;
