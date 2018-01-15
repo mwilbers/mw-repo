@@ -25,7 +25,8 @@
 		scope="singleton">
 		<constructor-arg>
 			<list value-type="java.lang.String">
-			    <value>nav</value> <!-- url context path for menu tree -->
+			    <value>nav</value> <!-- url space for menu tree -->
+			    <value>userConfig</value> <!-- url space for UserConfigController , all user specific parameters -->
 			</list>
 		</constructor-arg>
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />

@@ -1,217 +1,5 @@
 'use strict';
 
-function mwGrid() {
-	var grid = {};
-	var columns = [];
-	var columnFilters = {};
-	this.data = [];
-	var dataView;
-
-	var options = {};
-	var scope = {};
-	
-	/* private functions */
-	
-	function initializeColumns( ofdbFields, gridPropertiesModel ) {
-		
-		var columnCounter = 0;
-		columns = [];	// FIXME: why to clear local columns array here ?
-		for(var i = 0; i < ofdbFields.length; i++) {
-			var ofdbField = ofdbFields[i];
-			
-			if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
-				columns[columnCounter] = {};
-				
-				columns[columnCounter]["id"] = ofdbField.propOfdbName;
-				columns[columnCounter]["name"] = ofdbField.columnTitle;
-				columns[columnCounter]["field"] = ofdbField.propName;
-				
-				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
-					var result = buildListOfValuesString( ofdbField.listOfValues );
-					columns[columnCounter]["options"] = result;
-					columns[columnCounter]["editor"] = SelectCellEditor;
-				}
-				
-				columnCounter++;
-			} 
-		}
-		
-		columns[columnCounter] = {};
-		columns[columnCounter]["id"] = "type";
-		columns[columnCounter]["name"] = "type";
-		columns[columnCounter]["field"] = "type";
-		columnCounter++;
-		
-	}
-	
-	function buildListOfValuesString( listOfValuesArray ) {
-		var result = "";
-		for(var l=0; l<listOfValuesArray.length; l++) {
-			result += listOfValuesArray[l] + ",";
-		}
-		return result.substring(0, result.length - 1);	
-	}
-	
-	function getControllerScope() {
-		return angular.element($("#controllerScope")).scope();
-	}
-	
-	
-	
-	/* public functions */
-	
-	this.getColumns = function () {
-		return columns;
-	};
-	
-	this.getColumnFilters = function() {
-		return columnFilters;
-	};
-	
-	this.initialize = function() {
-		console.log("mwGrid initialize");
-
-		this.options = {
-			enableCellNavigation: true,
-			enableColumnReorder: false,
-			asyncEditorLoading: false,
-			showHeaderRow: true,
-			headerRowHight: 30,
-			explicitInitialization: true,
-            autoEdit: true, 
-			editable: true
-		},
-		
-		$(function () {
-			console.log("mwGrid $function ");
-
-			this.dataView = new Slick.Data.DataView();
-			this.grid = new Slick.Grid("#innerGrid", this.dataView, mwGrid.getColumns(), mwGrid.options);
-		});
-		
-		
-	};
-	
-	this.filter = function (item) {
-		
-		var gridFiltersArray = mwGrid.getColumnFilters();
-		for (var columnId in gridFiltersArray ) {
-			
-		    if (columnId !== undefined && gridFiltersArray[columnId] !== "") {
-				var c = mwGrid.grid.getColumns()[mwGrid.grid.getColumnIndex(columnId)];			
-				if (item[c.field] === null) {
-					return false;
-				} else if( item[c.field].indexOf( gridFiltersArray[columnId] ) === -1  ) {
-				    return false;
-				}
-		    }
-		  
-		}
-		return true;
-	};
-	
-	this.load = function( rows, ofdbFields, gridPropertiesModel ) {
-		console.log("mwGrid load");
-		
-		initializeColumns( ofdbFields, gridPropertiesModel );
-		
-		// NOTE: because mwGrid.data references memory of rows we must not reinitialize data objects by '{}' every time
-		if(rows.length > 0 && undefined == this.data[0]) {
-			for (var i = 0; i < rows.length; i++) {
-				this.data[i] = {};			
-			}
-		}
-		
-		for (var i = 0; i < rows.length; i++) {
-			
-			//var columnCounter = 0;
-			for(var j=0; j < ofdbFields.length; j++) {
-				var ofdbField = ofdbFields[j];
-				//if(ofdbFields[j].mapped) {
-				if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
-					this.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
-				}
-				
-			}
-			this.data[i]["type"] = rows[i]["type"];
-			
-		}
-		
-		this.dataView = new Slick.Data.DataView();
-		this.grid = new Slick.Grid("#innerGrid", this.dataView, this.getColumns(), this.options);
-		this.grid.setSelectionModel(new Slick.CellSelectionModel());
-		
-		this.grid.onClick.subscribe(function(e, args) {
-			console.log("onClick");
-			this.scope = getControllerScope();
-			var controller = this.scope.ctrl;
-			controller.setCurrentRowIndex( args.row );
-			
-			if( controller.hasRowChanged() && controller.isRowDirty() ) {
-				controller.submit();
-				controller.reset();
-			}
-			
-			this.scope.$apply();
-		});
-			
-		this.grid.onCellChange.subscribe(function(e, args) {
-			console.log("onCellChange");
-			
-			this.scope = getControllerScope();
-			this.scope.state.rows = args.grid.getData().getItems();
-			
-			var controller = this.scope.ctrl;			
-			controller.processChange( args.item.id, args.item );
-			
-			this.scope.$apply();
-		});
-			
-		this.dataView.onRowCountChanged.subscribe(function (e, args) {
-			mwGrid.grid.updateRowCount();
-			mwGrid.grid.render();
-		});
-		this.dataView.onRowsChanged.subscribe(function (e, args) {
-		  mwGrid.grid.invalidateRows(args.rows);
-		  mwGrid.grid.render();
-		});
-		$(this.grid.getHeaderRow()).delegate(":input", "change keyup", function (e) {
-		  var columnId = $(this).data("columnId");
-		  if (columnId != null) {
-			mwGrid.getColumnFilters()[columnId] = $.trim($(this).val());
-			mwGrid.dataView.refresh();
-		  }
-		});
-		this.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
-			
-			if(args.column.id !== undefined) {
-				$(args.node).empty();
-				$("<input type='text'>")
-				   .data("columnId", args.column.id)
-				   .val(mwGrid.getColumnFilters()[args.column.id])
-				   .appendTo(args.node);
-			}
-		});
-		this.grid.init();
-		this.dataView.beginUpdate();
-		this.dataView.setItems(this.data);
-		this.dataView.setFilter(this.filter);
-		this.dataView.endUpdate();
-		
-		this.grid.render();
-		console.log(this.grid);
-			
-	};
-	
-	this.clear = function() {
-		mwGrid.data = [];
-		var cols = mwGrid.getColumns();
-		cols = [];
-		columnFilters = {};
-	}
-	
-}
-
 function OfdbFieldEvaluator() {
 	
 	this.isShowColumn = function( ofdbField, gridPropertiesModel ) {
@@ -231,13 +19,53 @@ function OfdbFieldEvaluator() {
 }
 
 
+App.config(function($routeProvider){
+  $routeProvider
+    .when('/',{
+		controller:'EntityController',
+		templateUrl:'../static/includes/mwgrid_include.html',
+		resolve:{
+			'MyServiceData':function(AppConfigService){
+				return AppConfigService.promise;
+			}
+		}})
+  });
 
-angular.module('angWebApp').controller('EntityController', ['$scope', 'EntityService', function($scope, entityService) {
+App.service('AppConfigService', function($http) {
+    var myData = null;
+
+	var promise = $http.get('userConfig/').success(function (data) {
+      myData = data;
+    });
+
+    return {
+      promise:promise,
+      setData: function (data) {
+          myData = data;
+      },
+      doStuff: function () {
+          return myData;//.getSomeData();
+      }
+    };
+});
+
+
+
+App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
     console.log("entityController");
 	
 	var self = this;
-    
-    self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
+	globalEntityController = this;
+	
+	if(null === appConfigService.doStuff()) {
+			return;
+	}
+	
+	var appConfig = [];
+	console.log('Promise is now resolved: '+appConfigService.doStuff().data);
+	appConfig['defaultRestUrl'] = appConfigService.doStuff().defaultRestUrl;
+	
+	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;
     self.remove = remove;
     self.reset = reset;
@@ -248,7 +76,8 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	self.setCurrentRowIndex = setCurrentRowIndex;
 	self.hasRowChanged = hasRowChanged;
 	self.processChange = processChange;
-	
+	self.setRows = setRows;
+
     self.entity = {};
     var rowDirty = false;
 	var currentRowIndex = 0;
@@ -263,10 +92,21 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	
 	$scope.reloadGrid = function() {
         mwGrid.clear();
-		fetchAllEntities();
+		fetchAllEntities( getCurrentUrl() ); // FIXME: should be adjusted with current url
     };
 
     fetchAllEntities();
+	
+	function setRows( newRows ) {
+		if(undefined === $scope.state) {
+			$scope.state = {};
+		}
+		$scope.state.rows = newRows;
+	}
+	
+	function getCurrentUrl() {
+		return appConfig['defaultRestUrl'];
+	}
 	
     function loadGridRows( entityTOs, ofdbFields ){
     	
@@ -290,10 +130,10 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     }
     
     function fetchAllEntities(){
-    	entityService.fetchAllEntities()
+    	entityService.fetchAllEntities( getCurrentUrl() )
             .then(
             function(d) {
-                console.log("ctrl.fetchAllEntities");
+                console.log("ctrl.fetchAllEntities for " + getCurrentUrl());
 				$scope.state.rows = [];
 				
 				mwGrid.initialize();
@@ -333,16 +173,6 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 		return rowChanged;
 	}
     
-    function createUser(user){
-    	entityService.createUser(user)
-            .then(
-            fetchAllUsers,
-            function(errResponse){
-                console.error('Error while creating User');
-            }
-        );
-    }
-	
 	function processChange( entityId, entity ) {
 	
 		initialize( entityId, entity );
@@ -356,7 +186,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
 	}
 	
 	function createEntity( entity ){
-    	entityService.createEntity(entity)
+    	entityService.createEntity(entity, getCurrentUrl())
             .then(
             fetchAllEntities,
             function(errResponse){
@@ -366,7 +196,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     }
 
 	function updateEntity( entity, id){
-    	entityService.updateEntity( entity, id)
+    	entityService.updateEntity( entity, id, getCurrentUrl())
             .then(
             fetchAllEntities,
             function(errResponse){
@@ -376,7 +206,7 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     }
 
     function deleteUser(id){
-    	entityService.deleteUser(id)
+    	entityService.deleteUser(id, getCurrentUrl())
             .then(
             fetchAllUsers,
             function(errResponse){
@@ -425,6 +255,11 @@ angular.module('angWebApp').controller('EntityController', ['$scope', 'EntitySer
     }
 
 }]);
+
+/**
+ * globalEntityController is necessary for getting access to controller later in mwgrid
+ */
+var globalEntityController = null;
 
 var mwGrid = new mwGrid();
 var evaluator = new OfdbFieldEvaluator(  );

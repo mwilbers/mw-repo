@@ -3,11 +3,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
   module.exports = 'angWebApp';
 }
 
-angular.module('angWebApp', ['treeControl']).controller('MenuController', ['$http', '$timeout', function ($http, $timeout) {
+App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', function ($http, $timeout, appConfigService) {
   var ctrl = this;
 
   ctrl.loadingTime = 1500;
   ctrl.treeModel = [];
+  
   ctrl.treeOptions = {
     dirSelectable: false,    // Click a folder name to expand (not select)
     isLeaf: function isLeafFn(node) {
@@ -22,26 +23,23 @@ angular.module('angWebApp', ['treeControl']).controller('MenuController', ['$htt
 			
 			var entity = entityTOs[i].item;
 			var displayName = entity.anzeigeName + " ( " + entity.typ + " ) ";
-			
 			var currentNode = { "name": displayName, "url": "nav/menu/" + entity.id };
 			treeModel[i] = currentNode;
-			console.log('node json: ' + angular.toJson(currentNode));
+			// console.log('node json: ' + angular.toJson(currentNode));
 			
 		} 	
     	
 		return treeModel;
-    }
+  }
   
   ctrl.fetchChildNodes = function fetchChildNodes(node, expanded) {
     function doFetch(node) {
       if (node.hasOwnProperty('url')) {
+		  
         console.log('GET ' + node.url);
-        $http.get(node.url)
-          .success(function(data) {
+        $http.get(node.url).success(function(data) {
             console.log('GET ' + node.url + ' ... ok! ');
-			
 			node.children = loadTreeModel( data.entityTOs );
-            // node.children = data;
           });
       } else {
         // Leaf node
@@ -61,11 +59,8 @@ angular.module('angWebApp', ['treeControl']).controller('MenuController', ['$htt
   // 'http://localhost:8080/app.admin.angwebrest/admin/menues/860102'
   $http.get('http://localhost:8080/app.admin.angwebrest/admin/nav/')
     .success(function(data) {
-      // ctrl.treeModel = data;
-	  
 	  ctrl.treeModel = [];
 	  ctrl.treeModel = loadTreeModel( data.entityTOs );
-	  
     });
 
 }]);

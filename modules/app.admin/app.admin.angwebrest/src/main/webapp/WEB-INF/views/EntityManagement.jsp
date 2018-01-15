@@ -28,22 +28,25 @@
     <!-- simple angularjs readonly table -->
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
      <link rel="stylesheet" href="<c:url value='/static/css/app.css' />"></link>
-	 <link rel="stylesheet" href="<c:url value='/static/css/angular/angular.treeview.css' />"></link>
-     
+	 
      <!-- slickgrid grid -->
      <link rel="stylesheet" href="<c:url value='/static/slickgrid/slick.grid.css' />">
      <link rel="stylesheet" href="<c:url value='/static/slickgrid/examples/examples.css' />">
 	 <link rel="stylesheet" href="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.css' />">
      
+	 
   </head>
   
   <!-- FIXME: build responsive design of html5: see https://www.youtube.com/watch?v=g2taIe7ZFUA -->
   
-  <body ng-app="angWebApp" class="ng-cloak">
+  <body ng-app="angWebApp" class="ng-cloak" >
   
   <div style="">
+  
+  
+  
 	<div class="generic-container" style="width:400px;display:inline-block;vertical-align:top;height:1000px;" >
-		vvv
+		
 		<div class='container'  ng-controller="MenuController as menuCtrl">
 		  Fake Loading Time: <input type=number ng-model='menuCtrl.loadingTime'> ms
 		  <br>
@@ -56,8 +59,10 @@
 		  </treecontrol>
 		</div>
 	  </div>
+	  
+	  
   
-      <div class="generic-container" style="width:800px;display:inline-block;" ng-controller="EntityController as ctrl" id="controllerScope">
+      <div class="generic-container" style="width:800px;display:inline-block;" ng-controller="EntityController as ctrl" id="controllerScope"  >
           <div class="panel panel-default">
               <div class="panel-heading"><span class="lead">Entity Registration Form </span></div>
               <div class="formcontainer">
@@ -141,25 +146,30 @@
           </div>
           
           <!-- slickgrid grid -->
+		  
 		  <div>
 			  innerGrid Properties<br>
 			  <input type="checkbox" ng-model="gridPropertiesModel.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
 			  Show not mapped columns and values<br>
 		  </div>
 		  <br>
-		  inner grid
-          <div id="innerGrid" style="width:90%;height:300px;">
+		  inner grid<br>
+          <div  style="display:inline-block; width:700px;" ng-view>
           
           </div>  
       </div>
+	  
+	  
+	  
 	 </div>
 	  
       
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+	  <script src="<c:url value='/static/js/angular/angular-route.min.js' />"></script>
+	  
 	  <script src="<c:url value='/static/jQuery/jquery-1.7.min.js' />"></script>
 	  <script src="<c:url value='/static/jQuery/jquery.event.drag-2.2.js' />"></script>
 	  <script src="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.min.js' />"></script>
-	  <script src="<c:url value='/static/js/angular/angular.treeview.js' />"></script>
 	  
 	  
 	  <script src="<c:url value='/static/slickgrid/slick.core.js' />"></script>
@@ -173,6 +183,7 @@
 	  
 	  <script src="<c:url value='/static/slickgrid/slick.dataview.js' />"></script>	  
 	  <script src="<c:url value='/static/js/slickgrid_addons/slick.selectcelleditor.js' />"></script>
+	  <script src="<c:url value='/static/js/slickgrid_addons/mwgrid.js' />"></script>
 	  
       <script src="<c:url value='/static/js/app.js' />"></script>
 	  
@@ -180,5 +191,8 @@
 	  <script src="<c:url value='/static/js/controller/menuController.js' />"></script>
 	  <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
 	  <script src="<c:url value='/static/js/service/entityService.js' />"></script>
+	  
+	 
+	  
   </body>
 </html>

@@ -44,11 +44,7 @@ function SelectCellEditor(args) {
 	};
 
 	this.applyValue = function(item,state) {
-		item[args.column.field] = state;
-		
-		var controller = angular.element($("#controllerScope")).scope().ctrl;
-		controller.processChange( item["id"], item );
-		
+		item[args.column.field] = state;		
 	};
 
 	this.isValueChanged = function() {

@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($http, $q){
+App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 
 	// FIXME: build dynamic restbased url
-    var REST_SERVICE_URI = 'http://localhost:8080/app.admin.angwebrest/admin/menues/';
+    // var REST_SERVICE_URI = userConfigService.getUserProperty('DEFAULT_REST_URL'); 
+	// 'http://localhost:8080/app.admin.angwebrest/admin/menues/';
 
     var factory = {
         fetchAllEntities: fetchAllEntities,
@@ -14,9 +15,12 @@ angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($h
 
     return factory;
 
-    function fetchAllEntities() {
+    function fetchAllEntities( restUrl ) {
         var deferred = $q.defer();
-        $http.get(REST_SERVICE_URI)
+		// var restUrl = user.value;
+		//var restUrl = myService.getOptions(); //.getUserProperty('DEFAULT_REST_URL');
+		
+        $http.get(restUrl)
             .then(
             function (response) {
                 deferred.resolve(response.data);
@@ -29,9 +33,10 @@ angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($h
         return deferred.promise;
     }
     
-    function createEntity( entity ) {
+    function createEntity( entity, restUrl ) {
         var deferred = $q.defer();
-        $http.post(REST_SERVICE_URI, entity)
+		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
+        $http.post(restUrl, entity)
             .then(
             function (response) {
                 deferred.resolve(response.data);
@@ -45,9 +50,10 @@ angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($h
     }
 
 
-    function updateEntity( entity, id) {
+    function updateEntity( entity, id, restUrl) {
         var deferred = $q.defer();
-        $http.put(REST_SERVICE_URI+id, entity)
+		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
+        $http.put(restUrl+id, entity)
             .then(
             function (response) {
                 deferred.resolve(response.data);
@@ -60,9 +66,10 @@ angular.module('angWebApp').factory('EntityService', ['$http', '$q', function($h
         return deferred.promise;
     }
 
-    function deleteUser(id) {
+    function deleteUser(id, restUrl) {
         var deferred = $q.defer();
-        $http.delete(REST_SERVICE_URI+id)
+		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
+        $http.delete(restUrl+id)
             .then(
             function (response) {
                 deferred.resolve(response.data);

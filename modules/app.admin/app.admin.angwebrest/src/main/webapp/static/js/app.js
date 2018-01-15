@@ -1,5 +1,5 @@
 'use strict';
 
-var App = angular.module('angWebApp',[]);
+var App = angular.module('angWebApp', ['ngRoute', 'treeControl']);
 
 

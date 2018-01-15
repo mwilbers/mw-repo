@@ -35,6 +35,7 @@
     	<mvc:annotation-driven>
 		   <mvc:message-converters>
            		<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+           		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
@@ -76,6 +77,9 @@
 		<property name="menuService" ref="menuService"></property>
 		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 	</bean>
+	
+	<bean id="userConfigController" class="de.mw.mwdata.core.web.control.UserConfigController" />
+		
     
 <!-- 	<bean id="genericEntityController" class="de.mw.mwdata.app.admin.angwebrest.controller.AngWebRestController"> -->
 <!-- 		<property name="ofdbService" ref="ofdbService"></property> -->
