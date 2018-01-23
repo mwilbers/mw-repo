@@ -8,13 +8,11 @@ import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
@@ -40,7 +38,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.MapValue;
 import de.mw.mwdata.core.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.core.ofdb.def.CRUD;
 import de.mw.mwdata.core.ofdb.def.OfdbField;
@@ -340,8 +337,8 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 	}
 
 	/**
-	 * Populates the empty filterObject for spring-web-binding. Spring does set
-	 * the properties of the choosen filter-options.
+	 * Populates the empty filterObject for spring-web-binding. Spring does set the
+	 * properties of the choosen filter-options.
 	 * 
 	 */
 	@ModelAttribute("filterSet")
@@ -362,11 +359,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 			return isEmpty;
 		}
 
-		for (Entry<String, MapValue> entry : entityTO.getMap().entrySet()) {
-			if (!StringUtils.isBlank(entry.getValue().getValue())) {
-				return false;
-			}
-		}
+		isEmpty = !entityTO.hasJoinedValues();
 
 		return isEmpty;
 

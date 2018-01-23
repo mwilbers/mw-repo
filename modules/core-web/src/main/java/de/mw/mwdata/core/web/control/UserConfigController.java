@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.mw.mwdata.core.web.UiUserConfig;
+import de.mw.mwdata.core.web.uimodel.UiUserConfig;
 
 /**
  * Controller for serving all user specific and systemwide properties and

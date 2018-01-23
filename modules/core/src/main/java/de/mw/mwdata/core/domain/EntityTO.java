@@ -1,11 +1,9 @@
 package de.mw.mwdata.core.domain;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.collections.FactoryUtils;
-import org.apache.commons.collections.MapUtils;
-import de.mw.mwdata.core.ofdb.MapValue;
+import java.util.Map.Entry;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * An {@link EntityTO} is an TO-object containing all data and informations of the primary underlying view and
@@ -15,50 +13,90 @@ import de.mw.mwdata.core.ofdb.MapValue;
  *
  * @param <E>
  */
-public class EntityTO<E extends AbstractMWEntity> implements Serializable {
+public class EntityTO<E extends AbstractMWEntity> {
 
 	// http://stackoverflow.com/questions/736186/can-a-spring-form-command-be-a-map?rq=1
 
-	/**
-	 *
-	 */
-	private static final long	serialVersionUID	= -4450059813957334370L;
-
-	private E					item;
-
-	public EntityTO(final E item) {
-		this.item = item;
-	}
+	private E							entity;
 
 	@SuppressWarnings("unchecked")
-	private Map<String, MapValue> map = MapUtils.lazyMap( new HashMap<String, MapValue>(),
-			FactoryUtils.instantiateFactory( MapValue.class ) );
+	private Map<String, JoinedValue>	map;
 
-	// public void setItem( final E entity ) {
-	// this.item = entity;
-	// }
+	/**
+	 * Internal class for managing all joined table column values by key/value - pairs from ofdb queries<br>
+	 * E.g. 'select TabDef as tDef, b.name as bName from TabDef , tDef.bereiche as b ...'
+	 *
+	 * @author WilbersM
+	 *
+	 */
+	public class JoinedValue {
+
+		private String value;
+
+		public JoinedValue(final String value) {
+			this.value = value;
+		}
+
+		public JoinedValue() {
+
+		}
+
+		private String getValue() {
+			return this.value;
+		}
+
+		// private void setValue( final String value ) {
+		//
+		// // FIXME: ... hier fehler wenn Liste von Menues und dann filtern auf feld
+		// // AnsichtDef "FX_Entwickler"
+		// if ( StringUtils.isEmpty( value ) ) {
+		// this.value = null;
+		// } else {
+		// this.value = value;
+		// }
+		// }
+
+		@Override
+		public String toString() {
+			return this.value;
+		}
+
+	}
+
+	public EntityTO(final E entity) {
+		this.entity = entity;
+		this.map = new HashMap<>();
+	}
+
+	public boolean isEmpty() {
+		return null == this.entity;
+	}
 
 	public E getItem() {
-		return this.item;
+		return this.entity;
 	}
 
-	public void setSuchWert( final String key, final MapValue value ) {
-		this.map.put( key, value );
+	public String getJoinedValue( final String mapKey ) {
+
+		if ( null == this.map.get( mapKey ) ) {
+			return StringUtils.EMPTY;
+		}
+
+		return this.map.get( mapKey ).getValue();
 	}
 
-	public MapValue getSuchWert( final String key ) {
-		return this.map.get( key );
+	public boolean hasJoinedValues() {
+		for ( Entry<String, JoinedValue> entry : this.map.entrySet() ) {
+			if ( !StringUtils.isBlank( entry.getValue().getValue() ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	public Map<String, MapValue> getMap() {
-		return this.map;
+	public void addJoinedValue( final String mapKey, final String mapValue ) {
+		this.map.put( mapKey, new JoinedValue( mapValue ) );
 	}
-
-	public void setMap( final Map<String, MapValue> map ) {
-		// FIXME: bad style: setting map ...
-		this.map = map;
-	}
-
-	// ... nun in listEntity.jsp den verweis auf map['ofProp.propName'].value oder so ähnlich
 
 }

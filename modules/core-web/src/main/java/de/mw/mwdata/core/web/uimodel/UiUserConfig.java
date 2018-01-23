@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.web;
+package de.mw.mwdata.core.web.uimodel;
 
 /**
  * Class for transporting all systemwide and user specific properties from
@@ -12,7 +12,7 @@ package de.mw.mwdata.core.web;
  * @author WilbersM
  *
  */
-public class UiUserConfig {
+public class UiUserConfig implements UiJsonConvertable {
 
 	private static final String DEFAULT_REST_URL = "http://localhost:8080/app.admin.angwebrest/admin/tabDef/";
 

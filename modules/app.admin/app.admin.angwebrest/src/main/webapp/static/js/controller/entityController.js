@@ -18,7 +18,11 @@ function OfdbFieldEvaluator() {
 	
 }
 
-
+/**
+ * Definition for routeProvider: Before loading EntityController and showing grid load all user 
+ * specific serverbased properties for configuring clientbased constants
+ *
+ */
 App.config(function($routeProvider){
   $routeProvider
     .when('/',{
@@ -49,13 +53,11 @@ App.service('AppConfigService', function($http) {
     };
 });
 
-
-
 App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
     console.log("entityController");
 	
 	var self = this;
-	globalEntityController = this;
+	globalEntityController = self;
 	
 	if(null === appConfigService.doStuff()) {
 			return;
@@ -77,11 +79,14 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	self.hasRowChanged = hasRowChanged;
 	self.processChange = processChange;
 	self.setRows = setRows;
+	self.fetchAllEntities = fetchAllEntities;
+	self.setCurrentUrl = setCurrentUrl;
 
     self.entity = {};
     var rowDirty = false;
 	var currentRowIndex = 0;
 	var rowChanged = false;
+	var currentUrl = null;
     
     $scope.state = {};
     $scope.state.rows = [];
@@ -92,10 +97,11 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	
 	$scope.reloadGrid = function() {
         mwGrid.clear();
-		fetchAllEntities( getCurrentUrl() ); // FIXME: should be adjusted with current url
+		fetchAllEntities(); // FIXME: should be adjusted with current url
     };
 
     fetchAllEntities();
+	
 	
 	function setRows( newRows ) {
 		if(undefined === $scope.state) {
@@ -104,8 +110,17 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 		$scope.state.rows = newRows;
 	}
 	
+	function setCurrentUrl( newUrl ) {
+		currentUrl = newUrl;
+	}
+	
 	function getCurrentUrl() {
-		return appConfig['defaultRestUrl'];
+		if(null !== currentUrl) {
+			return currentUrl;
+		} else {
+			return appConfig['defaultRestUrl'];
+		}
+		
 	}
 	
     function loadGridRows( entityTOs, ofdbFields ){
@@ -260,6 +275,8 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
  * globalEntityController is necessary for getting access to controller later in mwgrid
  */
 var globalEntityController = null;
+
+
 
 var mwGrid = new mwGrid();
 var evaluator = new OfdbFieldEvaluator(  );

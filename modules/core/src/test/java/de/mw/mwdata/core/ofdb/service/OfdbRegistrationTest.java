@@ -15,7 +15,6 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.mocks.DomainMockFactory;
 import de.mw.mwdata.core.ofdb.AbstractOfdbInitializationTest;
 import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.MapValue;
 import de.mw.mwdata.core.ofdb.domain.AnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.AnsichtSpalten;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte;
@@ -191,9 +190,10 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Assert.assertTrue( resArray[1].equals( "Testbereich" ) );
 
 		EntityTO<TabDef> entityTO = new EntityTO<TabDef>( new TabDef() );
-		Map<String, MapValue> map = new HashMap<String, MapValue>();
-		map.put( "BenutzerBereich.name", new MapValue( "Testbereich" ) );
-		entityTO.setMap( map );
+		// Map<String, MapValue> map = new HashMap<String, MapValue>();
+		// map.put( "BenutzerBereich.name", new MapValue( "Testbereich" ) );
+		// entityTO.setMap( map );
+		entityTO.addJoinedValue( "BenutzerBereich.name", "Testbereich" );
 
 		PaginatedList<IEntity[]> items = this.entityService.findByCriteriaPaginated( TestConstants.TABLENAME_TABDEF,
 				entityTO, 0, null );

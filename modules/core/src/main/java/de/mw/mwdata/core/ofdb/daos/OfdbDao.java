@@ -344,7 +344,9 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 		List<IEntity[]> arrayResults = null;
 		Type[] types = query.getReturnTypes();
-		if ( types.length == 1 && types[0] instanceof ManyToOneType ) {
+		if ( types.length == 1 && types[0] instanceof ManyToOneType ) { // if only entity (and no other column) is
+																		// queried, hibernate returns Object instead of
+																		// Object[]
 
 			List<IEntity> result = query.list();
 			arrayResults = new ArrayList<IEntity[]>( result.size() );
@@ -360,25 +362,10 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 			arrayResults = new ArrayList<IEntity[]>( result );
 		}
 
-		// List<IEntity> result = query.list();
-		// query.setFlushMode( FlushMode.NEVER );
-
-		// List<IEntity[]> convertedResults = new ArrayList<IEntity[]>();
-		// if(!result.get(0 ).getClass().isArray()) {
-		//
-		// for(IEntity[] item : result) {
-		// IEntity[] entityArray = new IEntity[1];
-		// entityArray[0] = item;
-		// }
-		// } else {
-		// convertedResults = result;
-		// }
-
 		return arrayResults;
 
 	}
 
-	// @Override
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<IEntity[]> executeQueryPaginated( final String sql, final int pageIndex ) {

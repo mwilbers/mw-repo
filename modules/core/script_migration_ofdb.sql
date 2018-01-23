@@ -1250,3 +1250,27 @@ alter table SysSequenz modify ofdb varchar2(255) not null;
 alter table SysSequenz add system numeric(1) default -1 not null;
 
 alter table ADANSICHTENDEF modify angelegtvon varchar2(255);
+
+-- fix menue AdminOberflaeche 
+update FX_Menues_K set menueid = 8452 where menueid = 8419 and menue = 'AdminFarben';
+
+insert into FX_MENUES_K(menueid, menue, anzeigename, typ, ebene, untermenuevon, 
+				  angelegtvon, angelegtam, ofdb, system, DSID)
+				  values(8419, 'AdminOberflaeche', 'Oberfläche', 'KNOTEN', 1, 'Admin', '#migration#',
+                  '17.01.2018', 'X', -1, (select max(t.DSID) + 1 from FX_MENUES_K t ) );
+
+update FX_MENUES_K set hauptmenueid = (select m.dsid from FX_Menues_K m where menue = 'Admin')
+where menueid = 8419 and menue = 'AdminOberflaeche'
+;
+
+update FX_MENUES_K set aktiv = -1
+where menueid = 8419 and menue = 'AdminOberflaeche'
+;
+
+update FX_Menues_K 
+set hauptmenueid = (select m1.dsid from FX_Menues_K m1 where menue = 'AdminOberflaeche')
+where untermenuevon = 'AdminOberflaeche' 
+;
+
+
+

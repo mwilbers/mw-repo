@@ -3,6 +3,38 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
   module.exports = 'angWebApp';
 }
 
+function UiEntityResult( uiEntityList ) {
+	
+	var entities = [];
+	entities = uiEntityList.entityTOs;
+	
+	this.size = function() {
+		return entities.length;		
+	};
+	
+	this.getEntities = function() {
+		return entities;
+	};
+	
+	this.getEntity = function( index ) {
+		return new UiEntity( entities[index] );
+	};
+	
+}
+
+function UiEntity( entityTO ) {
+	var entityTO = entityTO;
+	
+	this.getProp = function( propName ) {
+		return entityTO.item[propName];
+	};
+	
+	this.getId = function() { // static: from AbstractMWEntity
+		return entityTO.item.id; 
+	};
+	
+}
+
 App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', function ($http, $timeout, appConfigService) {
   var ctrl = this;
 
@@ -16,14 +48,31 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
     }
   };
 
-  function loadTreeModel( entityTOs ){
+  function loadTreeModel( uiMenuNode ){
     	
 		var treeModel = [];
-    	  for(var i=0; i<entityTOs.length; i++) {
+		var entityTOs = [];
+		  for(var i=0; i<uiMenuNode.length; i++) {
 			
-			var entity = entityTOs[i].item;
-			var displayName = entity.anzeigeName + " ( " + entity.typ + " ) ";
-			var currentNode = { "name": displayName, "url": "nav/menu/" + entity.id };
+			var currentNode = {};
+			currentNode["name"] = uiMenuNode[i].displayName;
+			if(uiMenuNode[i].url !== null) {
+				currentNode["url"] = uiMenuNode[i].url; //"nav/menu/" + uiEntity.getId();
+			} 
+			//else {
+			if(uiMenuNode[i].restUrl !== null) {
+				currentNode["restUrl"] = uiMenuNode[i].restUrl;
+			}
+				// globalEntityController.fetchAllEntities();
+				/*
+				$http.get('nav/').success(function(data) {
+					ctrl.treeModel = [];
+					var wEntities = new UiEntityResult( data );
+					ctrl.treeModel = loadTreeModel( wEntities );
+				});
+				*/
+			//}
+			
 			treeModel[i] = currentNode;
 			// console.log('node json: ' + angular.toJson(currentNode));
 			
@@ -39,13 +88,15 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
         console.log('GET ' + node.url);
         $http.get(node.url).success(function(data) {
             console.log('GET ' + node.url + ' ... ok! ');
-			node.children = loadTreeModel( data.entityTOs );
+			// var wEntities = new UiEntityResult( data );
+			node.children = loadTreeModel( data );
           });
       } else {
         // Leaf node
+		
       }
     }
-
+	
     if (node._sent_request) {
       return;
     }
@@ -54,13 +105,17 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
     node.children = [{name: 'Loading ...'}];
     $timeout(function() { doFetch(node) }, ctrl.loadingTime);
   };
+  
+  ctrl.callNode = function callNode(node, selected) {
+	globalEntityController.setCurrentUrl( node.restUrl );
+	globalEntityController.fetchAllEntities();
+  };
 
-  //'../static/root.json'
-  // 'http://localhost:8080/app.admin.angwebrest/admin/menues/860102'
-  $http.get('http://localhost:8080/app.admin.angwebrest/admin/nav/')
+  $http.get('nav/')
     .success(function(data) {
 	  ctrl.treeModel = [];
-	  ctrl.treeModel = loadTreeModel( data.entityTOs );
+	  // var wEntities = new UiEntityResult( data );
+	  ctrl.treeModel = loadTreeModel( data );
     });
 
 }]);

@@ -18,6 +18,9 @@ public interface OfdbQueryBuilder {
 
 	public OfdbQueryBuilder joinTable( final String tableName, final String tableAlias );
 
+	public OfdbQueryBuilder leftJoinTable( final String leftTableAlias, final String association,
+			final String assocAlias );
+
 	/**
 	 * Creates a join expression on an associated entity defined in domain class
 	 *

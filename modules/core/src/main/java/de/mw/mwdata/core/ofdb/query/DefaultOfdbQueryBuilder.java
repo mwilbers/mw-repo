@@ -14,23 +14,24 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 	// private OfdbQueryModel queryModel;
 
-	private boolean					count;
+	private boolean							count;
 
-	private String					mainTable;
-	private String					mainTableAlias;
-	private Map<String, String>		joinTables				= new HashMap<String, String>();
+	private String							mainTable;
+	private String							mainTableAlias;
+	private Map<String, String>				joinTables				= new HashMap<String, String>();
+	private Map<String, TableColumnPair>	leftJoinTables			= new HashMap<String, TableColumnPair>();
 
-	private Map<String, String>		joinEntities			= new HashMap<String, String>();
+	private Map<String, String>				joinEntities			= new HashMap<String, String>();
 
-	private Map<String, String>		selectTableAliasItems	= new HashMap<String, String>();
+	private Map<String, String>				selectTableAliasItems	= new HashMap<String, String>();
 
-	private Map<String, String>		selectColumnAliasItems	= new HashMap<String, String>();
+	private Map<String, String>				selectColumnAliasItems	= new HashMap<String, String>();
 
-	private List<JoinRestriction>	joinRestrictions		= new ArrayList<JoinRestriction>();
+	private List<JoinRestriction>			joinRestrictions		= new ArrayList<JoinRestriction>();
 
-	private List<WhereRestriction>	whereRestrictions		= new ArrayList<WhereRestriction>();
+	private List<WhereRestriction>			whereRestrictions		= new ArrayList<WhereRestriction>();
 
-	private List<OrderSet>			orderSet				= new ArrayList<OrderSet>();
+	private List<OrderSet>					orderSet				= new ArrayList<OrderSet>();
 
 	private class TableColumnPair {
 
@@ -163,8 +164,22 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 			// add joins
 			sbFrom.append( " inner join " );
+
+			// FIXME: is this correct ? mainTableAlias here ? Menue inner join Menue ?
 			sbFrom.append( this.mainTableAlias ).append( "." ).append( joinEntry.getKey() ).append( " as " )
 					.append( joinEntry.getValue() );
+
+		}
+
+		for ( Map.Entry<String, TableColumnPair> leftJoinEntry : this.leftJoinTables.entrySet() ) {
+
+			// add joins
+			sbFrom.append( " left join " );
+
+			// FIXME: is this correct ? mainTableAlias here ? Menue inner join Menue ?
+			sbFrom.append( leftJoinEntry.getValue().getTableName() ).append( "." )
+					.append( leftJoinEntry.getValue().getColumnName() ).append( " as " )
+					.append( leftJoinEntry.getKey() );
 
 		}
 
@@ -283,6 +298,13 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		return this;
 	}
 
+	@Override
+	public OfdbQueryBuilder leftJoinTable( final String leftTableAlias, final String association,
+			final String assocAlias ) {
+		this.leftJoinTables.put( assocAlias, new TableColumnPair( leftTableAlias, association ) );
+		return this;
+	}
+
 	// @Override
 	@Override
 	public OfdbQueryBuilder whereJoin( final String join1Table, final String join1Column, final String join2Table,
@@ -344,4 +366,5 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		this.joinEntities.put( entityName, entityAlias );
 		return this;
 	}
+
 }

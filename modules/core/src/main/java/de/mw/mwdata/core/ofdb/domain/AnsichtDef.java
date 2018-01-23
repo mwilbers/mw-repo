@@ -42,27 +42,6 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	@Column(name = "ANSICHT", updatable = false, nullable = false, unique = true)
 	private String				name;
 
-	// @OneToOne(fetch = FetchType.EAGER)
-	// @JoinColumn(name = "ANSICHT", referencedColumnName = "TABELLE", nullable = false, insertable = false, updatable =
-	// false)
-	// private TabDef tabDef;
-
-	// @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	// @JoinColumn(name = "ANSICHT", referencedColumnName = "ANSICHT")
-	// private List<AnsichtSpalten> ansichtSpalten;
-	//
-	//
-	// public List<AnsichtSpalten> getAnsichtSpalten() {
-	// return this.ansichtSpalten;
-	// }
-	//
-	// public void setAnsichtSpalten(List<AnsichtSpalten> ansichtSpalten) {
-	// this.ansichtSpalten = ansichtSpalten;
-	// }
-
-	// @Column(name = "BEREICH")
-	// @ManyToOne(fetch = FetchType.EAGER)
-	// @JoinColumn(name = "BEREICH", referencedColumnName = "name", nullable = false)
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BEREICHSID", referencedColumnName = "BEREICHSID", nullable = false)
 	private BenutzerBereich		bereich;
@@ -70,17 +49,9 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	@Column(name = "BEZEICHNUNG")
 	private String				bezeichnung;
 
-	// @Column(name = "EXPORTIEREN", columnDefinition = "NUMERIC(11) default 0")
-	// @Type(type = "fxboolean")
-	// private Boolean exportieren;
-
 	@Column(name = "HINZUFUEGEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
 	private Boolean				hinzufuegen;
-
-	// @Column(name = "KOPIEREN", columnDefinition = "NUMBER(11) default 0")
-	// @Type(type = "fxboolean")
-	// private Boolean kopieren;
 
 	@Column(name = "BEARBEITEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
@@ -89,18 +60,6 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	@Column(name = "ENTFERNEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
 	private Boolean				entfernen;
-
-	// @Column(name = "ENTFERNENMEHRFACH", columnDefinition = "NUMBER(11) default 0")
-	// @Type(type = "fxboolean")
-	// private Boolean entfernenMehrfach;
-
-	// @Column(name = "IMPORTIEREN", columnDefinition = "NUMBER(11) default 0")
-	// @Type(type = "fxboolean")
-	// private Boolean importieren;
-
-	// @Column(name = "STORNIEREN", columnDefinition = "NUMBER(11) default 0")
-	// @Type(type = "fxboolean")
-	// private Boolean stornieren;
 
 	@Column(name = "LESEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
@@ -265,6 +224,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	 *
 	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#setUrlPath(java.lang.String)
 	 */
+	@Override
 	public void setUrlPath( final String urlPath ) {
 		this.urlPath = urlPath;
 	}
@@ -274,6 +234,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	 *
 	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#getUrlPath()
 	 */
+	@Override
 	public String getUrlPath() {
 		return this.urlPath;
 	}
@@ -296,6 +257,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	 *
 	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#setAppContextPath(java.lang.String)
 	 */
+	@Override
 	public void setAppContextPath( final String appContextPath ) {
 		this.appContextPath = appContextPath;
 	}
@@ -305,6 +267,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	 *
 	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#getAppContextPath()
 	 */
+	@Override
 	public String getAppContextPath() {
 		return this.appContextPath;
 	}

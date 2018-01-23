@@ -31,9 +31,39 @@
 	 
      <!-- slickgrid grid -->
      <link rel="stylesheet" href="<c:url value='/static/slickgrid/slick.grid.css' />">
-     <link rel="stylesheet" href="<c:url value='/static/slickgrid/examples/examples.css' />">
+     <link rel="stylesheet" href="<c:url value='/static/slickgrid/examples/examples.css' />"> 
 	 <link rel="stylesheet" href="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.css' />">
      
+	 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+	  <script src="<c:url value='/static/js/angular/angular-route.min.js' />"></script>
+	  
+	  <script src="<c:url value='/static/jQuery/jquery-1.7.min.js' />"></script>
+	  <script src="<c:url value='/static/jQuery/jquery.event.drag-2.2.js' />"></script>
+	  <script src="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.min.js' />"></script>
+	  
+	  
+	  <script src="<c:url value='/static/slickgrid/slick.core.js' />"></script>
+	  <script src="<c:url value='/static/slickgrid/slick.grid.js' />"></script>
+	  <script src="<c:url value='/static/slickgrid/slick.editors.js' />"></script>
+	  
+	  <script src="<c:url value='/static/slickgrid/slick.formatters.js' />"></script>
+	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangedecorator.js' />"></script>
+	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangeselector.js' />"></script>
+	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellselectionmodel.js' />"></script>
+	  
+	  <script src="<c:url value='/static/slickgrid/slick.dataview.js' />"></script>	  
+	  <script src="<c:url value='/static/js/slickgrid_addons/slick.selectcelleditor.js' />"></script>
+	  <script src="<c:url value='/static/js/slickgrid_addons/mwgrid.js' />"></script>
+	  
+      <script src="<c:url value='/static/js/app.js' />"></script>
+	  
+	  <script src="<c:url value='/static/js/angular/angular-tree-control.js' />"></script>
+	  <script src="<c:url value='/static/js/controller/menuController.js' />"></script>
+	  <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
+	  <script src="<c:url value='/static/js/service/entityService.js' />"></script>
+	  
+	 
+	  
 	 
   </head>
   
@@ -41,28 +71,21 @@
   
   <body ng-app="angWebApp" class="ng-cloak" >
   
-  <div style="">
-  
-  
-  
-	<div class="generic-container" style="width:400px;display:inline-block;vertical-align:top;height:1000px;" >
+	<div class="generic-container" style="width:300px;display:inline-block;vertical-align:top;height:1000px;" >
 		
-		<div class='container'  ng-controller="MenuController as menuCtrl">
+		<div class='container' style="width:100%;" ng-controller="MenuController as menuCtrl">
 		  Fake Loading Time: <input type=number ng-model='menuCtrl.loadingTime'> ms
 		  <br>
 		  <br>
-		  <treecontrol class="tree-classic"
-			tree-model="menuCtrl.treeModel"
-			on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"
+		  <treecontrol class="tree-classic" on-selection="menuCtrl.callNode(node, selected)"
+			tree-model="menuCtrl.treeModel" on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"
 			options="menuCtrl.treeOptions">
 			{{node.name}}
 		  </treecontrol>
 		</div>
 	  </div>
-	  
-	  
-  
-      <div class="generic-container" style="width:800px;display:inline-block;" ng-controller="EntityController as ctrl" id="controllerScope"  >
+	
+      <div class="generic-container" style="width:800px;display:inline-block;"   >
           <div class="panel panel-default">
               <div class="panel-heading"><span class="lead">Entity Registration Form </span></div>
               <div class="formcontainer">
@@ -131,6 +154,15 @@
                           </tr>
                       </thead>
                       <tbody>
+							<tr >
+                              <td><span >a</span></td>
+                              <td><span >aa</span></td>
+                              <td><span >aaa</span></td>
+                              <td><span >aaaa</span></td>
+                              <td>
+                              <button type="button" ng-click="ctrl.edit(u.id)" class="btn btn-success custom-width">Edit</button>  <button type="button" ng-click="ctrl.remove(u.id)" class="btn btn-danger custom-width">Remove</button>
+                              </td>
+                          </tr>
                           <tr ng-repeat="u in ctrl.entities.uiEntities">
                               <td><span ng-bind="u.entityArray[0]['alias']"></span></td>
                               <td><span ng-bind="u.username"></span></td>
@@ -146,53 +178,16 @@
           </div>
           
           <!-- slickgrid grid -->
-		  
-		  <div>
-			  innerGrid Properties<br>
-			  <input type="checkbox" ng-model="gridPropertiesModel.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
-			  Show not mapped columns and values<br>
+		  <div ng-controller="EntityController as ctrl" id="controllerScope">
+			  <div ng-view>
+				  
+				   
+			  </div>
 		  </div>
-		  <br>
-		  inner grid<br>
-          <div  style="display:inline-block; width:700px;" ng-view>
-          
-          </div>  
       </div>
 	  
-	  
-	  
-	 </div>
+
 	  
       
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
-	  <script src="<c:url value='/static/js/angular/angular-route.min.js' />"></script>
-	  
-	  <script src="<c:url value='/static/jQuery/jquery-1.7.min.js' />"></script>
-	  <script src="<c:url value='/static/jQuery/jquery.event.drag-2.2.js' />"></script>
-	  <script src="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.min.js' />"></script>
-	  
-	  
-	  <script src="<c:url value='/static/slickgrid/slick.core.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/slick.grid.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/slick.editors.js' />"></script>
-	  
-	  <script src="<c:url value='/static/slickgrid/slick.formatters.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangedecorator.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangeselector.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellselectionmodel.js' />"></script>
-	  
-	  <script src="<c:url value='/static/slickgrid/slick.dataview.js' />"></script>	  
-	  <script src="<c:url value='/static/js/slickgrid_addons/slick.selectcelleditor.js' />"></script>
-	  <script src="<c:url value='/static/js/slickgrid_addons/mwgrid.js' />"></script>
-	  
-      <script src="<c:url value='/static/js/app.js' />"></script>
-	  
-	  <script src="<c:url value='/static/js/angular/angular-tree-control.js' />"></script>
-	  <script src="<c:url value='/static/js/controller/menuController.js' />"></script>
-	  <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
-	  <script src="<c:url value='/static/js/service/entityService.js' />"></script>
-	  
-	 
-	  
   </body>
 </html>

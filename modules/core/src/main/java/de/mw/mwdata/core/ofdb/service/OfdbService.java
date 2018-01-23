@@ -21,7 +21,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.IFxEnum;
-import de.mw.mwdata.core.ofdb.MapValue;
 import de.mw.mwdata.core.ofdb.OfdbUtils;
 import de.mw.mwdata.core.ofdb.SortKey;
 import de.mw.mwdata.core.ofdb.cache.OfdbCacheManager;
@@ -321,8 +320,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 			if ( ofField.isVerdeckenDurchSpalte() ) {
 
-				MapValue whereMapValue = filterEntityTO.getMap().get( ofField.getItemKey() );
-				boolean toFilter = (!StringUtils.isBlank( whereMapValue.getValue() ));
+				String whereMapValue = filterEntityTO.getJoinedValue( ofField.getItemKey() );
+				boolean toFilter = (!StringUtils.isBlank( whereMapValue ));
 
 				if ( toFilter ) {
 
@@ -331,7 +330,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 							ansichtSpalte.getVerdeckenDurchTabAKey(), ansichtSpalte.getVerdeckenDurchSpalteAKey() );
 
 					queryModel.addWhereRestriction( suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Eq,
-							whereMapValue.getValue() );
+							whereMapValue );
 
 				}
 

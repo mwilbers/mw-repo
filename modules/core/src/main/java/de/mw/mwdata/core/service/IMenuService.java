@@ -1,12 +1,12 @@
 package de.mw.mwdata.core.service;
 
 import java.util.List;
-import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.domain.EntityTO;
 
 public interface IMenuService {
 
-	public List<IEntity[]> findMainMenus();
+	public List<EntityTO> findMainMenus();
 
-	public List<IEntity[]> findChildMenus( final int parentMenuId );
+	public List<EntityTO> findChildMenus( final int parentMenuId );
 
 }

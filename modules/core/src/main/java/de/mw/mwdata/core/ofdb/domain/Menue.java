@@ -107,12 +107,6 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	@Column(name = "LIZENZ", nullable = true)
 	private String			lizenz;
 
-	// @Column(name = "BILDDATEINORMAL", nullable = true)
-	// private String bildDateiNormal;
-	//
-	// @Column(name = "BILDDATEIAUSGEWAEHLT", nullable = true)
-	// private String bildDateiAusgewaehlt;
-
 	@Column(name = "GRUPPE", nullable = true)
 	private String			gruppe;
 
