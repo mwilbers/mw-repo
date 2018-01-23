@@ -74,19 +74,6 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 		this.crudService = crudService;
 	}
 
-	// -------------------Retrieve All
-	// Users--------------------------------------------------------
-
-	// @RequestMapping(value = "/user/", method = RequestMethod.GET)
-	// public ResponseEntity<List<User>> listAllUsers() {
-	// List<User> users = userService.findAllUsers();
-	// if (users.isEmpty()) {
-	// // You may decide to return HttpStatus.NOT_FOUND
-	// return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
-	// }
-	// return new ResponseEntity<List<User>>(users, HttpStatus.OK);
-	// }
-
 	/**
 	 * Populates the empty filterObject for spring-web-binding. Spring does set the
 	 * properties of the choosen filter-options. <br>
@@ -105,12 +92,8 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	public ResponseEntity<UiEntityList<E>> listAllTabDefs() {
-		// UiEntityList<E>
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
-
-		// ... Rückgabetype geändert von UiEntityList<E> nach TabDef -> dann
-		// funktioniert json-convertierung
 
 		// initialize navigation state
 		HttpSession session = request.getSession();
@@ -134,14 +117,8 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 		}
 
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
-		// FIXME: remove next rows
-		// uiEntities.getOfdbFields().clear();
-		// uiEntities.getEntityTOs().clear();
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
-
-		// E res = (E) uiEntities.getUiEntities().get(0).getEntityArray()[0];
-		// return new ResponseEntity<E>(res, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/tabDef/{id}", method = RequestMethod.PUT)
@@ -162,30 +139,11 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 			return new ResponseEntity<EntityTO>(HttpStatus.NOT_FOUND);
 		}
 
-		// currentEntity.setUsername(user.getUsername());
-		// currentEntity.setAddress(user.getAddress());
-		// currentEntity.setEmail(user.getEmail());
-
 		this.crudService.update(entity);
 		EntityTO<E> entityTO = new EntityTO<E>(entity);
 		// FIXME: mapValues not set in entityTO
 		return new ResponseEntity<EntityTO>(entityTO, HttpStatus.OK);
 	}
-
-	// -------------------Retrieve Single
-	// User--------------------------------------------------------
-
-	// @RequestMapping(value = "/user/{id}", method = RequestMethod.GET,
-	// produces = MediaType.APPLICATION_JSON_VALUE)
-	// public ResponseEntity<User> getUser(@PathVariable("id") long id) {
-	// System.out.println("Fetching User with id " + id);
-	// User user = userService.findById(id);
-	// if (user == null) {
-	// System.out.println("User with id " + id + " not found");
-	// return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-	// }
-	// return new ResponseEntity<User>(user, HttpStatus.OK);
-	// }
 
 	// -------------------Create a
 	// User--------------------------------------------------------

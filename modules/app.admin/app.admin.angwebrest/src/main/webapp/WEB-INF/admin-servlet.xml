@@ -75,7 +75,7 @@
 	
 	<bean id="menueController" class="de.mw.mwdata.core.web.control.MenuController">
 		<property name="menuService" ref="menuService"></property>
-		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
+		
 	</bean>
 	
 	<bean id="userConfigController" class="de.mw.mwdata.core.web.control.UserConfigController" />
@@ -87,7 +87,6 @@
 <!-- 		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property> -->
 <!-- 	</bean> -->
 	
-	<bean id="userService" class="de.mw.mwdata.app.admin.angwebrest.service.UserServiceImpl" />
 	
     
    <!--  ...................... more snippets .............. -->

@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.core.ofdb.cache.OfdbCacheManager;
-import de.mw.mwdata.core.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.core.ofdb.domain.Menue;
 import de.mw.mwdata.core.service.IMenuService;
 import de.mw.mwdata.core.web.uimodel.UiMenuNode;
@@ -27,28 +24,14 @@ public class MenuController {
 
 	private IMenuService menuService;
 
-	private OfdbCacheManager ofdbCacheManager;
-
 	public void setMenuService(IMenuService menuService) {
 		this.menuService = menuService;
 	}
-
-	public void setOfdbCacheManager(OfdbCacheManager ofdbCacheManager) {
-		this.ofdbCacheManager = ofdbCacheManager;
-	}
-
-	// ... 1. add new method listDefaultMenues -> menues von ebene 1 laden
-	// 2. listAllTabDefs ohne argument machen
-	// 3. menueController.js anpassen: data-object aus uiEntities transformieren ->
-	// oder besser hier in java ?
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
 		// initialize ofPropList
-
-		// FIXME: ofdbCacheManager no more needed ?
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
 
 		List<EntityTO> menuResult = this.menuService.findMainMenus();
 		List<UiMenuNode> menuList = new ArrayList<>();
@@ -57,11 +40,7 @@ public class MenuController {
 			menuList.add(menu);
 		}
 
-		// UiEntityList<Menue> uiEntities = new UiEntityList<Menue>(menuResult,
-		// viewHandle.getOfdbFieldList());
-
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
-
 	}
 
 	private UiMenuNode convertToUiMenu(final EntityTO menuEntity) {
@@ -84,9 +63,6 @@ public class MenuController {
 	@RequestMapping(value = "/menu/{parentMenuId}", method = RequestMethod.GET)
 	public ResponseEntity<List<UiMenuNode>> listChildMenus(@PathVariable("parentMenuId") int parentMenuId) {
 
-		// initialize ofPropList
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
-
 		// // FIXME: compare with where-restrictions from OfdbDao.findMenues()
 		List<EntityTO> menuResult = this.menuService.findChildMenus(parentMenuId);
 
@@ -95,9 +71,6 @@ public class MenuController {
 			UiMenuNode menu = convertToUiMenu(item);
 			menuList.add(menu);
 		}
-
-		// UiEntityList<Menue> uiEntities = new UiEntityList<Menue>(menuResult,
-		// viewHandle.getOfdbFieldList());
 
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
 	}

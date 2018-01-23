@@ -2,10 +2,6 @@
 
 App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 
-	// FIXME: build dynamic restbased url
-    // var REST_SERVICE_URI = userConfigService.getUserProperty('DEFAULT_REST_URL'); 
-	// 'http://localhost:8080/app.admin.angwebrest/admin/menues/';
-
     var factory = {
         fetchAllEntities: fetchAllEntities,
         createEntity: createEntity,
@@ -17,9 +13,7 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 
     function fetchAllEntities( restUrl ) {
         var deferred = $q.defer();
-		// var restUrl = user.value;
-		//var restUrl = myService.getOptions(); //.getUserProperty('DEFAULT_REST_URL');
-		
+
         $http.get(restUrl)
             .then(
             function (response) {
@@ -35,7 +29,7 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
     
     function createEntity( entity, restUrl ) {
         var deferred = $q.defer();
-		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
+		
         $http.post(restUrl, entity)
             .then(
             function (response) {
@@ -52,8 +46,8 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 
     function updateEntity( entity, id, restUrl) {
         var deferred = $q.defer();
-		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
-        $http.put(restUrl+id, entity)
+		
+        $http.put(restUrl+ '/' + id, entity)
             .then(
             function (response) {
                 deferred.resolve(response.data);
@@ -68,8 +62,8 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 
     function deleteUser(id, restUrl) {
         var deferred = $q.defer();
-		// var restUrl = userConfigService.getUserProperty('DEFAULT_REST_URL');
-        $http.delete(restUrl+id)
+		
+        $http.delete(restUrl+ '/' + id)
             .then(
             function (response) {
                 deferred.resolve(response.data);

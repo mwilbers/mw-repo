@@ -97,7 +97,7 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	
 	$scope.reloadGrid = function() {
         mwGrid.clear();
-		fetchAllEntities(); // FIXME: should be adjusted with current url
+		fetchAllEntities(); 
     };
 
     fetchAllEntities();

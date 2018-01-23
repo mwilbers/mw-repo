@@ -25,16 +25,6 @@ public class MenuService implements IMenuService {
 	@Override
 	public List<EntityTO> findMainMenus() {
 
-		// für die RESTbased urls auf die entities:
-		// select m.* , a.*
-		// from FX_Menues_K m
-		// left join FX_AnsichtDef_K a on (a.dsid = m.ansichtdefid)
-		// where 1=1
-		// and m.typ = 'ANSICHT'
-		// and m.anzeigename = 'Ansichten'
-		// ;
-
-		// List<EntityTO> entityTOs = new ArrayList<>();
 		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
 		int layer = 0;
 		String sql = builder.selectTable( ConfigOfdb.T_MENU, "aMenu" ).selectAlias( "aView", "urlPath" )
@@ -44,11 +34,6 @@ public class MenuService implements IMenuService {
 
 		List<IEntity[]> entities = this.ofdbDao.executeQuery( sql );
 		List<EntityTO> entityTOs = convertToEntityTO( entities, new String( "urlPath" ) );
-
-		// for ( IEntity[] item : entities ) {
-		// EntityTO entityTO = convertToEntityTO( item, new String( "urlPath" ) );
-		// entityTOs.add( entityTO );
-		// }
 
 		return entityTOs;
 	}

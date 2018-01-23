@@ -107,8 +107,10 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
   };
   
   ctrl.callNode = function callNode(node, selected) {
-	globalEntityController.setCurrentUrl( node.restUrl );
-	globalEntityController.fetchAllEntities();
+	if(undefined !== node.restUrl) {
+		globalEntityController.setCurrentUrl( node.restUrl );
+		globalEntityController.fetchAllEntities();		
+	}
   };
 
   $http.get('nav/')
