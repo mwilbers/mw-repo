@@ -26,11 +26,4 @@ public interface ApplicationFactory {
 	 */
 	public ApplicationState getState();
 
-	/**
-	 * Registers all Controllers with usage of customized configuration-settings in given configuration-object
-	 *
-	 * @param controllerConfiguration
-	 */
-	public void registerControllers( final ControllerConfiguration controllerConfiguration );
-
 }

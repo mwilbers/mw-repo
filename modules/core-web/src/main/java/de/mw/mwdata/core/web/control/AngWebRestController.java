@@ -50,16 +50,10 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 
 	private NavigationManager navigationManager;
 
-	private OfdbController ofdbController;
-
 	private ICrudService crudService;
 
 	public void setEntityService(IPagingEntityService entityService) {
 		this.entityService = entityService;
-	}
-
-	public void setOfdbController(OfdbController ofdbController) {
-		this.ofdbController = ofdbController;
 	}
 
 	public void setOfdbService(IOfdbService ofdbService) {
@@ -102,7 +96,9 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 
 		// initialize ofPropList
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(state.getUrlPath());
-		List<OfdbField> ofdbFieldList = this.ofdbController.findOfdbFields(viewDef.getName(), CRUD.SELECT);
+		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.SELECT);
+		// List<OfdbField> ofdbFieldList =
+		// this.ofdbController.findOfdbFields(viewDef.getName(), CRUD.SELECT);
 
 		PaginatedList<IEntity[]> entityResult = null;
 		int pageIndex = state.getPageIndex();

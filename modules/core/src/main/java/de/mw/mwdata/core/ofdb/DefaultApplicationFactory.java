@@ -19,9 +19,9 @@ import de.mw.mwdata.core.ofdb.validate.OfdbValidatable;
  * @author mwilbers
  *
  */
-public abstract class AbstractApplicationFactory implements ApplicationFactory {
+public class DefaultApplicationFactory implements ApplicationFactory {
 
-	private static final Logger	LOGGER	= LoggerFactory.getLogger( AbstractApplicationFactory.class );
+	private static final Logger	LOGGER	= LoggerFactory.getLogger( DefaultApplicationFactory.class );
 
 	private IOfdbService		ofdbService;
 
@@ -39,7 +39,7 @@ public abstract class AbstractApplicationFactory implements ApplicationFactory {
 		this.viewConfigFactory = viewConfigFactory;
 	}
 
-	public AbstractApplicationFactory(final String servletPath) {
+	public DefaultApplicationFactory(final String servletPath) {
 		this.servletPath = servletPath;
 	}
 
@@ -51,10 +51,12 @@ public abstract class AbstractApplicationFactory implements ApplicationFactory {
 		this.ofdbValidator = ofdbValidator;
 	}
 
+	@Override
 	public void configure() {
 		this.state = ApplicationState.CONFIGURE;
 	}
 
+	@Override
 	public void init() throws OfdbMissingMappingException {
 		this.state = ApplicationState.INITIALIZE;
 
@@ -96,6 +98,7 @@ public abstract class AbstractApplicationFactory implements ApplicationFactory {
 		this.ofdbCacheManager = ofdbCacheManager;
 	}
 
+	@Override
 	public ApplicationState getState() {
 		return this.state;
 	}

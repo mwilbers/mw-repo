@@ -62,63 +62,20 @@
         </property>
     </bean>
     
-    <bean id="controllerConfiguration" class="de.mw.mwdata.core.web.DefaultControllerConfiguration" >
-	    	<!-- <property name="ofdbService" ref="ofdbService"></property>
-	    	<property name="ofdbValidator" ref="ofdbValidator"></property>
-	    	 <property name="servletSubPath" value="admin"></property>  -->
-	    	
-	    	<property name="overwrittenControllerMap">
-		    	<map>
-			    	<entry key="tabDef" value="#{ T(de.mw.mwdata.app.admin.web.control.TabDefController) }"  />
-			    	<!-- value-ref="tabDefController" -->
-			    </map>
-	    	</property>
-	    	
-		</bean>    
-		
-		<bean id="applicationFactory" class="de.mw.mwdata.core.web.DefaultApplicationFactory" init-method="init">
+    
+		<bean id="applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
 		 	<constructor-arg index="0"  value="admin" />		 	
 		 	<property name="ofdbService" ref="ofdbService"></property>
 		 	<property name="ofdbValidator" ref="ofdbValidator"></property>
 		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 		</bean>
-		
-    
-	<bean id="mwBeanFactoryPostProcessor" class="de.mw.mwdata.core.web.ControllerBeanFactoryPostProcessor">
-    	<property name="applicationFactory" ref="applicationFactory"></property>
-    	<property name="controllerConfiguration" ref="controllerConfiguration"></property>
-    </bean>
 	
-	<bean id="genericEntityController" class="de.mw.mwdata.core.web.control.GenericEntityController">
-		<property name="benutzerBereichEditor" ref="benutzerBereichEditor"></property>
-		<property name="enumDBTYPEEditor" ref="enumDBTYPEEditor"></property>
-		<property name="enumMENUETYPEEditor" ref="enumMENUETYPEEditor"></property>
-		<property name="ofdbController" ref="ofdbController"></property>
-		<property name="ofdbService" ref="ofdbService"></property>
-		<property name="crudService" ref="crudService"></property>
-		<property name="navigationManager" ref="navigationManager"></property>
-		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-	</bean>
-   
-   	<bean id="angularController" class="de.mw.mwdata.core.web.control.AngularController">
-<!-- 		<property name="ofdbService" ref="ofdbService"></property> -->
-	</bean>
-   
 	<!-- .................... Ofdb-Controller-Configuration ..................... -->
 	
-	<!-- FIXME: scope prototype here not correct -->
-	<bean id="ofdbController" class="de.mw.mwdata.core.web.control.OfdbController" scope="singleton">
-		<property name="ofdbService" ref="ofdbService"></property>
-    </bean>
-  	   
   	<bean id="adapter1" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">	    
 	</bean>
   	
-	
-	<bean id="mwHandlerMapping" name="mwHandlerMapping" scope="singleton" class="de.mw.mwdata.core.web.OfdbProvidingHandlerMapping">
-		<property name="ofdbService" ref="ofdbService"></property>
-    </bean>
 
   	
 	<context:component-scan base-package="de.mw.mwdata.app.admin.web.control" >

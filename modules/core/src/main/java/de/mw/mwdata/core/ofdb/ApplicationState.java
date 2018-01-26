@@ -1,7 +1,7 @@
 package de.mw.mwdata.core.ofdb;
 
 /**
- * State enum that identifies the current state of the application. The {@link AbstractApplicationFactory} keeps this
+ * State enum that identifies the current state of the application. The {@link DefaultApplicationFactory} keeps this
  * state for sending events of the progress.
  *
  * @author mwilbers
