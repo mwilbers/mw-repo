@@ -15,13 +15,11 @@ import de.mw.mwdata.core.ofdb.domain.AnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte;
-import de.mw.mwdata.core.ofdb.domain.IMenue;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
 import de.mw.mwdata.core.ofdb.domain.TabSpeig;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.ofdb.exception.OfdbUniqueConstViolationException;
-import de.mw.mwdata.core.utils.ITree;
 
 /**
  * This interface should provide only readonly-methods from ofdb-tables.
@@ -33,22 +31,12 @@ import de.mw.mwdata.core.utils.ITree;
  */
 public interface IOfdbService {
 
-	/**
-	 * Loads the registerd Menu-entries for the application-menu-bar
-	 */
-	public ITree findMenues();
-
 	public IAnsichtDef findAnsichtByName( final String viewName );
 
 	/**
 	 * Loads the ansichtDef given by the id
 	 */
 	public IAnsichtDef findAnsichtById( final long ansichtId );
-
-	/**
-	 * @return the Menue-domain by the given menu-id
-	 */
-	public IMenue findMenuById( final long menueId );
 
 	/**
 	 * Used for initialization and registration of ofdb-data for the given urlpath to the view

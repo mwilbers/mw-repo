@@ -28,7 +28,6 @@ import de.mw.mwdata.core.ofdb.domain.AnsichtOrderBy;
 import de.mw.mwdata.core.ofdb.domain.AnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte;
-import de.mw.mwdata.core.ofdb.domain.IMenue;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig.DBTYPE;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
@@ -39,7 +38,6 @@ import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.ValueType;
 import de.mw.mwdata.core.utils.ClassNameUtils;
-import de.mw.mwdata.core.utils.ITree;
 import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.ordb.query.OperatorEnum;
 
@@ -61,17 +59,11 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Autowired
 	private ICrudDao			crudDao;
 
-	private IMenueDao			ofdbMenueDao;
-
 	@Autowired
 	private OfdbMapper			ofdbMapper;
 
 	/** FIXME: holding map as state in OfdbDao ? */
 	// private Map<String, OfdbMapper> tableMap = new HashMap<String, OfdbMapper>();
-
-	public void setOfdbMenueDao( final IMenueDao ofdbMenueDao ) {
-		this.ofdbMenueDao = ofdbMenueDao;
-	}
 
 	// @Override
 	@Override
@@ -184,12 +176,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 	// @Override
 	@Override
-	public ITree findMenues() {
-		return this.ofdbMenueDao.findMenues();
-	}
-
-	// @Override
-	@Override
 	public TabDef findTableDefByFullClassName( final String fullClassName ) {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
@@ -221,12 +207,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	public IAnsichtDef findAnsichtDefByName( final String ansichtName ) {
 		// FIXME: should be replaced by genericDao.findByName
 		return (IAnsichtDef) this.crudDao.findByName( AnsichtDef.class, ansichtName );
-	}
-
-	// @Override
-	@Override
-	public IMenue findMenueById( final long menueId ) {
-		return this.ofdbMenueDao.findById( menueId );
 	}
 
 	// @Override

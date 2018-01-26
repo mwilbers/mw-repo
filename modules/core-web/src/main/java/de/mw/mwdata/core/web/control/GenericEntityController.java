@@ -48,9 +48,7 @@ import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.ofdb.service.IOfdbService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IPagingEntityService;
-import de.mw.mwdata.core.utils.ITree;
 import de.mw.mwdata.core.utils.PaginatedList;
-import de.mw.mwdata.core.utils.TreeItem;
 import de.mw.mwdata.core.web.Config;
 import de.mw.mwdata.core.web.navigation.NavigationException;
 import de.mw.mwdata.core.web.navigation.NavigationManager;
@@ -110,8 +108,6 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 	private NavigationManager navigationManager;
 
 	private OfdbCacheManager ofdbCacheManager;
-
-	protected ITree<TreeItem<Menue>> menues;
 
 	private MessageSource messageSource;
 
@@ -229,11 +225,11 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		NavigationState state = SessionUtils.getNavigationState(session);
 		this.navigationManager.doList(getUrl().getServletSubPath(), pi, menue, state);
 
-		if (null == this.menues) {
-			// FIXME: check if this.menues is loaded redundant
-			// TODO: improve performance of menu-call
-			this.menues = this.ofdbController.findMenues();
-		}
+		// if (null == this.menues) {
+		// // FIXME: check if this.menues is loaded redundant
+		// // TODO: improve performance of menu-call
+		// this.menues = this.ofdbController.findMenues();
+		// }
 
 		// initialize ofPropList
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(state.getUrlPath());
@@ -251,7 +247,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		}
 
 		ModelAndView mav = getView(Config.TILES_VIEWDEF_LIST_ENTITIES);
-		mav.addObject("menues", this.menues);
+		// mav.addObject("menues", this.menues);
 
 		// ... testen, indem im menue AnsichtSpalten aufgerufen wird
 		mav.addObject("entitiesArray", entitiesArray.getItems());
@@ -282,10 +278,10 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		NavigationState state = SessionUtils.getNavigationState(request.getSession());
 		SessionUtils.logSession(request.getSession());
 
-		if (null == this.menues) {
-			// TODO: improve performance of menu-call
-			this.menues = this.ofdbController.findMenues();
-		}
+		// if (null == this.menues) {
+		// // TODO: improve performance of menu-call
+		// this.menues = this.ofdbController.findMenues();
+		// }
 
 		// if we want to sort the records the paging has to be reset
 		this.navigationManager.doSort(col, asc, state);
@@ -306,7 +302,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		}
 
 		ModelAndView mav = getView(Config.TILES_VIEWDEF_LIST_ENTITIES);
-		mav.addObject("menues", this.menues);
+		// mav.addObject("menues", this.menues);
 
 		// ... testen, indem im menue AnsichtSpalten aufgerufen wird
 		mav.addObject("entitiesArray", entitiesArray.getItems());
@@ -396,7 +392,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		ofPropList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.SELECT);
 
 		mav.addObject("entitiesArray", entitiesArray.getItems());
-		mav.addObject("menues", this.menues);
+		// mav.addObject("menues", this.menues);
 		mav.addObject("filterSet", state.getFilterSet());
 		mav.addObject("ofPropList", ofPropList);
 		mav.addObject("entitiesPl", entitiesArray);
@@ -433,7 +429,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 		List<OfdbField> ofPropList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.UPDATE);
 
 		ModelAndView mav = getView(Config.TILES_VIEWDEF_EDIT_ENTITY);
-		mav.addObject("menues", this.menues);
+		// mav.addObject("menues", this.menues);
 		mav.addObject("ofPropList", ofPropList);
 		// TODO: instead of currentObject use name editObject here ...
 		mav.addObject("currentObject", entityTO);
@@ -480,9 +476,9 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 			this.crudService.insert(currentObject);
 		}
 
-		if (currentObject instanceof Menue) {
-			this.menues = this.ofdbController.findMenues();
-		}
+		// if (currentObject instanceof Menue) {
+		// this.menues = this.ofdbController.findMenues();
+		// }
 
 		int pageIndex = state.getPageIndex();
 		PaginatedList<E> entitiesPl = null;
@@ -498,7 +494,7 @@ public class GenericEntityController<E extends AbstractMWEntity> implements Crud
 
 		List<OfdbField> ofPropList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.SELECT);
 
-		mav.addObject("menues", this.menues);
+		// mav.addObject("menues", this.menues);
 		mav.addObject("ofPropList", ofPropList);
 		mav.addObject("entitiesPl", entitiesPl);
 		mav.addObject("entities", this.entities);

@@ -23,14 +23,11 @@ import de.mw.mwdata.core.mocks.DomainMockFactory;
 import de.mw.mwdata.core.ofdb.AbstractOfdbInitializationTest;
 import de.mw.mwdata.core.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.core.ofdb.def.OfdbPropMapper;
-import de.mw.mwdata.core.ofdb.domain.AnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.AnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
-import de.mw.mwdata.core.ofdb.domain.IMenue.MENUETYP;
 import de.mw.mwdata.core.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig.DBTYPE;
-import de.mw.mwdata.core.ofdb.domain.Menue;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
 import de.mw.mwdata.core.ofdb.domain.TabSpeig;
 import de.mw.mwdata.core.ofdb.exception.OfdbException;
@@ -39,8 +36,6 @@ import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.ValueType;
 import de.mw.mwdata.core.test.data.TestConstants;
-import de.mw.mwdata.core.utils.ITree;
-import de.mw.mwdata.core.utils.TreeItem;
 import de.mw.mwdata.ordb.query.OperatorEnum;
 
 /**
@@ -144,52 +139,6 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		this.getCrudDao().delete( tabDef );
 		List<TabDef> tabDefs = this.getCrudDao().findAll( TabDef.class );
 		Assert.assertEquals( tabDefs.size(), 1 );
-
-	}
-
-	@Test
-	public void testLoadMenues() throws OfdbMissingMappingException {
-
-		LOGGER.info( "++++++++++++++++++++++++++++++++++++++++++++++++++++" );
-		LOGGER.info( "+++++testLoadMenues+++++++++" );
-		LOGGER.info( "++++++++++++++++++++++++++++++++++++++++++++++++++++" );
-
-		IOfdbService oService = this.getOfdbService();
-		ITree menues = oService.findMenues();
-		Assert.assertNotNull( menues );
-
-		this.applicationFactory.configure();
-
-		AnsichtDef ansicht0 = DomainMockFactory.createAnsichtDefMock( "ansicht0", this.getTestBereich(),
-				!isAppInitialized() );
-		saveForTest( ansicht0 );
-
-		Menue menue0 = DomainMockFactory.createMenueMock( "menue0", ansicht0, 0, MENUETYP.KNOTEN, 42,
-				!isAppInitialized() );
-		saveForTest( menue0 );
-		Assert.assertNotNull( menue0.getId() );
-
-		Menue menue1 = DomainMockFactory.createMenueMock( "menue1", ansicht0, 1, MENUETYP.KNOTEN, 43,
-				!isAppInitialized() );
-		menue1.setHauptMenueId( menue0.getId() );
-		saveForTest( menue1 );
-
-		List<Menue> unterMenues = new ArrayList<Menue>();
-		unterMenues.add( menue1 );
-		menue0.setUnterMenues( unterMenues );
-		saveForTest( menue0 );
-
-		this.applicationFactory.init();
-
-		menues = oService.findMenues();
-		Assert.assertNotNull( menues.getRootItem().getChildren() );
-		Assert.assertTrue( menues.getRootItem().getChildren().size() == 1 );
-		TreeItem<Menue> treeItem0 = (TreeItem<Menue>) menues.getRootItem().getChildren().get( 0 );
-		Assert.assertEquals( (treeItem0.getEntity()).getName(), "menue0", "Not correct menue saved in ITree." );
-
-		// TODO: ... do following here:
-		// 1. hibernate save-update-cascade for saving unterMenues
-		// 2. in setUnterMenues set HauptMenueId
 
 	}
 

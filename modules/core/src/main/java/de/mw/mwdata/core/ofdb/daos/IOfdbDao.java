@@ -13,12 +13,10 @@ import de.mw.mwdata.core.ofdb.domain.AnsichtOrderBy;
 import de.mw.mwdata.core.ofdb.domain.AnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte;
-import de.mw.mwdata.core.ofdb.domain.IMenue;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
 import de.mw.mwdata.core.ofdb.domain.TabSpeig;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
-import de.mw.mwdata.core.utils.ITree;
 
 /**
  * @author Wilbers, Markus
@@ -65,18 +63,6 @@ public interface IOfdbDao {
 	public List<AnsichtTab> findAnsichtTabAnsichtId( final long ansichtId );
 
 	/**
-	 * Loads all menu-items in form of a tree-structure.
-	 *
-	 */
-	public ITree findMenues();
-
-	// /**
-	// * Loads all defined registered tables from FX_TabDef_K
-	// *
-	// */
-	// public List<TabDef> findRegisteredTabDef();
-
-	/**
 	 * Loads the table-object given by the tablename
 	 */
 	public TabDef findTabDefByTableName( final String tableName );
@@ -87,18 +73,6 @@ public interface IOfdbDao {
 	public IAnsichtDef findAnsichtDefByName( final String ansichtName );
 
 	/**
-	 *
-	 * @param menueId
-	 * @return
-	 */
-	public IMenue findMenueById( final long menueId );
-
-	// /**
-	// * Loads the view given by the called urlPath
-	// */
-	// public AnsichtDef findAnsichtByUrlPath( final String urlPath );
-
-	/**
 	 * Initializes the Persistence-Mapper from OFDB-TabSpeigs to propertynames.
 	 *
 	 * @param type
@@ -107,47 +81,6 @@ public interface IOfdbDao {
 	 */
 	public Map<String, OfdbPropMapper> initializeMapper( final Class<? extends AbstractMWEntity> type,
 			final String tableName );
-
-	// /**
-	// * Loads a map from persistence layer containing tabSpeig.spalte as key and propertyname as value by the given
-	// * tabSpeigs
-	// *
-	// * @param tabSpeigs
-	// * @return
-	// */
-	// public Map<String, OfdbPropMapper> loadPropertyMapping( final List<TabSpeig> tabSpeigs );
-
-	// /**
-	// * Sets the propertyname of the OfdbField given by the TabSpeig
-	// *
-	// * @param ofProp
-	// * @param tabSpeig
-	// */
-	// public void setFieldName( OfdbField ofProp, TabSpeig tabSpeig );
-
-	// /**
-	// * Sets the value of the entity given by the OfdbField
-	// *
-	// * @param ofProp
-	// * @param entity
-	// */
-	// public void setFieldValue( OfdbField ofProp, AbstractMWEntity entity );
-
-	// /**
-	// * Sets the value-list of the Ofdbfield given by the TabSpeig
-	// *
-	// * @param ofField
-	// * the Ofdbfield whose value-list is set
-	// * @param tabSpeig
-	// * the TabSpeig for finding the property of the OfdbField
-	// * @param dao
-	// * the dao for access to the values
-	// * @param ansichtOrderList
-	// * @throws OfdbMissingMappingException
-	// */
-	// public void setListOfValues( final OfdbField ofField, final TabSpeig tabSpeig,
-	// final IGenericDao<AbstractMWEntity> dao, final List<AnsichtOrderBy> ansichtOrderList )
-	// throws OfdbMissingMappingException;
 
 	public Object getEntityValue( final AbstractMWEntity entity, final int propPersistenceIndex )
 			throws OfdbMissingMappingException;

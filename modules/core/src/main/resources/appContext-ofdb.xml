@@ -21,9 +21,6 @@
 		<constructor-arg value="#{ T(de.mw.mwdata.core.domain.Sequence)}" />
 	</bean>
 
-
-	<bean id="ofdbMenueDao" parent="abstractHbnDao" class="de.mw.mwdata.core.ofdb.daos.MenueDao" />
-
 	<bean id="crudDao" parent="abstractHbnDao" class="de.mw.mwdata.core.daos.CrudDao" />
 
 
@@ -39,9 +36,7 @@
 
 	<bean id="ofdbMapper" parent="abstractHbnDao" class="de.mw.mwdata.core.ofdb.daos.OfdbMapper" />
 
-	<bean id="ofdbDao" parent="abstractHbnDao" class="de.mw.mwdata.core.ofdb.daos.OfdbDao">
-		<property name="ofdbMenueDao" ref="ofdbMenueDao"></property>
-	</bean>
+	<bean id="ofdbDao" parent="abstractHbnDao" class="de.mw.mwdata.core.ofdb.daos.OfdbDao" />
 
 	<bean id="ofdbValidator" class="de.mw.mwdata.core.ofdb.validate.OfdbValidator">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
@@ -54,7 +49,7 @@
 		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="crudService" ref="crudService" />
-		<property name="menueDao" ref="ofdbMenueDao" />
+		
 	</bean>
 	
 	<bean id="menuService" class="de.mw.mwdata.core.service.MenuService">

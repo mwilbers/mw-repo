@@ -25,7 +25,6 @@ import de.mw.mwdata.core.ofdb.OfdbUtils;
 import de.mw.mwdata.core.ofdb.SortKey;
 import de.mw.mwdata.core.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.core.ofdb.cache.ViewConfigHandle;
-import de.mw.mwdata.core.ofdb.daos.IMenueDao;
 import de.mw.mwdata.core.ofdb.daos.IOfdbDao;
 import de.mw.mwdata.core.ofdb.def.CRUD;
 import de.mw.mwdata.core.ofdb.def.ConfigOfdb;
@@ -38,7 +37,6 @@ import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
-import de.mw.mwdata.core.ofdb.domain.IMenue;
 import de.mw.mwdata.core.ofdb.domain.ITabDef;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
@@ -56,7 +54,6 @@ import de.mw.mwdata.core.ofdb.query.QueryValue;
 import de.mw.mwdata.core.ofdb.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.utils.ClassNameUtils;
-import de.mw.mwdata.core.utils.ITree;
 import de.mw.mwdata.ordb.query.OfdbOrderSet;
 import de.mw.mwdata.ordb.query.OfdbQueryModel;
 import de.mw.mwdata.ordb.query.OfdbWhereRestriction;
@@ -76,7 +73,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	private IOfdbDao			ofdbDao;
 	private OfdbCacheManager	ofdbCacheManager;
-	private IMenueDao			menueDao;
+
 	private ICrudService		crudService;
 
 	protected IOfdbDao getOfdbDao() {
@@ -91,29 +88,13 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		this.ofdbCacheManager = ofdbCacheManager;
 	}
 
-	public void setMenueDao( final IMenueDao menueDao ) {
-		this.menueDao = menueDao;
-	}
-
 	public void setCrudService( final ICrudService crudService ) {
 		this.crudService = crudService;
 	}
 
 	@Override
-	public ITree findMenues() {
-		// FIXME: method still needed ?
-		return this.menueDao.findMenues();
-		// return this.getOfdbDao().findMenues();
-	}
-
-	@Override
 	public IAnsichtDef findAnsichtById( final long ansichtId ) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public IMenue findMenuById( final long menueId ) {
-		return this.menueDao.findById( menueId );
 	}
 
 	@Override
@@ -620,50 +601,10 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	}
 
-	// @Override
-	// public List<IEntity[]> loadView( final String viewName, final List<SortKey>... sortKeys ) {
-	//
-	// List<SortKey> cols = prepareSortColumns( viewName, sortKeys );
-	// String sql = buildSQL( viewName, cols );
-	// List<IEntity[]> result = this.getOfdbDao().executeQuery( sql );
-	//
-	// return result;
-	//
-	// }
-
-	// protected List<SortKey> prepareSortColumns( final String viewName, final List<SortKey>... sortKeys ) {
-	// List<SortKey> cols = new ArrayList<SortKey>();
-	//
-	// if ( ArrayUtils.isEmpty( sortKeys ) ) {
-	//
-	// ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewName );
-	// List<IAnsichtOrderBy> ansichtOrderList = viewHandle.getViewOrders();
-	//
-	// for ( IAnsichtOrderBy orderBy : ansichtOrderList ) {
-	//
-	// ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtOrderBy( orderBy );
-	// String propName = mapTabSpeig2Property( tabSpeig );
-	//
-	// SORTDIRECTION dir = (orderBy.getAufsteigend() ? SORTDIRECTION.ASC : SORTDIRECTION.DESC);
-	// cols.add( new SortKey( propName, dir.getName() ) );
-	// }
-	//
-	// } else {
-	// cols = sortKeys[0];
-	// }
-	//
-	// return cols;
-	// }
-
 	@Override
 	public List<IEntity[]> executeQuery( final String sql ) {
 		return this.getOfdbDao().executeQuery( sql );
 	}
-
-	// @Override
-	// public long executeCountQuery( final String sqlCount ) {
-	// return this.getOfdbDao().executeCountQuery( sqlCount );
-	// }
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)

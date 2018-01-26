@@ -12,11 +12,9 @@ import de.mw.mwdata.core.ofdb.domain.AnsichtDef;
 import de.mw.mwdata.core.ofdb.domain.AnsichtSpalten;
 import de.mw.mwdata.core.ofdb.domain.AnsichtTab;
 import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
-import de.mw.mwdata.core.ofdb.domain.IMenue.MENUETYP;
 import de.mw.mwdata.core.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.core.ofdb.domain.ITabSpeig.DBTYPE;
-import de.mw.mwdata.core.ofdb.domain.Menue;
 import de.mw.mwdata.core.ofdb.domain.TabDef;
 import de.mw.mwdata.core.ofdb.domain.TabSpeig;
 
@@ -121,9 +119,9 @@ public class DomainMockFactory {
 
 	}
 
-	public static AnsichtTab createAnsichtTabMock( final AnsichtDef viewDef, final TabDef tabDef,
-			final int reihenfolge, final String joinTyp, final String join1SpalteAKey, final String join2SpalteAKey,
-			final String join2TabAKey, final boolean setDefaultCredentials ) {
+	public static AnsichtTab createAnsichtTabMock( final AnsichtDef viewDef, final TabDef tabDef, final int reihenfolge,
+			final String joinTyp, final String join1SpalteAKey, final String join2SpalteAKey, final String join2TabAKey,
+			final boolean setDefaultCredentials ) {
 
 		AnsichtTab viewTab = new AnsichtTab();
 		viewTab.setName( viewDef.getName() );
@@ -215,30 +213,6 @@ public class DomainMockFactory {
 		// setDefaultCreationProperties( tabDef );
 
 		return tabDef;
-	}
-
-	public static Menue createMenueMock( final String menueName, final AnsichtDef ansicht, final int ebene,
-			final MENUETYP typ, final long menueId, final boolean setDefaultCredentials ) {
-
-		Menue menue = new Menue();
-		menue.setName( menueName );
-		menue.setAktiv( true );
-		menue.setAnsichtDef( ansicht );
-		menue.setOfdb( "X" );
-		menue.setSystem( false );
-		menue.setAnzeigeName( menueName );
-		menue.setEbene( ebene );
-		menue.setMenuId( menueId );
-		menue.setTyp( typ );
-
-		if ( setDefaultCredentials ) {
-			menue.setAngelegtAm( new Date() );
-			menue.setAngelegtVon( Constants.SYS_USER_DEFAULT );
-		}
-
-		// setDefaultCreationProperties( menue );
-
-		return menue;
 	}
 
 }
