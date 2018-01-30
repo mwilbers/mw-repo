@@ -16,5 +16,6 @@
     <description>MWData Admin Application aggregator</description>
     <modules>
 		<module>app.admin.client</module>
-    </modules>
+		<module>app.admin.server</module>
+	</modules>
 </project>

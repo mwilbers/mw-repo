@@ -8,9 +8,9 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
   
-	<artifactId>app.calendar.service</artifactId>
+	<artifactId>app.calendar.server</artifactId>
 	<packaging>jar</packaging>
-	<name>MWDATA Calendar web application - Service backend</name>
+	<name>MWDATA Calendar web application - Server implementation</name>
 
 	<dependencies>
 		

@@ -15,7 +15,7 @@
     <name>MWDATA Calendar Application</name>
     <description>MWData Calendar Application aggregator</description>
     <modules>
-		<module>app.calendar.service</module>
+		<module>app.calendar.server</module>
 		<module>app.calendar.client</module>
     </modules>
 </project>

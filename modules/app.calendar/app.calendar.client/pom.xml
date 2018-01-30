@@ -10,10 +10,37 @@
   
 	<artifactId>app.calendar.client</artifactId>
 	<packaging>war</packaging>
-	<name>MWDATA Calendar web application - Client</name>
+	<name>MWDATA Calendar web application - Client implementation</name>
 
 	<dependencies>
 		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>de.mw.mwdata.core</groupId>
+			<artifactId>core-web</artifactId>
+		</dependency>
+    
 		<!-- test scope -->
 		<dependency>
 			<groupId>org.testng</groupId>
