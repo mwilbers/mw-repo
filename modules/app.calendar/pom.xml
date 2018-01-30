@@ -9,12 +9,13 @@
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../mw.parent</relativePath>
     </parent>
-    <groupId>de.mw.mwdata.admin</groupId>
-	<artifactId>app.admin</artifactId>
+    <groupId>de.mw.mwdata.calendar</groupId>
+	<artifactId>app.calendar</artifactId>
 	<packaging>pom</packaging>
-    <name>MWDATA Admin Application</name>
-    <description>MWData Admin Application aggregator</description>
+    <name>MWDATA Calendar Application</name>
+    <description>MWData Calendar Application aggregator</description>
     <modules>
-		<module>app.admin.client</module>
+		<module>app.calendar.service</module>
+		<module>app.calendar.client</module>
     </modules>
 </project>

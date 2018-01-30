@@ -8,9 +8,9 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
   
-	<artifactId>app.admin.angwebrest</artifactId>
+	<artifactId>app.admin.client</artifactId>
 	<packaging>war</packaging>
-	<name>MWDATA AngularJS based REST Maven Webapp</name>
+	<name>MWDATA Administration Webapp - Client</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,11 +75,11 @@
 				<version>2.4</version>
 				<configuration>
 					<warSourceDirectory>src/main/webapp</warSourceDirectory>
-					<warName>app.admin.angwebrest</warName>
+					<warName>app.admin.client</warName>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>app.admin.angwebrest</finalName>
+		<finalName>app.admin.client</finalName>
 	</build>
 </project>

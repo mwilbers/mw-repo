@@ -40,23 +40,24 @@
 	<modules>
 		<module>../common-utils</module>
     	<module>../common-testframework</module>
-		<module>../mwdata.ofdb-api</module>
-		<module>../mwdata.core</module>
+		<module>../ofdb-api</module>
+		<module>../core</module>
 		
-		<module>../mwdata.core.rights</module>  
-    	<module>../mwdata.core.web</module>
-    	<module>../mwdata.ui-api</module>
-<!--     	<module>../mwdata.ui-springweb</module> -->
-		<module>../mwdata.app.admin</module>
+		<module>../core-web</module>
+    	<module>../ui-api</module>
+
+		<module>../app.admin</module>
+		
+		<module>../app.calendar</module>
+		<module>../calendar-api</module>
+		<module>../calendar-google</module>
 		
     </modules>
     
 <!-- 3.0.2.RELEASE -->
 
 	<properties>
-<!-- 		<spring.version>4.2.4.RELEASE</spring.version> -->
 		<spring.version>4.3.1.RELEASE</spring.version>
-		<!-- 4.2.4.RELEASE 3.2.8.RELEASE -->
 		<java.version>1.7</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<apachetiles.version>3.0.5</apachetiles.version>
