@@ -14,7 +14,8 @@ package de.mw.mwdata.core.web.uimodel;
  */
 public class UiUserConfig implements UiJsonConvertable {
 
-	private static final String DEFAULT_REST_URL = "http://localhost:8080/app.admin.angwebrest/admin/tabDef/";
+	// FIXME: dynamice url
+	private static final String DEFAULT_REST_URL = "http://localhost:8080/app.admin.client/admin/tabDef/";
 
 	public String getDefaultRestUrl() {
 		return DEFAULT_REST_URL;

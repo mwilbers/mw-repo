@@ -5,7 +5,7 @@
     <param-value>classpath:appContext-core.xml
 					 classpath:appContext-ofdb.xml
 					 classpath:appContext-core-web.xml
-					 classpath:appContext-angwebrest.xml</param-value>
+					 classpath:appContext-adminClient.xml</param-value>
   </context-param>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

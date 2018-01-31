@@ -60,7 +60,6 @@
 		<spring.version>4.3.1.RELEASE</spring.version>
 		<java.version>1.7</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<apachetiles.version>3.0.5</apachetiles.version>
 		<jackson.version>2.7.5</jackson.version>
 	</properties>
 
@@ -107,16 +106,6 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.4.2</version>
 				</plugin>
-<!-- 				<plugin> -->
-<!-- 					<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 					<artifactId>maven-eclipse-plugin</artifactId> -->
-<!-- 					<version>2.10</version> -->
-<!-- 					<configuration> -->
-<!-- 						<downloadSources>true</downloadSources> -->
-<!-- 						<downloadJavadocs>true</downloadJavadocs> -->
-<!-- 					</configuration> -->
-<!-- 				</plugin> -->
-
 
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 				<plugin>
@@ -177,63 +166,32 @@
 		    	<artifactId>jcl-over-slf4j</artifactId>     
 		    	<version>1.7.21</version>  
 		    </dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>log4j</groupId> -->
-<!-- 				<artifactId>log4j</artifactId> -->
-<!-- 				<version>1.2.14</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 		    	<groupId>org.slf4j</groupId> -->
-<!-- 		    	<artifactId>slf4j-api</artifactId> -->
-<!-- 		    	<version>1.5.10</version> -->
-<!-- 		    </dependency> -->
-<!-- 		    <dependency> -->
-<!-- 				<groupId>org.slf4j</groupId> -->
-<!-- 				<artifactId>slf4j-simple</artifactId> -->
-<!-- 				<version>1.5.10</version> -->
-<!-- 			</dependency> -->
-			
 			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc5</artifactId>
 				<version>11.2.0.1.0</version>
 			</dependency>
 			
-			<!-- For spring 4 hibernate 4 configuration see http://www.baeldung.com/hibernate-4-spring -->
-			
+			<!-- For spring 4 hibernate 4 configuration see http://www.baeldung.com/hibernate-4-spring -->			
 			<dependency>
 				<groupId>javassist</groupId>
 				<artifactId>javassist</artifactId>
-<!-- 				<version>3.8.0.GA</version> -->
 				<version>3.18.2-GA</version>
 			</dependency>
-			
-			
 			<dependency>
 			  <groupId>org.hibernate.javax.persistence</groupId>
-<!--  			  <artifactId>hibernate-jpa-2.0-api</artifactId>  -->
-<!--  			  <version>1.0.1.Final</version> -->
 			  <artifactId>hibernate-jpa-2.1-api</artifactId>
 			  <version>1.0.0.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
-<!-- 				<version>3.5.6-Final</version> -->
 				<version>4.3.6.Final</version> 
-<!-- 				<version>4.2.21.Final</version> 				 -->
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.hibernate</groupId> -->
-<!-- 				<artifactId>hibernate-annotations</artifactId> -->
-<!-- 				<version>3.5.6-Final</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!--                 <groupId>org.hibernate</groupId> -->
-<!--                 <artifactId>hibernate-commons-annotations</artifactId> -->
-<!--                 <version>3.2.0.Final</version> -->
-<!--             </dependency> -->
+			
+			
 
+			<!-- json jackson libraries -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
@@ -245,6 +203,7 @@
 			    <version>${jackson.version}</version>
 			</dependency>
 
+			<!-- FIXME: deps still used ? -->
             <dependency>
             	<groupId>org.apache.tomcat</groupId>
             	<artifactId>tomcat-dbcp</artifactId>
@@ -308,23 +267,6 @@
 				<version>${spring.version}</version>
 			</dependency> 
 			
-			<dependency>
-				<groupId>de.mw.mwdata.core</groupId>
-				<artifactId>core</artifactId>
-				<version>1.0-SNAPSHOT</version>
-			</dependency>
-		 	<dependency>
-				<groupId>de.mw.mwdata.core</groupId>
-				<artifactId>core-rights</artifactId>
-				<version>1.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.mw.mwdata.admin</groupId>
-				<artifactId>app.admin.business</artifactId>
-				<version>1.0-SNAPSHOT</version>
-			</dependency>
-						
-			
 			<!--  web -->
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -342,11 +284,10 @@
 		         <version>1.1.2</version>
 		     </dependency>
 
-			<!-- javax.servlet -->
+			<!-- javax.servlet: FIXME: still needed ? -->
 			 <dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
-	<!-- 			<version>2.5</version> -->
 				<version>3.1.0</version>
 				<scope>provided</scope>
 			</dependency>
@@ -361,14 +302,8 @@
 				<artifactId>jstl</artifactId>
 				<version>1.2</version>
 			</dependency>
-		     
-<!-- 		     <dependency> -->
-<!-- 			    <groupId>org.apache.tiles</groupId> -->
-<!-- 			    <artifactId>tiles-extras</artifactId> -->
-<!-- 			    <version>2.2.2</version>	     -->
-<!-- 			  </dependency> -->
 
-			<!-- spring 4, tiles 3.0.5 migration -->
+			<!-- spring 4, tiles 3.0.5 migration 
 			<dependency>
 	            <groupId>org.apache.tiles</groupId>
 	            <artifactId>tiles-core</artifactId>
@@ -389,47 +324,67 @@
 	            <artifactId>tiles-jsp</artifactId>
 	            <version>${apachetiles.version}</version>
 	        </dependency>
-
+-->
 			  
+			  <!-- MWData deps -->
 			  <dependency>
 				<groupId>de.mw.common</groupId>
 				<artifactId>common-utils</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
-			  
-			  
-			  <dependency>
-				<groupId>de.mw.mwdata.core</groupId>
-				<artifactId>core-web</artifactId>
-				<version>1.0-SNAPSHOT</version>
-			</dependency>
-		    
 		    <dependency>
 				<groupId>de.mw.mwdata.core</groupId>
 				<artifactId>ofdb-api</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
-			  
 			<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>core</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.admin</groupId>
+				<artifactId>app.admin.business</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.admin</groupId>
+				<artifactId>app.admin.client</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.calendar</groupId>
+				<artifactId>app.calendar.server</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.calendar</groupId>
+				<artifactId>app.calendar.client</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+						  
+			<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>core-web</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+		    <dependency>
 				<groupId>de.mw.mwdata.ui</groupId>
 				<artifactId>ui-api</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			
+			
+			<!--  testing  -->
 			<dependency>
 		         <groupId>org.hsqldb</groupId>
 		         <artifactId>hsqldb</artifactId>
 		         <version>2.3.3</version>
-<!-- 		         <version>1.8.0.10</version> -->
-<!-- 		         <version>2.2.8</version>   -->
 		      </dependency>
-			
-			<!--  testing  -->
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
 				<version>6.9.10</version>
-<!-- 				<scope>test</scope> -->
 			</dependency>
 			<dependency>
 			    <groupId>org.springframework</groupId>
@@ -437,7 +392,6 @@
 			    <version>1.0.0.M2</version>
 			    <scope>test</scope>
 			</dependency>
-			
 			<dependency>
 				<groupId>de.mw.common</groupId>
 				<artifactId>common-testframework</artifactId>
@@ -454,7 +408,6 @@
 			<groupId>p6spy</groupId>
 			<artifactId>p6spy</artifactId>
 			<version>1.3</version>
-<!-- 			<version>2.0.0</version> -->
 		</dependency>
 			
 		</dependencies>

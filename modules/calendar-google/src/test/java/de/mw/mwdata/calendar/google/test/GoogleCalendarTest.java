@@ -93,7 +93,7 @@ public class GoogleCalendarTest {
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void testGoogleCalendar() throws IOException {
 		// Build a new authorized API client service.
 		// Note: Do not confuse this class with the

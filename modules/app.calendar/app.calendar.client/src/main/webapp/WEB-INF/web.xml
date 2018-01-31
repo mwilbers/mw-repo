@@ -5,7 +5,9 @@
 	id="WebApp_ID" version="2.5">
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:appContext-calendarService.xml</param-value>
+		<param-value>classpath:appContext-core.xml
+					 classpath:appContext-ofdb.xml
+					 classpath:appContext-calendarServer.xml</param-value>
 	</context-param>
 
 	<listener>

@@ -37,8 +37,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>de.mw.mwdata.calendar</groupId>
+			<artifactId>app.calendar.server</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>de.mw.mwdata.core</groupId>
-			<artifactId>core-web</artifactId>
+			<artifactId>core</artifactId>
 		</dependency>
     
 		<!-- test scope -->
@@ -55,6 +59,6 @@
 		<plugins>
 			
 		</plugins>
-		<finalName>app.admin.angwebrest</finalName>
+		<finalName>app.calendar.client</finalName>
 	</build>
 </project>
