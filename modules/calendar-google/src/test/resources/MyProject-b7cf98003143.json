@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "stately-rock-193321",
+  "private_key_id": "b7cf980031433217db11b77bdab288459dee191c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQChljFfAGEmPx4I\nrGIknhXfx7DhZpOnFMzTX4vCxT9ZXz37In5jGuQGTxuWjLMaBg3e8YTHxHhOBXA3\nbze9JjLLeISgW3ssiDuGygbBT51VTWQfSZJL/dd5dHPwxNi9SNe+BxlRizE9zGVL\nnw2G2LPEJ2H0rUpg8nXHTvAX49gFzYwm6QoCqifZ50GqEEb5bzWUDI4lpIDsOGBL\nddOB7hqAic9HA3oCTAD8yh2sveLMzez45jI2qLqDOZ1dqimnie9QFfUXuCvZ9C23\nwE5mdJIpz8sn2PWKXeJhrHRSbvrnkWIimFLKPuHhRk77ldP+ozAalR58LfyQNDvN\n+jdhoUCPAgMBAAECggEADs+McO/A99d7MkJSsJaI3L0Z+l8Dk6H1cD5muhCIUPHI\n5ZbwzLavReDEX5U/6Ve6t7+dcw4QFN6svXgFPOIeb8X5KhWYgalvA1jLK7bXbfUt\nAy0kKrD2qhxBcEUqtJbTp4hRCsdeWRK+CiNnAwAj4gvWD64+jgpLP1x950KsD0P1\nktNww/TMDaL5pmMu8d18NA6I7LVGDWkR5L4yLnlfsupYvQo8WdKlxIvrvJPACURk\n1Ynxp4hB8ePTtszOqa0emsb8LlUFsRGr9kcv8iBDrB8EGe0HJg5Dihv3bxtuvDoT\nRPZTSDcHZSnfrGU7nc3UrgX0wn0iHv0UCkADrnlWgQKBgQDRWIdMStQ/Sw7nL3dq\nADDBSX4d+Az6eMOd+udgzvtyHfyULv4RwPecQ2+2MvK9Dy3Klg/L4J7PnueoERH8\n0Hn1heTZUlXQ5VZ3wot/HkSn2bZV4irdmguumJqpHY+zeEdTy28SnmcVNLBKa0GF\nL3yIpxI6oeILICAtHWoDd9aPzwKBgQDFmPCGeDokoSBoDulEZyJ+n8JC3a06OQXm\nP60ira6tJU8nFwrCpKt6MdgyhjeJ7rOw8VC+qSVB3eUL0RxlVF2RuT9t9zHbL6AC\nwXaD9uheudhqR4y4pMlKkdD+LFq/PteF7AoWV0yLP7sZ/Rd+MpmSRt0/Siuy3vWK\n3IqqXhezQQKBgE2t6dZXVdZ+hXMnW8oLdAvkt1Vre3VdZkiylzSG2SqJEfXyUfhI\ngBiNtWAIG6YngbhQYmAmYwdrUU49t0z2FqsSGc7CDHHNB368w4JRuuwFjvDjUUCV\nLoyEt67U90OC+ASR0g84k8t8l4WlstQ2wKD8TXlQJE44h3f2GCZdS1JlAoGBAJ21\nUovQ238uxuGmvRFmS4bK1c5uhXsJ1iaOPg6GlvsE4ybs4h62NVLDA65Xp25EgVDB\nWdPCxsTKaKxEyygo7MGJHBIVkMpDOa/ZX1E2OQKZzBwPXUZl527H8Qlct1UawAPY\nf7iTFrmxNREqCp0jn6S7QIzqEvShtVKOcXJGxR3BAoGBAIGlFGABKrdC1ZDXMvsW\nk/4XuGG11rxyNOUAKACdmbCXLcrPUyXCZb2sgGlfF7tvWLKDSifm5iFLwW+sj34z\nlSpLL9kj5lGCrlyIe0dOo7fEH1LTASKn8Q5RsJjPKE0WsdWPsdDUvel7coW8/53k\nVvaMCOKlw3Fn8K2nRby8OuUi\n-----END PRIVATE KEY-----\n",
+  "client_email": "mw-dienstkonto@stately-rock-193321.iam.gserviceaccount.com",
+  "client_id": "105077256095251222640",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mw-dienstkonto%40stately-rock-193321.iam.gserviceaccount.com"
+}
