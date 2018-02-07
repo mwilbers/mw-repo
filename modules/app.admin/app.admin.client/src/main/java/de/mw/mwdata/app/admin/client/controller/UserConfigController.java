@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.web.control;
+package de.mw.mwdata.app.admin.client.controller;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.mw.mwdata.core.web.uimodel.UiUserConfig;
+import de.mw.mwdata.app.admin.client.uimodel.UiUserConfig;
 
 /**
  * Controller for serving all user specific and systemwide properties and

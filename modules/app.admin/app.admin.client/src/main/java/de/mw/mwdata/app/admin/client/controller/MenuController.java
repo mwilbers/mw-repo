@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.mw.mwdata.app.admin.client.uimodel.UiMenuNode;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.ofdb.domain.Menue;
 import de.mw.mwdata.core.service.IMenuService;
-import de.mw.mwdata.core.web.uimodel.UiMenuNode;
 
 @RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)

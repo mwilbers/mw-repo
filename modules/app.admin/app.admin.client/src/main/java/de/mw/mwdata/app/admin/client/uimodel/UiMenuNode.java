@@ -1,4 +1,6 @@
-package de.mw.mwdata.core.web.uimodel;
+package de.mw.mwdata.app.admin.client.uimodel;
+
+import de.mw.mwdata.core.web.uimodel.UiJsonConvertable;
 
 public class UiMenuNode implements UiJsonConvertable {
 

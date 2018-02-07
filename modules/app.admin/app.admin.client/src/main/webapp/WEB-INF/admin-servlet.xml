@@ -77,7 +77,7 @@
 		
 	</bean>
 	-->
-	<bean id="userConfigController" class="de.mw.mwdata.core.web.control.UserConfigController" />
+	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" />
     
    <!--  ...................... more snippets .............. -->
 </beans>
