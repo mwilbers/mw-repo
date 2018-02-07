@@ -1,8 +1,9 @@
-package de.mw.mwdata.core.web.control;
+package de.mw.mwdata.app.admin.client.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import de.mw.mwdata.core.web.uimodel.UiMenuNode;
 @RequestMapping("/admin/nav/**")
 public class MenuController {
 
+	@Autowired
 	private IMenuService menuService;
 
 	public void setMenuService(IMenuService menuService) {

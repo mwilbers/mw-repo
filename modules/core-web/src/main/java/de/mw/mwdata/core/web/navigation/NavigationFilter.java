@@ -18,7 +18,7 @@ import org.springframework.web.servlet.FrameworkServlet;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.core.web.control.AngWebRestController;
+import de.mw.mwdata.core.web.control.OfdbRestController;
 import de.mw.mwdata.core.web.util.SessionUtils;
 
 public class NavigationFilter implements Filter {
@@ -50,8 +50,8 @@ public class NavigationFilter implements Filter {
 
 		if (null == state) {
 
-			AngWebRestController<AbstractMWEntity> controller = (AngWebRestController<AbstractMWEntity>) webContext
-					.getBean("angWebRestController");
+			OfdbRestController<AbstractMWEntity> controller = (OfdbRestController<AbstractMWEntity>) webContext
+					.getBean("restController");
 			EntityTO<? extends AbstractMWEntity> filterSet = controller.populateFilterSet();
 
 			state = navigationManager.createNavigationState(httpRequest.getRequestURL().toString(), filterSet);

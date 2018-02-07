@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.web;
+package de.mw.mwdata.app.admin.client.filter;
 
 import java.io.IOException;
 
@@ -27,17 +27,13 @@ import de.mw.mwdata.core.web.util.SessionUtils;
  */
 public class UserFilter implements Filter {
 
-	// private IOfdbRechteService ofdbRechteService;
-
 	protected ServletContext context;
 
-	// @Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
 		this.context = filterConfig.getServletContext();
 
 	}
 
-	// @Override
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
@@ -76,15 +72,9 @@ public class UserFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	// @Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 
 	}
-
-	// public void setOfdbRechteService( final IOfdbRechteService ofdbRechteService
-	// ) {
-	// this.ofdbRechteService = ofdbRechteService;
-	// }
 
 }

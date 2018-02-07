@@ -13,7 +13,6 @@
 
 	<!-- common userfilter for identifying the logged in Benutzer-domain -->
 	
-	<bean id="userFilter" class="de.mw.mwdata.core.web.UserFilter" />
 	
 	<bean id="corsFilter" class="de.mw.mwdata.core.web.CorsFilter" />
 
@@ -32,9 +31,5 @@
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />
 	</bean>
-	
-	<bean id="ofdbController" class="de.mw.mwdata.core.web.control.OfdbController" scope="singleton">
-		<property name="ofdbService" ref="ofdbService"></property>
-    </bean>
 
 </beans>		

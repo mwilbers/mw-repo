@@ -1,4 +1,4 @@
-package de.mw.mwdata.app.admin.angwebrest.controller;
+package de.mw.mwdata.app.admin.client.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

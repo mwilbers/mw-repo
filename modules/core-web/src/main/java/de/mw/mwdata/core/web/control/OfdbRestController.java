@@ -40,7 +40,7 @@ import de.mw.mwdata.core.web.util.SessionUtils;
 @RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/admin/**")
-public class AngWebRestController<E extends AbstractMWEntity> {
+public class OfdbRestController<E extends AbstractMWEntity> {
 
 	protected List<IEntity> entities;
 
@@ -97,8 +97,6 @@ public class AngWebRestController<E extends AbstractMWEntity> {
 		// initialize ofPropList
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(state.getUrlPath());
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.SELECT);
-		// List<OfdbField> ofdbFieldList =
-		// this.ofdbController.findOfdbFields(viewDef.getName(), CRUD.SELECT);
 
 		PaginatedList<IEntity[]> entityResult = null;
 		int pageIndex = state.getPageIndex();

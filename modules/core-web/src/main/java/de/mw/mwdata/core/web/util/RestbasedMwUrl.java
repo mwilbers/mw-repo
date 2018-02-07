@@ -12,15 +12,15 @@ import org.apache.commons.lang.StringUtils;
  * RestbasedMwUrl belongs following patterns:<br>
  * 
  * <code>
- * <nobr>http://localhost:8080/app.admin.angwebrest/admin/tabDef/ -> HTTP GET,
+ * <nobr>http://localhost:8080/app.admin.client/admin/tabDef/ -> HTTP GET,
  * listAllEntities()</nobr>
- * <nobr>http://localhost:8080/app.admin.angwebrest/admin/tabDef/{entityId} -> HTTP
+ * <nobr>http://localhost:8080/app.admin.client/admin/tabDef/{entityId} -> HTTP
  * GET, MEDIATYPE-PRODUCE json, getEntity(entityId)</nobr>
- * <nobr>http://localhost:8080/app.admin.angwebrest/admin/tabDef/ -> HTTP POST,
+ * <nobr>http://localhost:8080/app.admin.client/admin/tabDef/ -> HTTP POST,
  * createEntiy(entity)</nobr>
- * <nobr>http://localhost:8080/app.admin.angwebrest/admin/tabDef/{entityId} -> HTTP PUT,
+ * <nobr>http://localhost:8080/app.admin.client/admin/tabDef/{entityId} -> HTTP PUT,
  * updateEntiy(entityId)</nobr>
- * <nobr>http://localhost:8080/app.admin.angwebrest/admin/tabDef/{entityId} -> HTTP DELETE,
+ * <nobr>http://localhost:8080/app.admin.client/admin/tabDef/{entityId} -> HTTP DELETE,
  * deleteEntiy(entityId)</nobr>
  * </code>
  * 
