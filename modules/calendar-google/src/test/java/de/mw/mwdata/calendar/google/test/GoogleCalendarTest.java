@@ -106,7 +106,7 @@ public class GoogleCalendarTest {
 				.setApplicationName(APPLICATION_NAME).build();
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testGoogleCalendar() throws IOException {
 		// Build a new authorized API client service.
 		// Note: Do not confuse this class with the
@@ -122,7 +122,7 @@ public class GoogleCalendarTest {
 		// holunderteetest@gmail.com
 		// calendar-id schverein luenne:
 		// bqb7kije2prlv7jqrsgask6bpc@group.calendar.google.com
-		Events events = service.events().list("bqb7kije2prlv7jqrsgask6bpc@group.calendar.google.com").execute();
+		Events events = service.events().list("holunderteetest@gmail.com").execute();
 
 		// List the next 10 events from the primary calendar.
 		// Events events =
