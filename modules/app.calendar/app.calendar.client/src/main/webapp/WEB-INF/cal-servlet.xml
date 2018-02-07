@@ -15,16 +15,14 @@
         http://www.springframework.org/schema/mvc 
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://www.springframework.org/schema/webflow-config
-	   	http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
-	   	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
 
 		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 			<property name="prefix">
 				<value>/WEB-INF/views/</value>
 			</property>
 			<property name="suffix">
-				<value>.html</value>
+				<value>.jsp</value>
 			</property>
 		</bean>
 		
