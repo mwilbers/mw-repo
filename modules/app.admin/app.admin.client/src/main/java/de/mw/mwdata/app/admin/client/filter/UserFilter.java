@@ -12,12 +12,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import de.mw.mwdata.core.domain.Benutzer;
-import de.mw.mwdata.core.ofdb.service.IOfdbService;
-import de.mw.mwdata.core.web.util.SessionUtils;
-
 /**
  * User-filter checks if the given user is authorized in Ofdb for the requested
  * AnsichtDef by the choosen menu
@@ -42,32 +36,35 @@ public class UserFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String menueId = httpRequest.getParameter("menue");
 
-		if (SessionUtils.isUserLoggedIn(httpRequest.getSession())) {
-
-			IOfdbService ofdbService = (IOfdbService) WebApplicationContextUtils.getWebApplicationContext(this.context)
-					.getBean("ofdbService");
-
-			// if user is not Administrator, than site is forbidden !!
-			Benutzer benutzer = (Benutzer) SessionUtils.getAttribute(httpRequest.getSession(), "benutzer");
-
-			// IOfdbRechteService ofdbRechteService = (IOfdbRechteService)
-			// WebApplicationContextUtils
-			// .getWebApplicationContext( this.context ).getBean( "ofdbRechteService" );
-			//
-			// AnsichtDef ansicht = ofdbService.findAnsichtById(
-			// menue.getAnsichtDef().getId() );
-			//
-			// if ( !ofdbRechteService.isAuthorized( benutzer, ansicht ) ) {
-			// httpResponse.sendRedirect( httpRequest.getContextPath() + "/forbidden.jsp" );
-			// } else {
-			// chain.doFilter( request, response );
-			// }
-
-		} else {
-
-			// TODO: instead of forbidden do redirect to Login-Page
-			httpResponse.sendRedirect(httpRequest.getContextPath() + "/forbidden.jsp");
-		}
+		// if (SessionUtils.isUserLoggedIn(httpRequest.getSession())) {
+		//
+		// IOfdbService ofdbService = (IOfdbService)
+		// WebApplicationContextUtils.getWebApplicationContext(this.context)
+		// .getBean("ofdbService");
+		//
+		// // if user is not Administrator, than site is forbidden !!
+		// Benutzer benutzer = (Benutzer)
+		// SessionUtils.getAttribute(httpRequest.getSession(), "benutzer");
+		//
+		// // IOfdbRechteService ofdbRechteService = (IOfdbRechteService)
+		// // WebApplicationContextUtils
+		// // .getWebApplicationContext( this.context ).getBean( "ofdbRechteService" );
+		// //
+		// // AnsichtDef ansicht = ofdbService.findAnsichtById(
+		// // menue.getAnsichtDef().getId() );
+		// //
+		// // if ( !ofdbRechteService.isAuthorized( benutzer, ansicht ) ) {
+		// // httpResponse.sendRedirect( httpRequest.getContextPath() + "/forbidden.jsp"
+		// );
+		// // } else {
+		// // chain.doFilter( request, response );
+		// // }
+		//
+		// } else {
+		//
+		// // TODO: instead of forbidden do redirect to Login-Page
+		// httpResponse.sendRedirect(httpRequest.getContextPath() + "/forbidden.jsp");
+		// }
 
 		chain.doFilter(request, response);
 	}

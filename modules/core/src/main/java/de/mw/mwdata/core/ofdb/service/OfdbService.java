@@ -112,15 +112,15 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable( ConfigOfdb.T_VIEWDEF, "v" ).fromTable( ConfigOfdb.T_VIEWDEF, "v" )
 				.andWhereRestriction( "v", "urlPath", OperatorEnum.Eq, urlPath, ValueType.STRING ).buildSQL();
-		List<IEntity[]> result = this.executeQuery( sql );
+		List<IEntity[]> result = executeQuery( sql );
 
 		if ( CollectionUtils.isEmpty( result ) ) {
 			String message = MessageFormat.format( "ViewDef by urlpath {0} is not found. ", urlPath );
 			throw new OfdbMissingObjectException( message );
 		}
 
-		Object o = result.get( 0 );
-		return (AnsichtDef) o;
+		Object[] o = result.get( 0 );
+		return (AnsichtDef) o[0];
 	}
 
 	@Override

@@ -43,7 +43,7 @@
 		<module>../ofdb-api</module>
 		<module>../core</module>
 		
-		<module>../core-web</module>
+		<module>../app.rest</module>
     	<module>../ui-api</module>
 
 		<module>../app.admin</module>
@@ -202,26 +202,6 @@
 			    <artifactId>jackson-core</artifactId>
 			    <version>${jackson.version}</version>
 			</dependency>
-
-			<!-- FIXME: deps still used ? -->
-            <!--
-			<dependency>
-            	<groupId>org.apache.tomcat</groupId>
-            	<artifactId>tomcat-dbcp</artifactId>
-            	<version>7.0.55</version>
-            </dependency>
-            <dependency>
-            	<groupId>org.apache.tomcat</groupId>
-            	<artifactId>tomcat-jdbc</artifactId>
-            	<version>7.0.19</version>
-            </dependency>
-			
-            <dependency>
-				<groupId>commons-dbcp</groupId>
-				<artifactId>commons-dbcp</artifactId>
-				<version>1.3</version>
-			</dependency>
-	-->		
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -323,7 +303,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.mw.mwdata.admin</groupId>
-				<artifactId>app.admin.business</artifactId>
+				<artifactId>app.admin.server</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -343,11 +323,16 @@
 			</dependency>
 						  
 			<dependency>
-				<groupId>de.mw.mwdata.core</groupId>
-				<artifactId>core-web</artifactId>
+				<groupId>de.mw.mwdata.rest</groupId>
+				<artifactId>app.rest.service</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
-		    <dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.rest</groupId>
+				<artifactId>app.rest.client</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>		    
+			<dependency>
 				<groupId>de.mw.mwdata.ui</groupId>
 				<artifactId>ui-api</artifactId>
 				<version>1.0-SNAPSHOT</version>

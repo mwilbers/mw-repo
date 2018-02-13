@@ -6,13 +6,20 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * FIXME: constants should be moved to ApplicationConfigService
+ *
+ * @author WilbersM
+ *
+ */
+@Deprecated
 public class Config {
 
-	public static final Object[]	EMPTY_ARGS				= new Object[0];
-	public static final String		CONFIG_NO_BUNDLE_SET	= "%No bundlename provided%";		//$NON-NLS-1$
-	public static final String		CONFIG_NO_KEY_SET		= "%No key provided for bundle%";	//$NON-NLS-1$
+	// public static final Object[] EMPTY_ARGS = new Object[0];
+	public static final String	CONFIG_NO_BUNDLE_SET	= "%No bundlename provided%";		//$NON-NLS-1$
+	public static final String	CONFIG_NO_KEY_SET		= "%No key provided for bundle%";	//$NON-NLS-1$
 
-	public static final String		CONFIG_BUNDLE			= "de.mw.mwdata.core.config";
+	public static final String	CONFIG_BUNDLE			= "de.mw.mwdata.core.config";
 
 	/**
 	 * Resolves the String for the passed key in the context of the user locale.

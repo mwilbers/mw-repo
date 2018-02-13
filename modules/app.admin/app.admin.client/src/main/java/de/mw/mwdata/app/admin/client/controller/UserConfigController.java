@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.mw.mwdata.app.admin.client.uimodel.UiUserConfig;
+import de.mw.mwdata.core.service.ApplicationConfigService;
+import de.mw.mwdata.rest.service.service.RestUrlService;
 
 /**
  * Controller for serving all user specific and systemwide properties and
@@ -20,10 +22,26 @@ import de.mw.mwdata.app.admin.client.uimodel.UiUserConfig;
 @RequestMapping("/admin/userConfig/**")
 public class UserConfigController {
 
+	private RestUrlService urlService;
+	private ApplicationConfigService configService;
+
+	public void setUrlService(RestUrlService urlService) {
+		this.urlService = urlService;
+	}
+
+	public void setApplicationConfigService(final ApplicationConfigService configService) {
+		this.configService = configService;
+	}
+
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	public ResponseEntity<UiUserConfig> loadSystemProperties() {
 
+		String defaultEntity = this.configService.getPropertyValue("app.admin.defaultEntity");
+		String restUrl = this.urlService.createUrlForReadEntities(defaultEntity);
+
 		UiUserConfig userConfig = new UiUserConfig();
+		userConfig.setDefaultRestUrl(restUrl);
+
 		return new ResponseEntity<UiUserConfig>(userConfig, HttpStatus.OK);
 
 	}

@@ -1,6 +1,6 @@
 package de.mw.mwdata.app.admin.client.uimodel;
 
-import de.mw.mwdata.core.web.uimodel.UiJsonConvertable;
+import de.mw.mwdata.rest.service.uimodel.UiJsonConvertable;
 
 /**
  * Class for transporting all systemwide and user specific properties from
@@ -17,10 +17,17 @@ import de.mw.mwdata.core.web.uimodel.UiJsonConvertable;
 public class UiUserConfig implements UiJsonConvertable {
 
 	// FIXME: dynamice url
-	private static final String DEFAULT_REST_URL = "http://localhost:8080/app.admin.client/admin/tabDef/";
+	// private static final String DEFAULT_REST_URL =
+	// "http://localhost:8080/app.admin.client/admin/tabDef/";
+
+	private String defaultRestUrl;
 
 	public String getDefaultRestUrl() {
-		return DEFAULT_REST_URL;
+		return this.defaultRestUrl;
+	}
+
+	public void setDefaultRestUrl(final String defaultRestUrl) {
+		this.defaultRestUrl = defaultRestUrl;
 	}
 
 }

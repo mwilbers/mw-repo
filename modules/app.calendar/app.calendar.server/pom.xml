@@ -22,6 +22,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.mw.mwdata.rest</groupId>
+			<artifactId>app.rest.service</artifactId>
+		</dependency>
 		
 		<!-- test scope -->
 		<dependency>

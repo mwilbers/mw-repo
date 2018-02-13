@@ -37,7 +37,7 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
+		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
 		 	<constructor-arg index="0"  value="cal" />		 	
 		 	<property name="ofdbService" ref="ofdbService"></property>
 		 	<property name="ofdbValidator" ref="ofdbValidator"></property>

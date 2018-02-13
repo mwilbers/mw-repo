@@ -20,7 +20,7 @@ function OfdbFieldEvaluator() {
 
 /**
  * Definition for routeProvider: Before loading EntityController and showing grid load all user 
- * specific serverbased properties for configuring clientbased constants
+ * specific server based properties for configuring client based constants
  *
  */
 App.config(function($routeProvider){
@@ -36,19 +36,19 @@ App.config(function($routeProvider){
   });
 
 App.service('AppConfigService', function($http) {
-    var myData = null;
+    var appConfig = null;
 
 	var promise = $http.get('userConfig/').success(function (data) {
-      myData = data;
+		appConfig = data;
     });
 
     return {
       promise:promise,
       setData: function (data) {
-          myData = data;
+    	  appConfig = data;
       },
-      doStuff: function () {
-          return myData;//.getSomeData();
+      getApplicationConfig: function () {
+          return appConfig;
       }
     };
 });
@@ -59,13 +59,13 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	var self = this;
 	globalEntityController = self;
 	
-	if(null === appConfigService.doStuff()) {
+	if(null === appConfigService.getApplicationConfig()) {
 			return;
 	}
 	
 	var appConfig = [];
-	console.log('Promise is now resolved: '+appConfigService.doStuff().data);
-	appConfig['defaultRestUrl'] = appConfigService.doStuff().defaultRestUrl;
+	console.log('Promise is now resolved: '+appConfigService.getApplicationConfig().data);
+	appConfig['defaultRestUrl'] = appConfigService.getApplicationConfig().defaultRestUrl;
 	
 	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;

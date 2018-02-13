@@ -33,6 +33,9 @@ public class MenuController {
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
+		// FIXME: return UI-object of menunodes with additional ofdb-infos (visible,
+		// filterable, editable, etc.)
+
 		// initialize ofPropList
 
 		List<EntityTO> menuResult = this.menuService.findMainMenus();

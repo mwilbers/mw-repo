@@ -39,7 +39,7 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
+		<bean id="app.admin.applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
 		 	<constructor-arg index="0"  value="admin" />		 	
 		 	<property name="ofdbService" ref="ofdbService"></property>
 		 	<property name="ofdbValidator" ref="ofdbValidator"></property>
@@ -47,37 +47,27 @@
 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 		</bean>
 
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<!-- 
-		<property name="messageConverters">
-			<list>
-				<bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-		            	<property name="objectMapper" ref="jacksonObjectMapper" />
-		            </bean>	
-			</list>
-		</property>	    
-		 -->
-	</bean>
-  	<bean id="requestMappingHandlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-  	</bean>
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+	
+  	<bean id="requestMappingHandlerMapping" 
+  		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+  	
 
 	<context:annotation-config />
    	<context:component-scan base-package="de.mw.mwdata.app.admin.client.controller" >
 	</context:component-scan>
 		
-    <bean id="restController" class="de.mw.mwdata.core.web.control.OfdbRestController">
-		<property name="ofdbService" ref="ofdbService"></property>
-		<property name="navigationManager" ref="navigationManager"></property>
-		<property name="entityService" ref="entityService"></property>
-		<property name="crudService" ref="crudService"></property>
-	</bean>
+    
 	<!--  
 	<bean id="menueController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
 		<property name="menuService" ref="menuService"></property>
 		
 	</bean>
 	-->
-	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" />
+	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" >
+		<property name="urlService" ref="rest.UrlService"></property>
+		<property name="applicationConfigService" ref="app.admin.applicationConfigService"></property>
+	</bean>
     
    <!--  ...................... more snippets .............. -->
 </beans>

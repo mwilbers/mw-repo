@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- common userfilter for identifying the logged in Benutzer-domain -->
+	
+<!-- 	<bean id="restController" class="de.mw.mwdata.rest.client.control.OfdbRestController"> -->
+<!-- 		<property name="ofdbService" ref="ofdbService" /> -->
+<!-- 		<property name="navigationManager" ref="navigationManager" /> -->
+<!-- 		<property name="entityService" ref="entityService" /> -->
+<!-- 		<property name="crudService" ref="crudService" /> -->
+<!-- 		<property name="urlService" ref="rest.UrlService" /> -->
+<!-- 	</bean> -->
+	
+	<bean id="corsFilter" class="de.mw.mwdata.rest.client.CorsFilter" />
+
+	<bean id="navigationFilter" class="de.mw.mwdata.rest.client.navigation.NavigationFilter" />
+
+	<bean id="urlManager" class="de.mw.mwdata.rest.client.util.UrlManager" />
+
+	<bean id="navigationManager" class="de.mw.mwdata.rest.client.navigation.CrudNavigationManager"
+		scope="singleton">
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="ofdbService" ref="ofdbService" />
+	</bean>
+	
+	
+	
+
+</beans>		
