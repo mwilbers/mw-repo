@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>mwdata-parent</artifactId>
+		<groupId>de.mw.mwdata</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../mw.parent</relativePath>
+	</parent>
+	<groupId>de.mw.mwdata.core</groupId>
+	<artifactId>ofdb-impl</artifactId>
+	<packaging>jar</packaging>
+	<name>MWData OFDB Cache Implementation</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>		
+	
+		<dependency>
+			<groupId>de.mw.mwdata.core</groupId>
+			<artifactId>core</artifactId>
+		</dependency>
+
+		<!-- Test-Utils -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.mw.common</groupId>
+			<artifactId>common-testframework</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		
+		<!-- We do not want to set the hibernate-db-connection-values in maven-artifacts 
+			because of db-independency <resources> <resource> <directory>src/main/resources</directory> 
+			<filtering>true</filtering> </resource> </resources> -->
+		<plugins>
+
+			
+			<!-- build sources-jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- build test-jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<suiteXmlFiles>
+						<suiteXmlFile>testng-ofdb.xml</suiteXmlFile>
+					</suiteXmlFiles>
+					<!-- <groups>hsql</groups> -->
+					<!-- <forkMode>always</forkMode> -->
+				</configuration>
+			</plugin>
+            
+
+		</plugins>
+
+	</build>
+
+</project>

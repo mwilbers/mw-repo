@@ -40,14 +40,15 @@
 	<modules>
 		<module>../common-utils</module>
     	<module>../common-testframework</module>
-		<module>../ofdb-api</module>
+		
 		<module>../core</module>
+
+		<module>../ofdb-impl</module>
 		
 		<module>../app.rest</module>
     	<module>../ui-api</module>
 
 		<module>../app.admin</module>
-		
 		<module>../app.calendar</module>
 		<module>../calendar-api</module>
 		<module>../calendar-google</module>
@@ -298,7 +299,17 @@
 			</dependency>
 			<dependency>
 				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>ofdb-impl</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
 				<artifactId>core</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.mw.mwdata.core</groupId>
+				<artifactId>entity-api</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>

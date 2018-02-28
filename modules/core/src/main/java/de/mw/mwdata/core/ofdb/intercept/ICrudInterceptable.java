@@ -1,11 +1,12 @@
 package de.mw.mwdata.core.ofdb.intercept;
 
+import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.ofdb.def.CRUD;
 import de.mw.mwdata.core.ofdb.exception.OfdbInvalidCheckException;
 
 /**
- * Special interface for registering crud interceptors and sending crud events. <br>
+ * Special interface for registering crud interceptors and sending crud events.
+ * <br>
  * FIXME: interface still needed ?
  *
  * @author mwilbers
@@ -13,9 +14,9 @@ import de.mw.mwdata.core.ofdb.exception.OfdbInvalidCheckException;
  */
 public interface ICrudInterceptable {
 
-	public void registerCrudInterceptor( final CrudChain crudInterceptor );
+	public void registerCrudInterceptor(final CrudChain crudInterceptor);
 
-	public void doActionsBeforeCheck( final AbstractMWEntity entity, final CRUD crud );
+	public void doActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud);
 
 	/**
 	 *
@@ -24,6 +25,6 @@ public interface ICrudInterceptable {
 	 * @throws OfdbInvalidCheckException
 	 *             if any ofdb relevant check was failed
 	 */
-	public void doCheck( final AbstractMWEntity entity, final CRUD crud ) throws OfdbInvalidCheckException;
+	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws OfdbInvalidCheckException;
 
 }

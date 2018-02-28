@@ -45,7 +45,10 @@
 			<groupId>de.mw.mwdata.admin</groupId>
 			<artifactId>app.admin.server</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>de.mw.mwdata.core</groupId>
+			<artifactId>ofdb-impl</artifactId>
+		</dependency>
     
 		<!-- test scope -->
 		<dependency>

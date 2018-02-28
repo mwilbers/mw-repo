@@ -16,6 +16,16 @@
     	<property name="propertyBundle" value="de.mw.mwdata.app.admin.config" />
     	
     </bean>
-    <!-- Service-objects ................................. -->  
+    
+    <bean id="app.admin.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+            <list>
+                <value>classpath:/hibernate.properties</value>
+                <value>classpath:/de/mw/mwdata/app/admin/config.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="order" value="1" />
+	</bean>
 
 </beans>

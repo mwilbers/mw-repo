@@ -2,6 +2,7 @@ package de.mw.mwdata.rest.client.control;
 
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,14 +24,14 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.domain.UiEntityList;
-import de.mw.mwdata.core.ofdb.def.CRUD;
-import de.mw.mwdata.core.ofdb.def.OfdbField;
-import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
-import de.mw.mwdata.core.ofdb.service.IOfdbService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IPagingEntityService;
 import de.mw.mwdata.core.utils.PaginatedList;
+import de.mw.mwdata.core.utils.SortKey;
+import de.mw.mwdata.ofdb.domain.IAnsichtDef;
+import de.mw.mwdata.ofdb.impl.OfdbField;
+import de.mw.mwdata.ofdb.impl.UiEntityList;
+import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.rest.client.navigation.NavigationManager;
 import de.mw.mwdata.rest.client.navigation.NavigationState;
 import de.mw.mwdata.rest.client.util.SessionUtils;
@@ -45,8 +46,6 @@ import de.mw.mwdata.rest.service.service.RestUrlService;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/rest/**")
 public class OfdbRestController<E extends AbstractMWEntity> {
-
-	protected List<IEntity> entities;
 
 	private IPagingEntityService entityService;
 
@@ -113,33 +112,19 @@ public class OfdbRestController<E extends AbstractMWEntity> {
 			throw new InvalidRestUrlException(message, e);
 		}
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(url.getEntityName());
-		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName(), CRUD.SELECT);
-
-		// FIXME: ... Problem: ofdbCache ist leer für REST-API:
-		// REDESIGN:
-		// a) Der ofdbCacheManager muss für die REST-API beladen werden, nicht für die
-		// aufrufenden Anwendungen
-		// b) Umstrukturierung REST-URLs:
-		// http://localhost:8080/app.rest.client/rest/referrer/admin/entity/tabDef...
-		// c) Spaltung Komponenten: app.admin und app.cal brauchen wohl nicht mehr die
-		// ofdb-inhalte, daher
-		// neue komponente ofdb-impl, core aufspalten in core und ofdb-impl
-		// d) nur noch abhängigkeit des rest-service von ofdb-impl
-		// e) perspektivisch: UI-Objekte schaffen, die für jedes field ein
-		// wrapper-objekt beinhalten
-		// mit den zusatz-infos der ofdb (visible, filterable, etc.)
+		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
 		PaginatedList<IEntity[]> entityResult = null;
-		int pageIndex = state.getPageIndex();
-		if (!state.isFiltered()) {
-			// FIXME: ofdbService should load ofdb metadata informations, but
-			// not entitesArray. Instead create new EntityService ...
-			entityResult = this.entityService.loadViewPaginated(viewDef.getName(), pageIndex, state.getSorting());
-		} else {
-			// ... what to do here if filtering
-			entityResult = this.entityService.findByCriteriaPaginated(viewDef.getName(), state.getFilterSet(),
-					pageIndex, state.getSorting());
-		}
+		// int pageIndex = state.getPageIndex();
+		// if (!state.isFiltered()) {
+		List<SortKey> sortKeys = new ArrayList<>();
+		entityResult = this.entityService.loadViewPaginated(viewDef.getName(), 1, sortKeys);
+		// } else {
+		// // ... what to do here if filtering
+		// entityResult = this.entityService.findByCriteriaPaginated(viewDef.getName(),
+		// state.getFilterSet(),
+		// pageIndex, state.getSorting());
+		// }
 
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
 

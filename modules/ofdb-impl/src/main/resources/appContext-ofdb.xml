@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	
+
+	<!-- DAOs ........................................................................................... -->
+	<!-- TODO: rename abstractHbnDao to abstractHbnSessionAware -->
+	<bean id="abstractHbnDao" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="ofdbMapper" parent="abstractHbnDao" class="de.mw.mwdata.ofdb.dao.OfdbMapper" />
+
+	<bean id="ofdbDao" parent="abstractHbnDao" class="de.mw.mwdata.ofdb.dao.OfdbDao" />
+
+	<bean id="ofdbValidator" class="de.mw.mwdata.ofdb.cache.OfdbValidator">
+		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
+	</bean>
+
+	<!-- use this abstractOfdbDao for further use of ofdbDao <bean id="abstractOfdbDao" 
+		abstract="true" parent="abstractHbnDao"> <property name="ofdbDao" ref="ofdbDao" 
+		/> </bean> -->
+	<bean id="ofdbService" class="de.mw.mwdata.ofdb.service.OfdbService">
+		<property name="ofdbDao" ref="ofdbDao" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="crudService" ref="crudService" />
+		
+	</bean>
+	
+	<bean id="ofdbCacheManager" class="de.mw.mwdata.ofdb.cache.DefaultOfdbCacheManager">
+	</bean>
+
+	<bean id="viewConfigFactory" class="de.mw.mwdata.ofdb.cache.ViewConfigFactoryBean">
+	</bean>
+
+	<!-- init-method="loadOfdbCache" -->
+	<bean id="abstractOfdbService" abstract="true">
+		<property name="ofdbService" ref="ofdbService" />
+	</bean>
+	
+	<!-- +++++++++++++++++++++++++++++++ -->
+	
+	<bean id="menuService" class="de.mw.mwdata.ofdb.service.MenuService">
+		<property name="ofdbDao" ref="ofdbDao" />
+	</bean>
+	
+	<bean id="entityService" class="de.mw.mwdata.ofdb.service.PagingEntityService">
+		<property name="ofdbDao" ref="ofdbDao" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="ofdbService" ref="ofdbService" />		
+	</bean>
+	
+	<!-- TypeZEITTYP -->
+	<context:component-scan base-package="de.mw.mwdata.core.ofdb.domain" />
+
+</beans>

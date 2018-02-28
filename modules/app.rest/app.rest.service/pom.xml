@@ -9,7 +9,6 @@
 		<groupId>de.mw.mwdata.rest</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>de.mw.mwdata.rest</groupId>
 	<artifactId>app.rest.service</artifactId>
 	<packaging>jar</packaging>
 
@@ -26,37 +25,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-			<!-- <groupId>javax.servlet</groupId> -->
-			<!-- <artifactId>javax.servlet-api</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-			<!-- <groupId>javax.servlet.jsp</groupId> -->
-			<!-- <artifactId>jsp-api</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-			<!-- <groupId>javax.servlet</groupId> -->
-			<!-- <artifactId>jstl</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-			<!-- <groupId>taglibs</groupId> -->
-			<!-- <artifactId>standard</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-web</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-webmvc</artifactId> -->
-		<!-- </dependency> -->
-
+		
 
 		<dependency>
 			<groupId>de.mw.mwdata.core</groupId>
-			<artifactId>ofdb-api</artifactId>
+			<artifactId>ofdb-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mw.mwdata.core</groupId>

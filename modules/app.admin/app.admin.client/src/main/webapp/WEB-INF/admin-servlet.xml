@@ -39,8 +39,8 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="app.admin.applicationFactory" class="de.mw.mwdata.core.ofdb.DefaultApplicationFactory" init-method="init">
-		 	<constructor-arg index="0"  value="admin" />		 	
+		<bean id="app.admin.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
+		 	<constructor-arg index="0"  value="admin" />		 <!-- FIXME: remove admin here -->	
 		 	<property name="ofdbService" ref="ofdbService"></property>
 		 	<property name="ofdbValidator" ref="ofdbValidator"></property>
 		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
@@ -51,22 +51,19 @@
 	
   	<bean id="requestMappingHandlerMapping" 
   		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-  	
-
-	<context:annotation-config />
-   	<context:component-scan base-package="de.mw.mwdata.app.admin.client.controller" >
-	</context:component-scan>
-		
-    
-	<!--  
-	<bean id="menueController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
-		<property name="menuService" ref="menuService"></property>
-		
+	
+	
+	<bean id="app.admin.indexController" class="de.mw.mwdata.app.admin.client.controller.IndexController" >
 	</bean>
-	-->
+	
 	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" >
 		<property name="urlService" ref="rest.UrlService"></property>
 		<property name="applicationConfigService" ref="app.admin.applicationConfigService"></property>
+	</bean>
+	
+	<bean id="app.admin.menuController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
+		<property name="menuService" ref="menuService"></property>
+		<property name="urlService" ref="rest.UrlService"></property>
 	</bean>
     
    <!--  ...................... more snippets .............. -->

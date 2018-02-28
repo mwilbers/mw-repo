@@ -15,6 +15,17 @@
     	<property name="propertyBundle" value="de.mw.mwdata.app.rest.config" />
     	
     </bean>
+    
+    <bean id="app.rest.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+            <list>
+                <value>classpath:/hibernate.properties</value>
+                <value>classpath:/de/mw/mwdata/app/rest/config.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="order" value="2" />
+	</bean>
 
 	<bean id="rest.UrlService" class="de.mw.mwdata.rest.service.service.CrudRestUrlService">
 		<property name="applicationConfigService" ref="rest.applicationConfigService"></property>

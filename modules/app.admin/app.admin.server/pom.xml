@@ -24,11 +24,11 @@
 		<groupId>de.mw.mwdata.rest</groupId>
 		<artifactId>app.rest.service</artifactId>
 	</dependency>
-<!-- 	<dependency> -->
-<!-- 		<groupId>de.mw.mwdata.core</groupId> -->
-<!-- 		<artifactId>rest-api</artifactId> -->
-<!-- 	</dependency> -->
-	
+	<dependency>
+		<groupId>de.mw.mwdata.core</groupId>
+		<artifactId>core</artifactId>
+	</dependency>
+
      <!-- Test-Utils -->
 
 	<dependency>

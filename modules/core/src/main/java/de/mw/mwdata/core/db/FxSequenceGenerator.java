@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
+
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.Sequence;
 

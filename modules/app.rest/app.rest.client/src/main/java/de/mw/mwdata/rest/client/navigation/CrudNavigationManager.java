@@ -18,13 +18,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.core.ofdb.SortKey;
-import de.mw.mwdata.core.ofdb.cache.OfdbCacheManager;
-import de.mw.mwdata.core.ofdb.cache.ViewConfigHandle;
-import de.mw.mwdata.core.ofdb.domain.IAnsichtDef;
-import de.mw.mwdata.core.ofdb.domain.IAnsichtTab;
-import de.mw.mwdata.core.ofdb.service.IOfdbService;
 import de.mw.mwdata.core.utils.ClassNameUtils;
+import de.mw.mwdata.core.utils.SortKey;
+import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
+import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
+import de.mw.mwdata.ofdb.domain.IAnsichtDef;
+import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.rest.service.RestbasedMwUrl;
 
 public class CrudNavigationManager implements NavigationManager, Serializable {

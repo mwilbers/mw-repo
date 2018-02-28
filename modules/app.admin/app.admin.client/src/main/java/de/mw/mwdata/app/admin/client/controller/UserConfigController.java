@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.mw.mwdata.app.admin.client.uimodel.UiUserConfig;
 import de.mw.mwdata.core.service.ApplicationConfigService;
@@ -17,7 +17,6 @@ import de.mw.mwdata.rest.service.service.RestUrlService;
  * constants. <br>
  * TODO: class is in temporary state ...
  */
-@RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/admin/userConfig/**")
 public class UserConfigController {
@@ -34,6 +33,7 @@ public class UserConfigController {
 	}
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseEntity<UiUserConfig> loadSystemProperties() {
 
 		String defaultEntity = this.configService.getPropertyValue("app.admin.defaultEntity");

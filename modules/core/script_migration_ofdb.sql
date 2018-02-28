@@ -1272,5 +1272,21 @@ set hauptmenueid = (select m1.dsid from FX_Menues_K m1 where menue = 'AdminOberf
 where untermenuevon = 'AdminOberflaeche' 
 ;
 
+-- update / refactoring domain classes new packages
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.Menue' where tabelle = 'FX_Menues_K';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.TabDef' where tabelle = 'FX_TabDef_K';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.AnsichtDef' where tabelle = 'FX_AnsichtDef_K';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten' where tabelle = 'FX_AnsichtSpalten_K';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.TabSpeig' where tabelle = 'FX_TabSpEig_K';
 
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.core.domain.BenutzerBereich' where tabelle = 'BenutzerBereicheDef';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.core.domain.Benutzer' where tabelle = 'BenutzerDef';
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.core.domain.BenutzerRecht' where tabelle = 'BenutzerRechte';
+
+
+update FX_AnsichtDef_K set urlpath = 'ansichtTab', appcontextpath = 'admin', reihenfolge = 45, Bereich = 'Administrator' where ansicht = 'FX_AnsichtTab_K';
+
+update FX_AnsichtDef_K set appcontextpath = 'rest' where appcontextpath = 'admin';
+
+update FX_TabDef_K set fullclassname = 'de.mw.mwdata.ofdb.domain.impl.AnsichtTab' where tabelle = 'FX_AnsichtTab_K';
 

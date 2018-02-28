@@ -4,6 +4,7 @@
 package de.mw.mwdata.core.domain;
 
 import javax.persistence.MappedSuperclass;
+
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
@@ -23,27 +24,32 @@ public abstract class AbstractMWOFDBEntity extends AbstractMWEntity {
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= -4279273124550594310L;
+	private static final long serialVersionUID = -4279273124550594310L;
 
-	// private static final Logger LOGGER = Logger.getLogger( AbstractMWOFDBEntity.class );
+	// private static final Logger LOGGER = Logger.getLogger(
+	// AbstractMWOFDBEntity.class );
 
 	// main fields ...
 
-	// @Column(name = Config.SYS_COL_ANGELEGT_AM, updatable = false, nullable = false)
+	// @Column(name = Config.SYS_COL_ANGELEGT_AM, updatable = false, nullable =
+	// false)
 	// private Date angelegtAm;
 	//
-	// @Column(name = Config.SYS_COL_ANGELEGT_VON, updatable = false, nullable = false)
+	// @Column(name = Config.SYS_COL_ANGELEGT_VON, updatable = false, nullable =
+	// false)
 	// private String angelegtVon;
 
 	// @Column(name = Constants.SYS_COL_OFDB, updatable = false, nullable = false)
 	// private String ofdb;
 	//
-	// @Column(name = Constants.SYS_COL_SYSTEM, columnDefinition = "NUMBER(1) default -1", updatable = false, nullable =
+	// @Column(name = Constants.SYS_COL_SYSTEM, columnDefinition = "NUMBER(1)
+	// default -1", updatable = false, nullable =
 	// false)
 	// @Type(type = "fxboolean")
 	// private Boolean system;
 
-	// @Column(name = Config.SYS_COL_TRANSAKTIONS_ID, updatable = true, nullable = false)
+	// @Column(name = Config.SYS_COL_TRANSAKTIONS_ID, updatable = true, nullable =
+	// false)
 	// private Long transaktionsId;
 
 	public AbstractMWOFDBEntity() {

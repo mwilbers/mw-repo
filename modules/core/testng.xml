@@ -14,35 +14,24 @@
 
 		<classes>
 
-			<class name="de.mw.mwdata.core.ofdb.service.CRUDTest">
-				<methods>
-					<include name="testSequenceIncrementationAndInterceptor" />
-					<include name="testLoadMenues" />
-					<include name="testFindAllWithSorting" />
-					<include name="testFindByCriteria" />
-					<include name="testInitializeOfdbMapper" />
-				</methods>
-			</class>
+<!-- 			<class name="de.mw.mwdata.core.ofdb.service.CRUDTest"> -->
+<!-- 				<methods> -->
+<!-- 					<include name="testSequenceIncrementationAndInterceptor" /> -->
+<!-- 					<include name="testLoadMenues" /> -->
+<!-- 					<include name="testFindAllWithSorting" /> -->
+<!-- 					<include name="testFindByCriteria" /> -->
+<!-- 					<include name="testInitializeOfdbMapper" /> -->
+<!-- 				</methods> -->
+<!-- 			</class> -->
 
-			<!-- <class name="de.mw.mwdata.core.ofdb.service.OfdbRegistrationAnsichtTabTest" 
-				/> -->
-
-			<class name="de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest" />
-
-			<class name="de.mw.mwdata.core.ofdb.service.OfdbValidationTest" />
-
-			<class name="de.mw.mwdata.core.ofdb.service.TabSpeigDefaultsTest">
-				<!-- <methods> -->
-				<!-- <include name="testSequenceIncrementationAndInterceptor"></include> -->
-				<!-- <include name="testInsertAndSelectDatatypes"></include> -->
-				<!-- <include name="testFindByTable"></include> -->
-				<!-- </methods> -->
-			</class>
+<!-- 			<class name="de.mw.mwdata.core.ofdb.service.OfdbRegistrationTest" /> -->
+<!-- 			<class name="de.mw.mwdata.core.ofdb.service.OfdbValidationTest" /> -->
+<!-- 			<class name="de.mw.mwdata.core.ofdb.service.TabSpeigDefaultsTest"> -->
+<!-- 			</class> -->
 
 
-			<!-- <class name="de.mw.mwdata.core.ofdb.daos.OfdbMapperTest" /> -->
 			<class name="de.mw.mwdata.core.ofdb.daos.QueryBuilderTest" />
-			<class name="de.mw.mwdata.core.ofdb.def.OfdbFieldTest" />
+<!-- 			<class name="de.mw.mwdata.core.ofdb.def.OfdbFieldTest" /> -->
 
 			<class name="de.mw.mwdata.core.utils.PaginatedListTest" />
 

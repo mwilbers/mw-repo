@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.core.ofdb.SortKey;
+import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.rest.service.RestbasedMwUrl;
 
 public class CrudNavigationState implements NavigationState {

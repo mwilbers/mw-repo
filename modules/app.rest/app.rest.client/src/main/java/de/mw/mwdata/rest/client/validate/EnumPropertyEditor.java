@@ -4,6 +4,7 @@
 package de.mw.mwdata.rest.client.validate;
 
 import java.beans.PropertyEditorSupport;
+
 import de.mw.mwdata.core.domain.IFxEnum;
 import de.mw.mwdata.rest.client.Config;
 

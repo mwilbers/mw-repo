@@ -3,34 +3,40 @@ package de.mw.mwdata.app.admin.client.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.mw.mwdata.app.admin.client.uimodel.UiMenuNode;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.core.ofdb.domain.Menue;
 import de.mw.mwdata.core.service.IMenuService;
+import de.mw.mwdata.ofdb.domain.impl.Menue;
+import de.mw.mwdata.rest.service.service.RestUrlService;
 
-@RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/admin/nav/**")
 public class MenuController {
 
-	@Autowired
 	private IMenuService menuService;
+
+	private RestUrlService urlService;
 
 	public void setMenuService(IMenuService menuService) {
 		this.menuService = menuService;
 	}
 
+	public void setUrlService(RestUrlService urlService) {
+		this.urlService = urlService;
+	}
+
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
 		// FIXME: return UI-object of menunodes with additional ofdb-infos (visible,
@@ -40,8 +46,13 @@ public class MenuController {
 
 		List<EntityTO> menuResult = this.menuService.findMainMenus();
 		List<UiMenuNode> menuList = new ArrayList<>();
+
 		for (EntityTO item : menuResult) {
 			UiMenuNode menu = convertToUiMenu(item);
+			if (!StringUtils.isEmpty(item.getJoinedValue("urlPath"))) {
+				String restUrl = this.urlService.createUrlForReadEntities(item.getJoinedValue("urlPath"));
+				menu.setRestUrl(restUrl);
+			}
 			menuList.add(menu);
 		}
 
@@ -56,7 +67,6 @@ public class MenuController {
 		node.setId(menu.getId());
 		node.setNodeType(menu.getTyp().name());
 		node.setDisplayName(menu.getAnzeigeName() + " ( " + menu.getTyp().name() + " ) ");
-		node.setRestUrl(menuEntity.getJoinedValue("urlPath"));
 
 		if (node.hasChildren()) {
 			node.setUrl("nav/menu/" + menu.getId());
@@ -66,6 +76,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/menu/{parentMenuId}", method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listChildMenus(@PathVariable("parentMenuId") int parentMenuId) {
 
 		// // FIXME: compare with where-restrictions from OfdbDao.findMenues()
@@ -74,6 +85,10 @@ public class MenuController {
 		List<UiMenuNode> menuList = new ArrayList<>();
 		for (EntityTO item : menuResult) {
 			UiMenuNode menu = convertToUiMenu(item);
+			if (!StringUtils.isEmpty(item.getJoinedValue("urlPath"))) {
+				String restUrl = this.urlService.createUrlForReadEntities(item.getJoinedValue("urlPath"));
+				menu.setRestUrl(restUrl);
+			}
 			menuList.add(menu);
 		}
 
