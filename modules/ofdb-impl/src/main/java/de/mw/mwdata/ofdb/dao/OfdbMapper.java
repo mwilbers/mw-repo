@@ -33,7 +33,7 @@ public class OfdbMapper extends HibernateDaoSupport {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfdbMapper.class);
 
-	public OfdbMapper( /* final Class<? extends AbstractMWEntity> type */) {
+	public OfdbMapper() {
 	}
 
 	/**
@@ -84,8 +84,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 					// e.g.: for TabDef.Bereich there is TabDef.BereichsId
 				}
 
-				// if ( !isAssociationType( propertyTypes[i] ) ) {
-
 				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
 				OfdbPropMapper propMapper = new OfdbPropMapper(tableName, columnNameDb);
 				propMapper.setPropertyName(props[i]);
@@ -96,8 +94,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 
 				propMap.put(columnNameDb, propMapper);
 
-				// this.nameToIndexMap.put( columnNameDb, new Integer( i ) );
-				// }
 			}
 		}
 

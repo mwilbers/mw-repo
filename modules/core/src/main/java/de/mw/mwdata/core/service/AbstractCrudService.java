@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
+import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.ofdb.exception.OfdbInvalidCheckException;
 import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.core.ofdb.intercept.CrudChain;
@@ -34,8 +35,6 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	private ICrudDao<T> crudDao;
 
 	private CrudChain crudChain;
-
-	// private ApplicationFactory applicationFactory;
 
 	/**
 	 * ordered list of interceptors. Have to be registered first
@@ -59,11 +58,6 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	public void setCrudInterceptors(final List<CrudChain> crudChainItems) {
 		this.crudChainItems = crudChainItems;
 	}
-
-	// public void setApplicationFactory( final ApplicationFactory
-	// applicationFactory ) {
-	// this.applicationFactory = applicationFactory;
-	// }
 
 	public void buildChain() {
 
@@ -195,6 +189,21 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	@Override
 	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws OfdbInvalidCheckException {
 		this.crudChain.doChainCheck(entity, crud);
+	}
+
+	@Override
+	public List<IEntity[]> executeSql(String sql) {
+		return this.crudDao.executeSql(sql);
+	}
+
+	@Override
+	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex) {
+		return this.crudDao.executeSqlPaginated(sql, pageIndex);
+	}
+
+	@Override
+	public long executeCountSql(String sqlCount) {
+		return this.crudDao.executeCountSql(sqlCount);
 	}
 
 }

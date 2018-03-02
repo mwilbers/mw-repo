@@ -25,19 +25,15 @@ public class PagingEntityService extends EntityService implements IPagingEntityS
 		String sql = this.getOfdbService().buildFilteredSQL(viewName, entityTO, cols);
 
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
-		List<IEntity[]> resultList = executeQueryPaginated(sql, pageIndex);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
-		long count = executeCountQuery(sqlCount);
+		long count = this.getCrudService().executeCountSql(sqlCount);
 
 		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pageIndex);
 
 		return pagingList;
 
-	}
-
-	private List<IEntity[]> executeQueryPaginated(final String sql, final int pageIndex) {
-		return this.getOfdbDao().executeQueryPaginated(sql, pageIndex);
 	}
 
 	@Override
@@ -48,10 +44,10 @@ public class PagingEntityService extends EntityService implements IPagingEntityS
 		String sql = getOfdbService().buildSQL(viewName, cols);
 
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
-		List<IEntity[]> resultList = executeQueryPaginated(sql, pageIndex);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
-		long count = executeCountQuery(sqlCount);
+		long count = getCrudService().executeCountSql(sqlCount);
 
 		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pageIndex);
 

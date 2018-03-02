@@ -17,8 +17,6 @@
 
 	<bean id="navigationFilter" class="de.mw.mwdata.rest.client.navigation.NavigationFilter" />
 
-	<bean id="urlManager" class="de.mw.mwdata.rest.client.util.UrlManager" />
-
 	<bean id="navigationManager" class="de.mw.mwdata.rest.client.navigation.CrudNavigationManager"
 		scope="singleton">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />

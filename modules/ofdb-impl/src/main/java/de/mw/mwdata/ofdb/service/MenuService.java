@@ -13,6 +13,7 @@ import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OperatorEnum;
 import de.mw.mwdata.core.ofdb.query.ValueType;
+import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IMenuService;
 import de.mw.mwdata.ofdb.dao.IOfdbDao;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
@@ -20,6 +21,12 @@ import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 public class MenuService implements IMenuService {
 
 	private IOfdbDao ofdbDao;
+
+	private ICrudService<IEntity> crudService;
+
+	public void setCrudService(ICrudService<IEntity> crudService) {
+		this.crudService = crudService;
+	}
 
 	public void setOfdbDao(final IOfdbDao ofdbDao) {
 		this.ofdbDao = ofdbDao;
@@ -35,7 +42,7 @@ public class MenuService implements IMenuService {
 				.andWhereRestriction("aMenu", "ebene", OperatorEnum.Eq, String.valueOf(layer), ValueType.NUMBER)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
-		List<IEntity[]> entities = this.ofdbDao.executeQuery(sql);
+		List<IEntity[]> entities = this.crudService.executeSql(sql);
 		List<EntityTO> entityTOs = convertToEntityTO(entities, new String("urlPath"));
 
 		return entityTOs;
@@ -76,7 +83,7 @@ public class MenuService implements IMenuService {
 						ValueType.NUMBER)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
-		List<IEntity[]> entities = this.ofdbDao.executeQuery(sql);
+		List<IEntity[]> entities = this.crudService.executeSql(sql);
 		List<EntityTO> entityTOs = convertToEntityTO(entities, new String("urlPath"));
 
 		return entityTOs;

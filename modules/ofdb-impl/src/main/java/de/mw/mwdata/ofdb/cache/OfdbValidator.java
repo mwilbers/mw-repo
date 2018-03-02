@@ -131,32 +131,15 @@ public class OfdbValidator implements OfdbValidatable {
 		return set;
 	}
 
-	// @Override
 	public ViewConfigValidationResultSet isAnsichtSpalteValid(final IAnsichtSpalte spalte,
 			final ViewConfigHandle viewHandle) {
 
 		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
-		// TabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte( spalte );
-		// if ( null == tabSpeig ) {
-		// // String msg = LocalizedMessages.getString( Config.BUNDLE_NAME,
-		// "MissingTabSpeigMapping",
-		// // spalte.getSpalteAKey(), spalte.getAnsichtDef().getName() );
-		// // result.setErrorMessage( msg );
-		//
-		// set.addValidationResult( "MissingTabSpeigMapping", spalte.getSpalteAKey(),
-		// spalte.getAnsichtDef().getName()
-		// );
-		//
-		// }
 
 		if (!StringUtils.isEmpty(spalte.getAnsichtSuchen())) {
 
 			if (StringUtils.isEmpty(spalte.getSuchwertAusTabAKey())
 					|| StringUtils.isEmpty(spalte.getSuchwertAusSpalteAKey())) {
-				// String message = LocalizedMessages.getString( Config.BUNDLE_NAME,
-				// "invalidOfdbConfig.FX_AnsichtSpalten.AnsichtSuchen", spalte.getSpalteAKey(),
-				// spalte.getName() );
-				// result.setErrorMessage( message );
 				set.addValidationResult("invalidOfdbConfig.FX_AnsichtSpalten.AnsichtSuchen", spalte.getSpalteAKey(),
 						spalte.getName());
 			}
@@ -167,7 +150,6 @@ public class OfdbValidator implements OfdbValidatable {
 			}
 
 			IAnsichtDef ansichtDef = viewHandleSuchen.getViewDef();
-			// this.ofdbService.findAnsichtByName( spalte.getAnsichtSuchen() );
 
 			// FIXME: null-check no more needed when we use db-foreign-keys on ansichtDefId
 			if (null == ansichtDef) {
@@ -189,15 +171,6 @@ public class OfdbValidator implements OfdbValidatable {
 						"invalidOfdbConfig.FX_AnsichtTab.missingTabDef_AnsichtSpalte_SuchWertAusTabAKey",
 						spalte.getName(), spalte.getSpalteAKey()); // -> siehe aufruf createOfdbFields()
 			}
-
-			// IGenericDao<AbstractMWEntity> dao = this.ofdbService.findDaoByTableName(
-			// suchTabDef );
-			// if ( null == dao ) {
-			// set.addValidationResult(
-			// "invalidOfdbConfig.FX_AnsichtSpalten.SuchWertAusTabAKey_missingDao",
-			// spalte.getSuchwertAusTabAKey(), spalte.getName(),
-			// spalte.getAnsichtDef().getName() );
-			// }
 
 			IAnsichtTab ansichtTabSuchen = viewHandleSuchen.findAnsichtTabByTabAKey(spalte.getSuchwertAusTabAKey());
 			if (null == ansichtTabSuchen) {
@@ -261,61 +234,8 @@ public class OfdbValidator implements OfdbValidatable {
 
 	}
 
-	// private void checkNull( final AbstractMWEntity entity, final
-	// ViewConfigValidationResultSet validationResultSet )
-	// {
-	//
-	// if ( null == entity ) {
-	// LOGGER.error( validationResultSet.toString() );
-	// String msg = LocalizedMessages.getString( Constants.BUNDLE_NAME_OFDB,
-	// "invalidConfiguration" );
-	// throw new OfdbInvalidConfigurationException( msg );
-	// }
-	//
-	// }
-
-	// @Override
 	public ViewConfigValidationResultSet isViewOrderByValid(final IAnsichtOrderBy ansichtOrderBy,
 			final ViewConfigHandle viewHandle) {
-
-		// ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
-		// // AnsichtTab viewTab = viewHandle.findAnsichtTabByTabAKey(
-		// ansichtOrderBy.getTabAKey() );
-		// TabSpeig orderTabSpeig = viewHandle.findTabSpeigByAnsichtOrderBy(
-		// ansichtOrderBy );
-		// if ( null == orderTabSpeig ) {
-		// set.addValidationResult(
-		// "invalidOfdbConfig.FX_AnsichtOrderBy.missingTabSpeig", ansichtOrderBy.getId()
-		// .toString(), ansichtOrderBy.getName() ); // -> siehe aufruf
-		// createOfdbFields()
-		// } else {
-		//
-		// List<TabSpeig> orderList = new ArrayList<TabSpeig>();
-		// orderList.add( orderTabSpeig );
-		//
-		// ... fehler: NPE hier im TabSpeigDefaultsTEst: dazu tue:
-		// 1. ANSICHTORDERBY tabelle muss über ANSICHTTABID und ANSICHTSPALTENID gehen,
-		// nicht über TABDEFID
-		// 2. alle unit-tests testen
-		//
-		// OfdbPropMapper orderPropMapper =
-		// this.ofdbCacheManager.findPropertyMapperByTabSpeig( orderTabSpeig );
-		// String orderPropName = orderPropMapper.getPropertyName();
-		// // ... NPE: orderPropName darf nicht aus ofdbCache geladen werdne, weil noch
-		// nicht da ...
-		// // Map<String, OfdbPropMapper> propertyMap =
-		// this.ofdbService.loadPropertyMapping( orderList );
-		// // String propName = propertyMap.get( orderTabSpeig.getSpalte().toUpperCase()
-		// ).getPropertyName();
-		//
-		// if ( null == orderPropName ) {
-		// set.addValidationResult(
-		// "invalidOfdbConfig.FX_AnsichtOrderBy.missingProperty", ansichtOrderBy.getId()
-		// .toString(), ansichtOrderBy.getSpalteAKey() ); // -> siehe aufruf
-		// createOfdbFields()
-		//
-		// }
-		// }
 
 		return new ViewConfigValidationResultSet();
 	}

@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
+import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.cache.ViewConfiguration.Builder;
@@ -40,16 +40,21 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ViewConfigFactoryBean.class);
 
-	// FIXME: replace autwiring by xml-injections
-
-	@Autowired
 	private OfdbCacheManager ofdbCacheManager;
-
-	@Autowired
 	private OfdbValidatable ofdbValidator;
-
-	@Autowired
 	private IOfdbService ofdbService;
+
+	public void setOfdbCacheManager(OfdbCacheManager ofdbCacheManager) {
+		this.ofdbCacheManager = ofdbCacheManager;
+	}
+
+	public void setOfdbValidator(OfdbValidatable ofdbValidator) {
+		this.ofdbValidator = ofdbValidator;
+	}
+
+	public void setOfdbService(IOfdbService ofdbService) {
+		this.ofdbService = ofdbService;
+	}
 
 	private void handleValidationErrors(final ViewConfigValidationResultSet resultSet) {
 
@@ -119,7 +124,12 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 						tableName);
 				LOGGER.warn(msg);
 			}
-			partSet = validateTabSpeigList(tabSpeigs);
+
+			// validate tabSpeigs
+			for (ITabSpeig tabSpeig : tabSpeigs) {
+				partSet = this.ofdbValidator.isTabSpeigValid(tabSpeig);
+				set.merge(partSet);
+			}
 			set.merge(partSet);
 			if (set.hasErrors()) {
 				handleValidationErrors(set);
@@ -223,22 +233,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			throw new OfdbInvalidConfigurationException(msg);
 		}
 		return entityClassType;
-	}
-
-	// FIXMEi: remove method
-	private ViewConfigValidationResultSet validateTabSpeigList(final List<ITabSpeig> tabSpeigs) {
-
-		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
-
-		for (ITabSpeig tabSpeig : tabSpeigs) {
-
-			// checkNull( tabSpeig, set );
-			ViewConfigValidationResultSet partSet = this.ofdbValidator.isTabSpeigValid(tabSpeig);
-			set.merge(partSet);
-
-		}
-
-		return set;
 	}
 
 	// //@Override
@@ -368,19 +362,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				if (ansichtSpalte.getSuchwertAusTabAKey().equals(ansichtSpalte.getTabAKey())) {
 					tabDef = viewHandle.getMainAnsichtTab().getTabDef();
 					viewHandleSuchen = viewHandle;
-					// } else if ( null == tabDef ) {
-					// // case if view references to parent instance of itself (e.g. FX_Menues_K ->
-					// FX_(Haupt)Menues_K)
-					// // if ( viewHandle.getMainAnsichtTab().getTabDef().getName()
-					// // .equals( ansichtSpalte.getSuchwertAusTabAKey() ) ) {
-					// // } else {
-					// String msg = LocalizedMessages.getString( Constants.BUNDLE_NAME,
-					// "invalidOfdbConfig.FX_AnsichtSpalten.SuchWertAusTabAKey_missingEntry",
-					// ansichtSpalte.getSuchwertAusTabAKey(), viewHandle.getViewDef().getName() );
-					// throw new OfdbMissingMappingException( msg );
-					// // }
 				} else {
-
 					tabDef = this.ofdbCacheManager.findRegisteredTableDef(ansichtSpalte.getSuchwertAusTabAKey());
 					if (null == tabDef) {
 						String msg = MessageFormat.format(
@@ -388,23 +370,12 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 								ansichtSpalte.getAnsichtDef().getName(), ansichtSpalte.getSuchwertAusTabAKey());
 						LOGGER.error(msg);
 					}
-
 				}
-
-				// } catch ( OfdbMissingMappingException e ) {
-				// String msg = MessageFormat.format( "Technical error: dao not found for table
-				// : {0}",
-				// tabDef.getName() );
-				// LOGGER.error( msg );
-				// throw new OfdbInvalidConfigurationException( msg );
-				// }
 
 				if (ofField.isMapped()) {
 
-					// IGenericDao<AbstractMWEntity> mappedDao =
-					// this.ofdbService.findDaoByTableName( tabDef );
 					// TODO: tabBeziehnungen here still needed? this.daoMap still needed ?
-					Class<? extends AbstractMWEntity> clazz = ClassNameUtils.loadClass(tabDef.getFullClassName());
+					Class<IEntity> clazz = ClassNameUtils.loadClass(tabDef.getFullClassName());
 					List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, tabSpeig,
 							viewHandleSuchen.getViewOrders(), clazz);
 					ofField.setListOfValues(listOfValues);

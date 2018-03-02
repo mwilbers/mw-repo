@@ -76,7 +76,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	private IOfdbDao ofdbDao;
 	private OfdbCacheManager ofdbCacheManager;
 
-	private ICrudService crudService;
+	private ICrudService<IEntity> crudService;
 
 	protected IOfdbDao getOfdbDao() {
 		return this.ofdbDao;
@@ -114,7 +114,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable(ConfigOfdb.T_VIEWDEF, "v").fromTable(ConfigOfdb.T_VIEWDEF, "v")
 				.andWhereRestriction("v", "urlPath", OperatorEnum.Eq, urlPath, ValueType.STRING).buildSQL();
-		List<IEntity[]> result = executeQuery(sql);
+		List<IEntity[]> result = this.crudService.executeSql(sql);
 
 		if (CollectionUtils.isEmpty(result)) {
 			String message = MessageFormat.format("ViewDef by urlpath {0} is not found. ", urlPath);
@@ -143,7 +143,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		String sql = b.selectTable(ConfigOfdb.T_VIEWDEF, "v").fromTable(ConfigOfdb.T_VIEWDEF, "v")
 				.andWhereRestriction("v", "name", OperatorEnum.Eq, viewName, ValueType.STRING).buildSQL();
 
-		List<IEntity[]> result = executeQuery(sql);
+		List<IEntity[]> result = this.crudService.executeSql(sql);
 
 		if (null == result) {
 			String message = MessageFormat.format("ViewDef {0} is not found. ", viewName);
@@ -620,10 +620,11 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	}
 
-	@Override
-	public List<IEntity[]> executeQuery(final String sql) {
-		return this.getOfdbDao().executeQuery(sql);
-	}
+	// @Override
+	// public List<IEntity[]> executeQuery(final String sql) {
+	// ...
+	// return this.crudService.executeSql(sql);
+	// }
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -678,6 +679,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	@Override
 	public ITabSpeig loadTablePropByTableName(final String tableName, final String columnName) {
 
+		// FIXME: method only used in tests
+
 		List<ITabSpeig> tableProps = loadTablePropListByTableName(tableName);
 		for (ITabSpeig tabSpeig : tableProps) {
 			if (columnName.equals(tabSpeig.getSpalte())) {
@@ -697,8 +700,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		for (ITabSpeig tabSpeig : tabSpeigs) {
 			if (tabSpeig.getPrimSchluessel()) {
 				// TODO: how can we get the propertyname of the hibernate-@id-column ? FIXME:
-				// this does not work for
-				// combined PS (e.g. two columns or more )
+				// this does not work for combined Primary keys (e.g. two columns or more )
 				OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
 
 				if (null == propMapper) {
@@ -707,7 +709,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 							+ type.getClass().getName() + " with this columnname.");
 				}
 
-				// propMapper.setPropertyName( Constants.SYS_PROP_ID );
 			}
 		}
 
@@ -727,7 +728,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	@Override
 	public List<Object> getListOfValues(final OfdbField ofField, final ITabSpeig tabSpeig,
-			final List<IAnsichtOrderBy> ansichtOrderList, final Class<? extends AbstractMWEntity> type) {
+			final List<IAnsichtOrderBy> ansichtOrderList, final Class<IEntity> type) {
 
 		// if no hibernate-specific entity-property found
 		if (!ofField.isMapped()) {
@@ -749,7 +750,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			return this.getOfdbDao().getEnumValues(entityClassType, ofField.getPropName());
 		} else if (null != type) {
 			Map<String, String> sortColumns = convertAnsichtOrderListToSortColumns(ansichtOrderList);
-			List<AbstractMWEntity> lovs = this.crudService.findAll(type, sortColumns);
+			List<IEntity> lovs = this.crudService.findAll(type, sortColumns);
 
 			return ListUtils.unmodifiableList(lovs);
 		}
@@ -895,7 +896,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 						entity.getId(), ValueType.NUMBER);
 
 				String sql = builder.buildSQL();
-				List<IEntity[]> results = executeQuery(sql);
+				List<IEntity[]> results = this.crudService.executeSql(sql);
 				if (results.size() > 0) {
 					String message = "Unique violation. TableDef: " + tabDef.getName() + ", tableProperty: "
 							+ tableProp.getSpalte();

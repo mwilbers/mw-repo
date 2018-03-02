@@ -3,6 +3,7 @@ package de.mw.mwdata.ofdb.cache;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +14,10 @@ import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 public class DefaultOfdbCacheManager implements OfdbCacheManager {
 
-	private static final Logger	LOGGER	= LoggerFactory.getLogger( DefaultOfdbCacheManager.class );
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOfdbCacheManager.class);
 
 	// FIXME: cache should be moved to ehcache
-	private OfdbCache			ofdbCache;
+	private OfdbCache ofdbCache;
 
 	public DefaultOfdbCacheManager() {
 		this.ofdbCache = OfdbCache.createInstance();
@@ -25,33 +26,30 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	/**
 	 *
 	 * @param tableName
-	 * @return a map containing the key = tabSpeig.spalte and value = propertyname of the requested tableName
+	 * @return a map containing the key = tabSpeig.spalte and value = propertyname
+	 *         of the requested tableName
 	 */
 	@Override
-	public Map<String, OfdbPropMapper> getPropertyMap( final String tableName ) {
-		return this.ofdbCache.getPropertyMap( tableName );
+	public Map<String, OfdbPropMapper> getPropertyMap(final String tableName) {
+		return this.ofdbCache.getPropertyMap(tableName);
 	}
 
 	@Override
-	public void registerView( final ViewConfigHandle viewHandle ) throws OfdbMissingMappingException {
-		this.addViewConfiguration( viewHandle );
+	public void registerView(final ViewConfigHandle viewHandle) throws OfdbMissingMappingException {
+		this.addViewConfiguration(viewHandle);
 
 		List<IAnsichtTab> ansichtTabList = viewHandle.getViewTabs();
 		boolean isReferenced = false;
-		if ( null == ansichtTabList ) {
+		if (null == ansichtTabList) {
 			return;
 		}
-		for ( IAnsichtTab ansichtTab : ansichtTabList ) {
+		for (IAnsichtTab ansichtTab : ansichtTabList) {
 
 			// check if TabDef is referenced in any other AnsichtTab
 			ITabDef tabDef = ansichtTab.getTabDef();
-			isReferenced = this.isReferencedByCachedAnsichtTab( tabDef, ansichtTab );
-			if ( !isReferenced ) {
-				this.ofdbCache.addPropertyMap( tabDef.getName(), viewHandle.getPropertyMap() );
-				// this.ofdbCache.removePropertyMap( tabDef.getName() );
-				// this.tablePropertyMap.remove( tabDef.getName() );
-				// this.tabSpeigMap.remove( tabDef.getName() );
-				// this.tabDefMap.remove( tabDef.getName() );
+			isReferenced = this.isReferencedByCachedAnsichtTab(tabDef, ansichtTab);
+			if (!isReferenced) {
+				this.ofdbCache.addPropertyMap(tabDef.getName(), viewHandle.getPropertyMap());
 			}
 		}
 
@@ -59,72 +57,67 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 
 	// @Override
 	@Override
-	public void unregisterView( final String viewName ) {
+	public void unregisterView(final String viewName) {
 
-		ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
-		if ( null == viewHandle ) {
+		ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
+		if (null == viewHandle) {
 			return;
 		}
 
-		List<IAnsichtTab> ansichtTabList = viewHandle.getViewTabs(); // this.ansichtTabMap.get( viewName );
+		List<IAnsichtTab> ansichtTabList = viewHandle.getViewTabs();
 		// // for each ansichtTab search if tabDef is used in any other ansichtTab
 		boolean isReferenced = false;
-		if ( null != ansichtTabList ) {
+		if (null != ansichtTabList) {
 
-			for ( IAnsichtTab ansichtTab : ansichtTabList ) {
+			for (IAnsichtTab ansichtTab : ansichtTabList) {
 
 				// check if TabDef is referenced in any other AnsichtTab
 				ITabDef tabDef = ansichtTab.getTabDef();
-				isReferenced = this.isReferencedByCachedAnsichtTab( tabDef, ansichtTab );
-				if ( !isReferenced ) {
-					this.ofdbCache.removePropertyMap( tabDef.getName() );
-					// this.tablePropertyMap.remove( tabDef.getName() );
-					// this.tabSpeigMap.remove( tabDef.getName() );
-					// this.tabDefMap.remove( tabDef.getName() );
+				isReferenced = this.isReferencedByCachedAnsichtTab(tabDef, ansichtTab);
+				if (!isReferenced) {
+					this.ofdbCache.removePropertyMap(tabDef.getName());
 				}
 			}
 		}
 
-		this.ofdbCache.removeViewData( viewName );
+		this.ofdbCache.removeViewData(viewName);
 
 	}
 
-	// @Override
 	@Override
-	public boolean isViewRegistered( final String viewName ) {
+	public boolean isViewRegistered(final String viewName) {
 
-		ViewConfigHandle viewHandle = this.getViewConfig( viewName );
-		// this.ofdbCache.getAnsichtByAnsichtName( viewName );
-		if ( null == viewHandle ) {
+		ViewConfigHandle viewHandle = this.getViewConfig(viewName);
+		if (null == viewHandle) {
 			return false;
 		}
-		IAnsichtTab ansichtTab = viewHandle.getMainAnsichtTab(); // this.getMainAnsichtTab( viewName );
-		if ( null == ansichtTab ) {
+		IAnsichtTab ansichtTab = viewHandle.getMainAnsichtTab();
+		if (null == ansichtTab) {
 			return false;
 		}
-		ITabDef tabDef = viewHandle.getTableByName( ansichtTab.getTabDef().getName() );
+		ITabDef tabDef = viewHandle.getTableByName(ansichtTab.getTabDef().getName());
 		return (null != tabDef);
 
 	}
 
-	public void addViewConfiguration( final ViewConfigHandle viewHandle ) {
-		this.ofdbCache.putViewConfiguration( viewHandle.getViewDef().getName(), viewHandle.getViewConfiguration() );
+	public void addViewConfiguration(final ViewConfigHandle viewHandle) {
+		this.ofdbCache.putViewConfiguration(viewHandle.getViewDef().getName(), viewHandle.getViewConfiguration());
 
 	}
 
 	@Override
-	public ViewConfigHandle getViewConfig( final String viewName ) {
-		return this.ofdbCache.getViewConfig( viewName );
+	public ViewConfigHandle getViewConfig(final String viewName) {
+		return this.ofdbCache.getViewConfig(viewName);
 	}
 
 	@Override
-	public ITabDef findRegisteredTableDef( final String tableName ) {
+	public ITabDef findRegisteredTableDef(final String tableName) {
 
-		for ( String viewName : this.ofdbCache ) {
-			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
+		for (String viewName : this.ofdbCache) {
+			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
 
-			for ( IAnsichtTab viewTab : viewHandle.getViewTabs() ) {
-				if ( viewTab.getTabDef().getName().equals( tableName ) ) {
+			for (IAnsichtTab viewTab : viewHandle.getViewTabs()) {
+				if (viewTab.getTabDef().getName().equals(tableName)) {
 					return viewTab.getTabDef();
 				}
 			}
@@ -134,17 +127,17 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		return null;
 	}
 
-	private boolean isReferencedByCachedAnsichtTab( final ITabDef tabDef, final IAnsichtTab ansichtTabToIgnore ) {
+	private boolean isReferencedByCachedAnsichtTab(final ITabDef tabDef, final IAnsichtTab ansichtTabToIgnore) {
 
-		for ( String viewName : this.ofdbCache ) {
-			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
+		for (String viewName : this.ofdbCache) {
+			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
 
-			for ( IAnsichtTab viewTab : viewHandle.getViewTabs() ) {
-				if ( viewTab.equals( ansichtTabToIgnore ) ) {
+			for (IAnsichtTab viewTab : viewHandle.getViewTabs()) {
+				if (viewTab.equals(ansichtTabToIgnore)) {
 					continue;
 				}
 
-				if ( viewTab.getTabDef().equals( tabDef ) ) {
+				if (viewTab.getTabDef().equals(tabDef)) {
 					return true;
 				}
 
@@ -156,11 +149,11 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	}
 
 	@Override
-	public ViewConfigHandle findViewConfigByTableName( final String tableName ) {
+	public ViewConfigHandle findViewConfigByTableName(final String tableName) {
 
-		for ( String viewName : this.ofdbCache ) {
-			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
-			if ( viewHandle.getMainAnsichtTab().getTabDef().getName().equals( tableName ) ) {
+		for (String viewName : this.ofdbCache) {
+			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
+			if (viewHandle.getMainAnsichtTab().getTabDef().getName().equals(tableName)) {
 				return viewHandle;
 			}
 		}
@@ -172,9 +165,9 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	public List<ViewConfigHandle> getRegisteredViewConfigs() {
 
 		List<ViewConfigHandle> viewConfigs = new ArrayList<ViewConfigHandle>();
-		for ( String viewName : this.ofdbCache ) {
-			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig( viewName );
-			viewConfigs.add( viewHandle );
+		for (String viewName : this.ofdbCache) {
+			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
+			viewConfigs.add(viewHandle);
 		}
 
 		return viewConfigs;

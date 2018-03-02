@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
-import org.hibernate.type.ManyToOneType;
-import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,6 @@ import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OperatorEnum;
 import de.mw.mwdata.core.ofdb.query.ValueType;
 import de.mw.mwdata.core.utils.ClassNameUtils;
-import de.mw.mwdata.core.utils.PaginatedList;
-import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
@@ -66,30 +61,12 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Autowired
 	private OfdbMapper ofdbMapper;
 
-	/** FIXME: holding map as state in OfdbDao ? */
-	// private Map<String, OfdbMapper> tableMap = new HashMap<String, OfdbMapper>();
-
-	// @Override
 	@Override
 	public Map<String, OfdbPropMapper> initializeMapper(final Class<? extends AbstractMWEntity> type,
 			final String tableName) {
-
 		LOGGER.debug(
 				"Loading Cache for Dao : " + tableName + " ....................................." + type.toString());
-
-		// OfdbMapper mapper = this.tableMap.get( tableName );
-
-		if (this.getHibernateTemplate().getSessionFactory() != null) {
-			return this.ofdbMapper.init(type, tableName);
-
-			// mapper = new OfdbMapper( type );
-			// this.tableMap.put( tableName, mapper );
-		} else {
-			// FIXME: can this case happen ?
-			throw new RuntimeException("Missing SessionFactory in OfdbDao.initializeMapper()");
-			// return null;
-		}
-
+		return this.ofdbMapper.init(type, tableName);
 	}
 
 	/**
@@ -97,44 +74,13 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	 *
 	 * @return the value as object, returns null, if there is no value,
 	 *
-	 *
 	 */
-	// @Override
 	@Override
 	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex)
 			throws OfdbMissingMappingException {
-
 		return this.ofdbMapper.getPropertyValue(entity, propPersistenceIndex);
 	}
 
-	// @Override
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public Map<String, TabSpeig> findTabSpeigMapByTable(final String tableName) {
-
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_TABPROPS, "tSpeig").fromTable(ConfigOfdb.T_TABPROPS, "tSpeig")
-				.joinTable(ConfigOfdb.T_TABDEF, "tDef").whereJoin("tSpeig", "tabDefId", "tDef", "id")
-				.andWhereRestriction("tDef", "name", OperatorEnum.Eq, tableName, ValueType.STRING)
-				.orderBy("tSpeig", "reihenfolge", "ASC").buildSQL();
-		List<IEntity[]> tabProps = this.executeQuery(sql);
-
-		if (null == tabProps) {
-			String message = MessageFormat.format("No table properties found by table name {0}. ", tableName);
-			throw new OfdbMissingObjectException(message);
-		}
-
-		Map<String, TabSpeig> map = new HashMap<String, TabSpeig>();
-		for (int i = 0; i < tabProps.size(); i++) {
-			Object o = tabProps.get(i);
-			TabSpeig tabSpeig = (TabSpeig) o;
-			map.put(tabSpeig.getSpalte(), tabSpeig); // FIXME: remove toUpperCase()
-		}
-		return map;
-
-	}
-
-	// @Override
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<ITabSpeig> findTabSpeigByTable(final String table) {
@@ -144,7 +90,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.joinTable(ConfigOfdb.T_TABDEF, "tDef").whereJoin("tSpeig", "tabDefId", "tDef", "id")
 				.andWhereRestriction("tDef", "name", OperatorEnum.Eq, table, ValueType.STRING)
 				.orderBy("tSpeig", "reihenfolge", "ASC").buildSQL();
-		List<IEntity[]> tabProps = executeQuery(sql);
+		List<IEntity[]> tabProps = this.crudDao.executeSql(sql);
 
 		List<ITabSpeig> props = new ArrayList<ITabSpeig>();
 		for (int i = 0; i < tabProps.size(); i++) {
@@ -166,7 +112,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.andWhereRestriction("aSpalten", "ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(),
 						ValueType.NUMBER)
 				.orderBy("aSpalten", "indexGrid", "asc").buildSQL();
-		List<IEntity[]> results = executeQuery(sql);
+		List<IEntity[]> results = this.crudDao.executeSql(sql);
 
 		Map<String, IAnsichtSpalte> map = new HashMap<String, IAnsichtSpalte>(results.size());
 		for (int i = 0; i < results.size(); i++) {
@@ -185,7 +131,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable(ConfigOfdb.T_TABDEF, "t").fromTable(ConfigOfdb.T_TABDEF, "t")
 				.andWhereRestriction("t", "fullClassName", OperatorEnum.Eq, fullClassName, ValueType.STRING).buildSQL();
-		List<IEntity[]> result = executeQuery(sql);
+		List<IEntity[]> result = this.crudDao.executeSql(sql);
 		if (null == result) {
 			String message = MessageFormat.format("TabDef by fullClassName {0} is not found. ", fullClassName);
 			throw new OfdbMissingObjectException(message);
@@ -195,24 +141,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		return (TabDef) entityArray[0];
 	}
 
-	// @Override
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public TabDef findTabDefByTableName(final String tableName) {
-		// FIXME: should be replaced by genericDao.findByName
-		return (TabDef) this.crudDao.findByName(TabDef.class, tableName);
-
-	}
-
-	// @Override
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public IAnsichtDef findAnsichtDefByName(final String ansichtName) {
-		// FIXME: should be replaced by genericDao.findByName
-		return (IAnsichtDef) this.crudDao.findByName(AnsichtDef.class, ansichtName);
-	}
-
-	// @Override
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<AnsichtOrderBy> findAnsichtOrderByAnsichtId(final long ansichtId) {
@@ -223,7 +151,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.andWhereRestriction("aTab", "ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(),
 						ValueType.NUMBER)
 				.orderBy("aOrder", "reihenfolge", "asc").buildSQL();
-		List<IEntity[]> results = this.executeQuery(sql);
+		List<IEntity[]> results = this.crudDao.executeSql(sql);
 
 		List<AnsichtOrderBy> orders = new ArrayList<AnsichtOrderBy>();
 
@@ -245,7 +173,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.selectTable("AnsichtTab", "aTab").fromTable("AnsichtTab", "aTab").andWhereRestriction("aTab",
 						"ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(), ValueType.NUMBER)
 				.orderBy("aTab", "reihenfolge", "asc").buildSQL();
-		List<IEntity[]> results = executeQuery(sql);
+		List<IEntity[]> results = this.crudDao.executeSql(sql);
 
 		List<IAnsichtTab> aTabs = new ArrayList<IAnsichtTab>();
 		for (int i = 0; i < results.size(); i++) {
@@ -300,7 +228,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.andWhereRestriction("viewDef", "urlPath", OperatorEnum.IsNotNull, "null", ValueType.STRING)
 				.orderBy("viewDef", "reihenfolge", "asc").buildSQL();
 
-		List<IEntity[]> results = this.executeQuery(sql);
+		List<IEntity[]> results = this.crudDao.executeSql(sql);
 
 		List<AnsichtDef> views = new ArrayList<AnsichtDef>();
 		if (CollectionUtils.isEmpty(results)) {
@@ -308,79 +236,16 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		}
 
 		for (int i = 0; i < results.size(); i++) {
-			// Object o = view;
 			IEntity[] entityArray = results.get(i);
 			views.add((AnsichtDef) entityArray[0]);
-			// views.add( item );
 		}
 
 		return views;
 	}
 
-	// @Override
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<IEntity[]> executeQuery(final String sql) {
-
-		Query query = this.getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sql);
-		// query.setFlushMode( FlushMode.MANUAL );
-
-		List<IEntity[]> arrayResults = null;
-		Type[] types = query.getReturnTypes();
-		if (types.length == 1 && types[0] instanceof ManyToOneType) { // if only entity (and no other column) is
-																		// queried, hibernate returns Object instead of
-																		// Object[]
-
-			List<IEntity> result = query.list();
-			arrayResults = new ArrayList<IEntity[]>(result.size());
-
-			for (IEntity item : result) {
-				IEntity[] arrayResult = new IEntity[1];
-				arrayResult[0] = item;
-				arrayResults.add(arrayResult);
-			}
-
-		} else {
-			List<IEntity[]> result = query.list();
-			arrayResults = new ArrayList<IEntity[]>(result);
-		}
-
-		return arrayResults;
-
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<IEntity[]> executeQueryPaginated(final String sql, final int pageIndex) {
-
-		Query query = this.getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sql);
-
-		int start = (pageIndex - 1) * PaginatedList.DEFAULT_STEPSIZE;
-		query.setFirstResult(start);
-		query.setMaxResults(PaginatedList.DEFAULT_STEPSIZE);
-
-		@SuppressWarnings("unchecked")
-		List<IEntity[]> result = query.list();
-
-		return result;
-
-	}
-
-	// @Override
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public long executeCountQuery(final String sqlCount) {
-		Query query = this.getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sqlCount);
-
-		List<Long> result = query.list();
-		return result.get(0).longValue();
-	}
-
 	@Override
 	public List<Object> getEnumValues(final Class<? extends AbstractMWEntity> entityClassType,
 			final String propertyName) {
-		// OfdbMapper ofdbMapper = this.tableMap.get( tableName );
-
 		return this.ofdbMapper.getEnumValues(entityClassType, propertyName);
 	}
 }

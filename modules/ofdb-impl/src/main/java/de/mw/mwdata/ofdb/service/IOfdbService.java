@@ -53,21 +53,6 @@ public interface IOfdbService {
 
 	public List<AnsichtDef> loadViewsForRegistration(final String applicationContextPath);
 
-	// /**
-	// * Loads all entities given by the viewName. Loads them sorted if sortColumns
-	// are given.
-	// *
-	// * @param viewName
-	// * @param sortColumns
-	// * @return
-	// */
-	// public List<IEntity[]> loadView( final String viewName, final
-	// List<SortKey>... sortKeys );
-
-	public List<IEntity[]> executeQuery(final String sql);
-
-	// public long executeCountQuery( final String sqlCount );
-
 	public boolean isEmpty(final AbstractMWEntity entity) throws OfdbMissingMappingException;
 
 	/**
@@ -124,7 +109,7 @@ public interface IOfdbService {
 	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsichtId(final long ansichtId);
 
 	public List<Object> getListOfValues(final OfdbField ofField, final ITabSpeig tabSpeig,
-			final List<IAnsichtOrderBy> ansichtOrderList, final Class<? extends AbstractMWEntity> type);
+			final List<IAnsichtOrderBy> ansichtOrderList, final Class<IEntity> type);
 
 	/**
 	 * Extracts the underlying table definition by the given entity and returns the
@@ -148,6 +133,6 @@ public interface IOfdbService {
 
 	public String buildSQL(final String viewName, final List<SortKey> sortKeys);
 
-	String buildSQLCount(final String viewName);
+	public String buildSQLCount(final String viewName);
 
 }

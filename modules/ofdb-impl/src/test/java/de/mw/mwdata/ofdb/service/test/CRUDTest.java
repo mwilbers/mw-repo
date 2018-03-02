@@ -246,7 +246,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		String sql = b.selectTable("TabDef", "tDef").fromTable("TabDef", "tDef")
 				.andWhereRestriction("tDef", "name", OperatorEnum.Eq, TestConstants.TABLENAME_TABDEF, ValueType.STRING)
 				.buildSQL();
-		List<IEntity[]> results = this.getOfdbService().executeQuery(sql);
+		List<IEntity[]> results = this.getCrudService().executeSql(sql);
 
 		List<TabDef> tabDefs = new ArrayList<TabDef>();
 		for (int i = 0; i < results.size(); i++) {
@@ -265,7 +265,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		sql = b.selectTable("tabDef", "tDef").fromTable("AnsichtTab", "aTab").joinEntity("tabDef", "tDef")
 				.andWhereRestriction("tDef", "datenbank", OperatorEnum.Eq, DATENBANK.K.name(), ValueType.STRING)
 				.buildSQL();
-		results = this.getOfdbService().executeQuery(sql);
+		results = this.getCrudService().executeSql(sql);
 
 		tabDefs = new ArrayList<TabDef>();
 		for (int i = 0; i < results.size(); i++) {
@@ -286,7 +286,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		sql = b.selectTable("TabSpeig", "tSpeig").fromTable("TabSpeig", "tSpeig")
 				.andWhereRestriction("tSpeig", "eingabeNotwendig", OperatorEnum.Eq, Boolean.TRUE, ValueType.BOOLEAN)
 				.buildSQL();
-		results = this.getOfdbDao().executeQuery(sql);
+		results = this.getCrudService().executeSql(sql);
 		tabSpeigs.clear();
 		for (int i = 0; i < results.size(); i++) {
 			IEntity[] entityArray = results.get(i);

@@ -6,68 +6,70 @@ import org.slf4j.LoggerFactory;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
+import de.mw.mwdata.core.domain.IEntity;
 
 public class ClassNameUtils {
 
-	protected static Logger	log	= LoggerFactory.getLogger( ClassNameUtils.class );
+	protected static Logger log = LoggerFactory.getLogger(ClassNameUtils.class);
 
 	// from OfdbService: replace all TabDef.getFullClassName()
-	public static Class<? extends AbstractMWEntity> getClassType( final String fullQualifiedClassName )
+	public static Class<? extends AbstractMWEntity> getClassType(final String fullQualifiedClassName)
 			throws ClassNotFoundException {
 
 		Class<?> class1 = null;
-		class1 = Class.forName( fullQualifiedClassName );
+		class1 = Class.forName(fullQualifiedClassName);
 
 		return (Class<? extends AbstractMWEntity>) class1;
 
 	}
 
 	/**
-	 * Converts the full qualified classname to the simple classname from last dot.<br>
+	 * Converts the full qualified classname to the simple classname from last
+	 * dot.<br>
 	 * Example: com.package.MyClass -> MyClass
 	 *
 	 * @param fullQualifiedClassName
 	 * @return
 	 */
-	public static String getSimpleClassName( final String fullQualifiedClassName ) {
+	public static String getSimpleClassName(final String fullQualifiedClassName) {
 
-		int lastDotPosition = StringUtils.lastIndexOf( fullQualifiedClassName, '.' );
-		if ( lastDotPosition == -1 ) {
+		int lastDotPosition = StringUtils.lastIndexOf(fullQualifiedClassName, '.');
+		if (lastDotPosition == -1) {
 			return null;
 		}
 
-		return fullQualifiedClassName.substring( lastDotPosition + 1 );
+		return fullQualifiedClassName.substring(lastDotPosition + 1);
 
 	}
 
-	public static Class<? extends AbstractMWEntity> loadClass( final String fullClassName ) {
+	public static Class<IEntity> loadClass(final String fullClassName) {
 		Class clazz = null;
 		try {
-			clazz = Class.forName( fullClassName );
-		} catch ( ClassNotFoundException e ) {
+			clazz = Class.forName(fullClassName);
+		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return clazz;
 	}
 
-	public static EntityTO<? extends AbstractMWEntity> createEntityTO( final Class<AbstractMWEntity> clazz ) {
+	public static EntityTO<? extends AbstractMWEntity> createEntityTO(final Class<AbstractMWEntity> clazz) {
 		AbstractMWEntity entityTO = null;
 		try {
 			entityTO = clazz.newInstance();
-		} catch ( InstantiationException e ) {
+		} catch (InstantiationException e) {
 			// FIXME: do correct error-handling here
-			log.error( "Could not instantiate filterObject of class: " + clazz.getCanonicalName() );
+			log.error("Could not instantiate filterObject of class: " + clazz.getCanonicalName());
 			e.printStackTrace();
-		} catch ( IllegalAccessException e ) {
-			log.error( "Could not instantiate filterObject of class: " + clazz.getCanonicalName() );
+		} catch (IllegalAccessException e) {
+			log.error("Could not instantiate filterObject of class: " + clazz.getCanonicalName());
 			e.printStackTrace();
-		} catch ( ClassCastException e ) {
-			log.error( "Could not cast to AbstractMWEntity: " + clazz.getCanonicalName() );
+		} catch (ClassCastException e) {
+			log.error("Could not cast to AbstractMWEntity: " + clazz.getCanonicalName());
 			return null;
 		}
 
-		EntityTO<AbstractMWEntity> entity = new EntityTO<AbstractMWEntity>( entityTO );
+		EntityTO<AbstractMWEntity> entity = new EntityTO<AbstractMWEntity>(entityTO);
 		// entity.setItem( entityTO );
 		return entity;
 
@@ -80,14 +82,14 @@ public class ClassNameUtils {
 	 * @param className
 	 * @return
 	 */
-	public static String convertClassNameToUrlPath( final String className ) {
+	public static String convertClassNameToUrlPath(final String className) {
 
-		String simpleClassName = getSimpleClassName( className );
-		if ( null == simpleClassName ) {
+		String simpleClassName = getSimpleClassName(className);
+		if (null == simpleClassName) {
 			return null;
 		}
 
-		return convertToCamelCase( simpleClassName );
+		return convertToCamelCase(simpleClassName);
 
 	}
 
@@ -98,13 +100,13 @@ public class ClassNameUtils {
 	 * @param simpleClassName
 	 * @return
 	 */
-	private static String convertToCamelCase( final String simpleClassName ) {
+	private static String convertToCamelCase(final String simpleClassName) {
 
-		if ( null == simpleClassName ) {
+		if (null == simpleClassName) {
 			return null;
 		}
 
-		return StringUtils.uncapitalize( simpleClassName );
+		return StringUtils.uncapitalize(simpleClassName);
 
 	}
 

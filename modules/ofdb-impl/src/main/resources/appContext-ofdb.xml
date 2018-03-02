@@ -37,6 +37,9 @@
 	</bean>
 
 	<bean id="viewConfigFactory" class="de.mw.mwdata.ofdb.cache.ViewConfigFactoryBean">
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="ofdbService" ref="ofdbService" />		
+		<property name="ofdbValidator" ref="ofdbValidator" />	
 	</bean>
 
 	<!-- init-method="loadOfdbCache" -->
@@ -48,12 +51,14 @@
 	
 	<bean id="menuService" class="de.mw.mwdata.ofdb.service.MenuService">
 		<property name="ofdbDao" ref="ofdbDao" />
+		<property name="crudService" ref="crudService" />
 	</bean>
 	
 	<bean id="entityService" class="de.mw.mwdata.ofdb.service.PagingEntityService">
 		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />		
+		<property name="crudService" ref="crudService" />
 	</bean>
 	
 	<!-- TypeZEITTYP -->

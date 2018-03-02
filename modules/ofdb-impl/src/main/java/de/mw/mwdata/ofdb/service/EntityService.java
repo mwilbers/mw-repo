@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.core.utils.SortKey.SORTDIRECTION;
@@ -23,12 +24,22 @@ public class EntityService implements IEntityService<IEntity> {
 
 	private IOfdbDao ofdbDao;
 
+	private ICrudService<IEntity> crudService;
+
 	public void setOfdbService(final IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
 	}
 
+	public void setCrudService(ICrudService<IEntity> crudService) {
+		this.crudService = crudService;
+	}
+
 	protected IOfdbService getOfdbService() {
 		return this.ofdbService;
+	}
+
+	protected ICrudService<IEntity> getCrudService() {
+		return this.crudService;
 	}
 
 	public void setOfdbCacheManager(final OfdbCacheManager ofdbCacheManager) {
@@ -48,7 +59,7 @@ public class EntityService implements IEntityService<IEntity> {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
 		String sql = this.ofdbService.buildSQL(viewName, cols);
-		List<IEntity[]> result = this.ofdbService.executeQuery(sql);
+		List<IEntity[]> result = this.crudService.executeSql(sql);
 
 		return result;
 
@@ -76,11 +87,6 @@ public class EntityService implements IEntityService<IEntity> {
 		}
 
 		return cols;
-	}
-
-	// @Override
-	protected long executeCountQuery(final String sqlCount) {
-		return this.getOfdbDao().executeCountQuery(sqlCount);
 	}
 
 }

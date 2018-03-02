@@ -15,7 +15,8 @@
 	<bean id="entityService" class="de.mw.mwdata.ofdb.service.PagingEntityService">
 		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
-		<property name="ofdbService" ref="ofdbService" />		
+		<property name="crudService" ref="crudService"></property>
+	 	<property name="ofdbService" ref="ofdbService" />		
 	</bean>
     <bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
 	 	<constructor-arg index="0"  value="admin" /> <!--  FIXME: remove admin here -->
