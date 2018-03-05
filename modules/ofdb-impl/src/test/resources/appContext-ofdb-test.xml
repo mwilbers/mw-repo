@@ -21,7 +21,6 @@
     <bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
 	 	<constructor-arg index="0"  value="admin" /> <!--  FIXME: remove admin here -->
 	 	<property name="ofdbService" ref="ofdbService"></property>
-	 	<property name="ofdbValidator" ref="ofdbValidator"></property>
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
 	</bean>

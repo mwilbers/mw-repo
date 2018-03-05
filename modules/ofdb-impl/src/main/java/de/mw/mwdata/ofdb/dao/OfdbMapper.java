@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.db.FxBooleanType;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.FxEnumType;
@@ -52,7 +51,7 @@ public class OfdbMapper extends HibernateDaoSupport {
 		String[] keyColumnNames = persister.getKeyColumnNames();
 		for (int i = 0; i < keyColumnNames.length; i++) {
 			OfdbPropMapper mapper = new OfdbPropMapper(tableName, keyColumnNames[i]);
-			mapper.setPropertyName(Constants.SYS_PROP_ID);
+			mapper.setPropertyName(persister.getIdentifierPropertyName());
 			mapper.setDbType(DBTYPE.LONGINTEGER);
 
 			propMap.put(keyColumnNames[i], mapper);

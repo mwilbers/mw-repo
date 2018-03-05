@@ -15,7 +15,6 @@ import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.core.test.data.TestConstants;
-import de.mw.mwdata.ofdb.cache.OfdbValidatable;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
@@ -35,9 +34,6 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfdbValidationTest.class);
 
 	@Autowired
-	private OfdbValidatable ofdbValidator;
-
-	@Autowired
 	private ApplicationFactory applicationFactory;
 
 	@Test
@@ -47,7 +43,8 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 
 		List<IAnsichtTab> ansichtTabList = new ArrayList<IAnsichtTab>();
 		IAnsichtDef ansichtDef = new AnsichtDef();
-		ViewConfigValidationResultSet resultSet = this.ofdbValidator.isAnsichtTabListValid(ansichtDef, ansichtTabList);
+		ViewConfigValidationResultSet resultSet = this.getOfdbService().isAnsichtTabListValid(ansichtDef,
+				ansichtTabList);
 		Assert.assertFalse(resultSet.hasErrors(), "Empty AnsichtTab-List not valid if ansichtDef is not empty.");
 		resultSet = new ViewConfigValidationResultSet();
 
@@ -85,19 +82,19 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 
 		ansichtTabList.add(ansichtTabMock);
 
-		resultSet = this.ofdbValidator.isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
+		resultSet = this.getOfdbService().isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
 		Assert.assertFalse(resultSet.hasErrors());
 
 		// simulate duplicate tableName -> should fail
 		ansichtTabMock.setTabAKey(TestConstants.TABLENAME_TABDEF);
-		resultSet = this.ofdbValidator.isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
+		resultSet = this.getOfdbService().isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
 		Assert.assertTrue(resultSet.hasErrors());
 		LOGGER.error(resultSet.toString());
 
 		// simulate missing original tableName when alias is different -> should fail
 		ansichtTabMock.setTabAKey(TestConstants.TABLENAME_TABDEF + "someAliasSuffix");
 		ansichtTabMock.setTabelle(null);
-		resultSet = this.ofdbValidator.isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
+		resultSet = this.getOfdbService().isAnsichtTabListValid(ansichtTabMock.getAnsichtDef(), ansichtTabList);
 		Assert.assertTrue(resultSet.hasErrors());
 		LOGGER.error(resultSet.toString());
 

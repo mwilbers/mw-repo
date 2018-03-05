@@ -58,11 +58,6 @@ public class UiEntityList<E extends AbstractMWEntity> {
 		this.ofdbFields = new ArrayList<>(fields);
 	}
 
-	public void setEntityTOs(final List<EntityTO<E>> entityTO) {
-		// FIXME: bad style: setting list from external
-		this.entityTOs = entityTO;
-	}
-
 	public void addEntityTO(final EntityTO<E> entityTO) {
 		this.entityTOs.add(entityTO);
 	}

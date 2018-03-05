@@ -63,7 +63,8 @@ public final class Constants {
 	/* ************************ PROPERTY-MAPPING ************************** */
 
 	/**
-	 * global constant for property id of entities
+	 * global constant for property id of entities<br>
+	 * FIXME: usage should be checked if necessary ?
 	 */
 	public static final String SYS_PROP_ID = "id";
 

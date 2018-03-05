@@ -9,10 +9,13 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.core.utils.SortKey;
+import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
+import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
@@ -134,5 +137,47 @@ public interface IOfdbService {
 	public String buildSQL(final String viewName, final List<SortKey> sortKeys);
 
 	public String buildSQLCount(final String viewName);
+
+	/**
+	 * Checks if all properties of the given AnsichtDef-object are valid for the
+	 * OFDB-Configuration
+	 *
+	 * @param ansichtDef
+	 * @param set
+	 */
+	public ViewConfigValidationResultSet isAnsichtValid(final IAnsichtDef ansichtDef);
+
+	/**
+	 * Checks if the given tableDef is valid for the OFDB-Configuration
+	 *
+	 * @param tabDef
+	 * @param tabSpeigs
+	 *            all table properties belonging to the given tabDef
+	 * @param set
+	 */
+	public ViewConfigValidationResultSet isTableValid(final ITabDef tabDef, List<ITabSpeig> tabSpeigs);
+
+	/**
+	 * Checks if all ansichtTab-objects of the given ansichtDef are valid for the
+	 * OFDB-configuration
+	 *
+	 * @param ansichtDef
+	 * @param ansichtTabList
+	 * @param set
+	 */
+	public ViewConfigValidationResultSet isAnsichtTabListValid(final IAnsichtDef ansichtDef,
+			final List<IAnsichtTab> ansichtTabList);
+
+	/**
+	 * Checks if the AnsichtSpalte is valid for the OFDB-configuration
+	 *
+	 * @param spalte
+	 * @param viewHandle
+	 */
+	public ViewConfigValidationResultSet isAnsichtSpalteValid(final IAnsichtSpalte spalte,
+			final ViewConfigHandle viewHandle);
+
+	public ViewConfigValidationResultSet isViewOrderByValid(final IAnsichtOrderBy ansichtOrderBy,
+			final ViewConfigHandle viewHandle);
 
 }

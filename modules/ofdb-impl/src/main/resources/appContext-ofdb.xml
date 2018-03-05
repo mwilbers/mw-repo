@@ -19,10 +19,6 @@
 
 	<bean id="ofdbDao" parent="abstractHbnDao" class="de.mw.mwdata.ofdb.dao.OfdbDao" />
 
-	<bean id="ofdbValidator" class="de.mw.mwdata.ofdb.cache.OfdbValidator">
-		<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-	</bean>
-
 	<!-- use this abstractOfdbDao for further use of ofdbDao <bean id="abstractOfdbDao" 
 		abstract="true" parent="abstractHbnDao"> <property name="ofdbDao" ref="ofdbDao" 
 		/> </bean> -->
@@ -38,8 +34,7 @@
 
 	<bean id="viewConfigFactory" class="de.mw.mwdata.ofdb.cache.ViewConfigFactoryBean">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
-		<property name="ofdbService" ref="ofdbService" />		
-		<property name="ofdbValidator" ref="ofdbValidator" />	
+		<property name="ofdbService" ref="ofdbService" />			
 	</bean>
 
 	<!-- init-method="loadOfdbCache" -->

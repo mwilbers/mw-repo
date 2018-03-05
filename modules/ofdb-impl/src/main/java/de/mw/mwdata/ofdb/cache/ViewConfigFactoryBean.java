@@ -41,15 +41,10 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ViewConfigFactoryBean.class);
 
 	private OfdbCacheManager ofdbCacheManager;
-	private OfdbValidatable ofdbValidator;
 	private IOfdbService ofdbService;
 
 	public void setOfdbCacheManager(OfdbCacheManager ofdbCacheManager) {
 		this.ofdbCacheManager = ofdbCacheManager;
-	}
-
-	public void setOfdbValidator(OfdbValidatable ofdbValidator) {
-		this.ofdbValidator = ofdbValidator;
 	}
 
 	public void setOfdbService(IOfdbService ofdbService) {
@@ -81,7 +76,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
 
 		// initialize AnsichtDef
-		ViewConfigValidationResultSet partSet = this.ofdbValidator.isAnsichtValid(ansicht);
+		ViewConfigValidationResultSet partSet = this.ofdbService.isAnsichtValid(ansicht);
 		set.merge(partSet);
 		ViewConfiguration.Builder builder = new Builder(ansicht);
 
@@ -92,7 +87,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			// if no AnsichtTab-entries show errors and abort
 			this.handleValidationErrors(set);
 		}
-		partSet = this.ofdbValidator.isAnsichtTabListValid(ansicht, ansichtTabList);
+		partSet = this.ofdbService.isAnsichtTabListValid(ansicht, ansichtTabList);
 		set.merge(partSet);
 		if (set.hasErrors()) {
 			this.handleValidationErrors(set);
@@ -113,7 +108,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			tabDef = ansichtTab.getTabDef();
 			tabSpeigs = this.ofdbService.loadTablePropListByTableName(tableName);
 
-			partSet = this.ofdbValidator.isTableValid(tabDef);
+			partSet = this.ofdbService.isTableValid(tabDef, tabSpeigs);
 			set.merge(partSet);
 			if (set.hasErrors()) {
 				this.handleValidationErrors(set);
@@ -125,15 +120,15 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				LOGGER.warn(msg);
 			}
 
-			// validate tabSpeigs
-			for (ITabSpeig tabSpeig : tabSpeigs) {
-				partSet = this.ofdbValidator.isTabSpeigValid(tabSpeig);
-				set.merge(partSet);
-			}
-			set.merge(partSet);
-			if (set.hasErrors()) {
-				handleValidationErrors(set);
-			}
+			// // validate tabSpeigs
+			// for (ITabSpeig tabSpeig : tabSpeigs) {
+			// partSet = this.ofdbService.isTabSpeigValid(tabSpeig);
+			// set.merge(partSet);
+			// }
+			// set.merge(partSet);
+			// if (set.hasErrors()) {
+			// handleValidationErrors(set);
+			// }
 
 			builder.addTableDef(tabDef);
 			builder.addTableProps(tabDef, tabSpeigs);
@@ -170,7 +165,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		List<AnsichtOrderBy> viewOrderByList = this.ofdbService.findAnsichtOrderByAnsichtId(ansicht.getId());
 		for (IAnsichtOrderBy viewOrderBy : viewOrderByList) {
 
-			partSet = this.ofdbValidator.isViewOrderByValid(viewOrderBy, builder.buildHandle());
+			partSet = this.ofdbService.isViewOrderByValid(viewOrderBy, builder.buildHandle());
 			set.merge(partSet);
 			if (!partSet.hasErrors()) {
 				builder.addViewOrderBy(viewOrderBy);
@@ -185,7 +180,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			// ... TestQueryBuilder: get the relevant tabSpeig of the ansichtSpalte
 			IAnsichtSpalte ansichtSpalte = entry.getValue();
 
-			partSet = this.ofdbValidator.isAnsichtSpalteValid(ansichtSpalte, builder.buildHandle());
+			partSet = this.ofdbService.isAnsichtSpalteValid(ansichtSpalte, builder.buildHandle());
 			set.merge(partSet);
 		}
 

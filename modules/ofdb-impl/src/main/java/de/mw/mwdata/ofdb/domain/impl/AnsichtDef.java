@@ -32,58 +32,58 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private final static String	SEQUENCE_KEY		= "FX_AnsichtDef_K:DSID";
+	private final static String SEQUENCE_KEY = "FX_AnsichtDef_K:DSID";
 
 	@Id
 	@GeneratedValue(generator = "SEQ_GEN")
 	@GenericGenerator(name = "SEQ_GEN", strategy = "de.mw.mwdata.core.db.FxSequenceGenerator")
 	@Column(name = "DSID")
-	private Long				id;
+	private Long id;
 
 	@Column(name = "ANSICHT", updatable = false, nullable = false, unique = true)
-	private String				name;
+	private String name;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BEREICHSID", referencedColumnName = "BEREICHSID", nullable = false)
-	private BenutzerBereich		bereich;
+	private BenutzerBereich bereich;
 
 	@Column(name = "BEZEICHNUNG")
-	private String				bezeichnung;
+	private String bezeichnung;
 
 	@Column(name = "HINZUFUEGEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				hinzufuegen;
+	private Boolean hinzufuegen;
 
 	@Column(name = "BEARBEITEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				bearbeiten;
+	private Boolean bearbeiten;
 
 	@Column(name = "ENTFERNEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				entfernen;
+	private Boolean entfernen;
 
 	@Column(name = "LESEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				lesen;
+	private Boolean lesen;
 
 	@Column(name = "FILTER", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				filter;
+	private Boolean filter;
 
 	@Column(name = "SORTIEREN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				sortieren;
+	private Boolean sortieren;
 
 	@Column(name = "URLPATH", nullable = true)
-	private String				urlPath;
+	private String urlPath;
 
 	@Column(name = "APPCONTEXTPATH", nullable = true)
-	private String				appContextPath;
+	private String appContextPath;
 
 	@Column(name = "REIHENFOLGE", updatable = true, nullable = true, unique = true)
-	private Integer				reihenfolge;
+	private Integer reihenfolge;
 
 	@Override
 	public String getSequenceKey() {
@@ -96,7 +96,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	}
 
 	@Override
-	public void setId( final Long id ) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -106,7 +106,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	}
 
 	@Override
-	public void setName( final String name ) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -114,7 +114,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.bereich;
 	}
 
-	public void setBereich( final BenutzerBereich bereich ) {
+	public void setBereich(final BenutzerBereich bereich) {
 		this.bereich = bereich;
 	}
 
@@ -122,71 +122,31 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.bezeichnung;
 	}
 
-	public void setBezeichnung( final String bezeichnung ) {
+	public void setBezeichnung(final String bezeichnung) {
 		this.bezeichnung = bezeichnung;
 	}
-
-	// public Boolean getExportieren() {
-	// return this.exportieren;
-	// }
-	//
-	// public void setExportieren( final Boolean exportieren ) {
-	// this.exportieren = exportieren;
-	// }
 
 	public Boolean getHinzufuegen() {
 		return this.hinzufuegen;
 	}
 
-	public void setHinzufuegen( final Boolean hinzufuegen ) {
+	public void setHinzufuegen(final Boolean hinzufuegen) {
 		this.hinzufuegen = hinzufuegen;
 	}
-
-	// public Boolean getKopieren() {
-	// return this.kopieren;
-	// }
-	//
-	// public void setKopieren( final Boolean kopieren ) {
-	// this.kopieren = kopieren;
-	// }
 
 	public Boolean getEntfernen() {
 		return this.entfernen;
 	}
 
-	public void setEntfernen( final Boolean entfernen ) {
+	public void setEntfernen(final Boolean entfernen) {
 		this.entfernen = entfernen;
 	}
-
-	// public Boolean getEntfernenMehrfach() {
-	// return this.entfernenMehrfach;
-	// }
-	//
-	// public void setEntfernenMehrfach( final Boolean entfernenMehrfach ) {
-	// this.entfernenMehrfach = entfernenMehrfach;
-	// }
-	//
-	// public Boolean getImportieren() {
-	// return this.importieren;
-	// }
-	//
-	// public void setImportieren( final Boolean importieren ) {
-	// this.importieren = importieren;
-	// }
-	//
-	// public Boolean getStornieren() {
-	// return this.stornieren;
-	// }
-	//
-	// public void setStornieren( final Boolean stornieren ) {
-	// this.stornieren = stornieren;
-	// }
 
 	public Boolean getLesen() {
 		return this.lesen;
 	}
 
-	public void setLesen( final Boolean lesen ) {
+	public void setLesen(final Boolean lesen) {
 		this.lesen = lesen;
 	}
 
@@ -194,7 +154,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.filter;
 	}
 
-	public void setFilter( final Boolean filter ) {
+	public void setFilter(final Boolean filter) {
 		this.filter = filter;
 	}
 
@@ -202,11 +162,11 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.sortieren;
 	}
 
-	public void setSortieren( final Boolean sortieren ) {
+	public void setSortieren(final Boolean sortieren) {
 		this.sortieren = sortieren;
 	}
 
-	public void setBearbeiten( final Boolean bearbeiten ) {
+	public void setBearbeiten(final Boolean bearbeiten) {
 		this.bearbeiten = bearbeiten;
 	}
 
@@ -214,29 +174,11 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.bearbeiten;
 	}
 
-	// public void setTabDef(TabDef tabDef) {
-	// this.tabDef = tabDef;
-	// }
-	//
-	// public TabDef getTabDef() {
-	// return tabDef;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#setUrlPath(java.lang.String)
-	 */
 	@Override
-	public void setUrlPath( final String urlPath ) {
+	public void setUrlPath(final String urlPath) {
 		this.urlPath = urlPath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#getUrlPath()
-	 */
 	@Override
 	public String getUrlPath() {
 		return this.urlPath;
@@ -247,7 +189,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return "AnsichtDef [name = '" + this.name + "']";
 	}
 
-	public void setReihenfolge( final Integer reihenfolge ) {
+	public void setReihenfolge(final Integer reihenfolge) {
 		this.reihenfolge = reihenfolge;
 	}
 
@@ -255,49 +197,75 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		return this.reihenfolge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#setAppContextPath(java.lang.String)
-	 */
 	@Override
-	public void setAppContextPath( final String appContextPath ) {
+	public void setAppContextPath(final String appContextPath) {
 		this.appContextPath = appContextPath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtDef#getAppContextPath()
-	 */
 	@Override
 	public String getAppContextPath() {
 		return this.appContextPath;
 	}
 
 	@Override
-	public boolean equals( final Object arg0 ) {
-
-		// compare names
-
-		if ( null == arg0 ) {
-			return false;
-		}
-		AnsichtDef orgAnsicht = (AnsichtDef) arg0;
-
-		if ( null == this.getName() && null != orgAnsicht.getName() ) {
-			return false;
-		}
-
-		return this.getName().equals( orgAnsicht.getName() );
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result += prime * result + ((this.getOfdb() == null) ? 0 : this.getOfdb().hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + ((this.getName() == null) ? 0 : this.getName().hashCode());
-		return result;
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AnsichtDef other = (AnsichtDef) obj;
+		if (this.name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!this.name.equals(other.name)) {
+			return false;
+		}
+
+		if (this.getOfdb() == null) {
+			if (other.getOfdb() != null)
+				return false;
+		} else if (!this.getOfdb().equals(other.getOfdb())) {
+			return false;
+		}
+
+		return true;
 	}
+
+	// @Override
+	// public boolean equals(final Object arg0) {
+	//
+	// // compare names
+	//
+	// if (null == arg0) {
+	// return false;
+	// }
+	// AnsichtDef orgAnsicht = (AnsichtDef) arg0;
+	//
+	// if (null == this.getName() && null != orgAnsicht.getName()) {
+	// return false;
+	// }
+	//
+	// return this.getName().equals(orgAnsicht.getName());
+	// }
+	//
+	// @Override
+	// public int hashCode() {
+	// final int prime = 31;
+	// int result = 1;
+	// result = (prime * result) + ((this.getName() == null) ? 0 :
+	// this.getName().hashCode());
+	// return result;
+	// }
 
 }

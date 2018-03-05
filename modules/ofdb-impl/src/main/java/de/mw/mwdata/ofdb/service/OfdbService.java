@@ -1,6 +1,7 @@
 package de.mw.mwdata.ofdb.service;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
+import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
 import de.mw.mwdata.ofdb.dao.IOfdbDao;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
@@ -51,6 +53,7 @@ import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
+import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbField;
@@ -545,32 +548,27 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		for (ITabSpeig tabSpeig : tabSpeigs) {
 
 			Object value = null;
-			try {
 
-				OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-				// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
-				if (null == propMapper) {
-					continue;
+			OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
+			// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+			if (null == propMapper) {
+				continue;
+			}
+
+			value = this.getOfdbDao().getEntityValue(entity, propMapper.getPropertyIndex());
+			if (null == value) {
+				value = getOfdbDefault(tabSpeig);
+				if (null != value) {
+					this.getOfdbDao().setEntityValue(entity, value, tabSpeig, propMapper);
+					// changedEntity.setNewValue( propMapper.getPropertyName(), result );
+					// ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewName
+					// );
+					// String mainTableName = viewHandle.getMainAnsichtTab().getTabDef().getName();
+					// this.getMainAnsichtTab( viewName ).getTabDef().getName();
+					LOGGER.info("Default Value set for Table " + viewToTable.getTabDef().getName() + ", TabSpeig "
+							+ tabSpeig.getSpalte() + ", defaultvalue: " + value);
 				}
 
-				value = this.getOfdbDao().getEntityValue(entity, propMapper.getPropertyIndex());
-				if (null == value) {
-					value = getOfdbDefault(tabSpeig);
-					if (null != value) {
-						this.getOfdbDao().setEntityValue(entity, value, tabSpeig, propMapper);
-						// changedEntity.setNewValue( propMapper.getPropertyName(), result );
-						// ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewName
-						// );
-						// String mainTableName = viewHandle.getMainAnsichtTab().getTabDef().getName();
-						// this.getMainAnsichtTab( viewName ).getTabDef().getName();
-						LOGGER.info("Default Value set for Table " + viewToTable.getTabDef().getName() + ", TabSpeig "
-								+ tabSpeig.getSpalte() + ", defaultvalue: " + value);
-					}
-
-				}
-
-			} catch (OfdbMissingMappingException e) {
-				LOGGER.error(e.getLocalizedMessage());
 			}
 
 		}
@@ -866,28 +864,24 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 				Object entityValue = null;
 				OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
 				String uniquePropNameItem = propMapper.getPropertyName();
-				try {
-					entityValue = this.ofdbDao.getEntityValue(entity, propMapper.getPropertyIndex());
 
-					if (ObjectUtils.isEmpty(entityValue)) {
-						if (tabSpeig.getEingabeNotwendig()) {
-							String msg = MessageFormat.format("Column {0} of table {1} must not be null.",
-									tabSpeig.getSpalte(), tabSpeig.getTabDef().getName());
-							throw new OfdbNullValueException(msg);
-						} else {
-							continue;
-						}
+				entityValue = this.ofdbDao.getEntityValue(entity, propMapper.getPropertyIndex());
+
+				if (ObjectUtils.isEmpty(entityValue)) {
+					if (tabSpeig.getEingabeNotwendig()) {
+						String msg = MessageFormat.format("Column {0} of table {1} must not be null.",
+								tabSpeig.getSpalte(), tabSpeig.getTabDef().getName());
+						throw new OfdbNullValueException(msg);
+					} else {
+						continue;
 					}
-
-					QueryValue queryValue = convertValueToQueryValue(entityValue, tabSpeig);
-					builder = builder.andWhereRestriction("tAlias", uniquePropNameItem, OperatorEnum.Eq,
-							queryValue.getData(), ValueType.STRING);
-					uniquePropsToCheck = true;
-
-				} catch (OfdbMissingMappingException e) {
-					// FIXME implement exception
-					e.printStackTrace();
 				}
+
+				QueryValue queryValue = convertValueToQueryValue(entityValue, tabSpeig);
+				builder = builder.andWhereRestriction("tAlias", uniquePropNameItem, OperatorEnum.Eq,
+						queryValue.getData(), ValueType.STRING);
+				uniquePropsToCheck = true;
+
 			}
 
 			if (uniquePropsToCheck) {
@@ -940,6 +934,209 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			this.nextChainItem.doChainCheck(entity, crud);
 		}
 
+	}
+
+	public ViewConfigValidationResultSet isAnsichtValid(final IAnsichtDef ansichtDef) {
+
+		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
+		if (StringUtils.isEmpty(ansichtDef.getUrlPath())) {
+			set.addValidationResult("illegalOfdbNullValue", ansichtDef.getName(), "urlPath");
+		}
+
+		return set;
+	}
+
+	private void isViewTabUnique(final List<IAnsichtTab> ansichtTabList, final ViewConfigValidationResultSet set) {
+
+		Map<String, List<IAnsichtTab>> map = new HashMap<String, List<IAnsichtTab>>();
+
+		for (IAnsichtTab ansichtTab : ansichtTabList) {
+
+			String tableName = ansichtTab.getTabDef().getName();
+			List<IAnsichtTab> aTabs = null;
+			if (map.containsKey(tableName)) {
+
+				aTabs = map.get(tableName);
+				for (IAnsichtTab aTab : aTabs) {
+
+					// if duplicate tabAKey per refrenced table
+					if (aTab.getTabAKey().equalsIgnoreCase(ansichtTab.getTabAKey())) {
+						set.addValidationResult("invalidOfdbConfig.FX_AnsichtTab.TabAKey", tableName,
+								ansichtTab.getAnsichtDef().getName());
+					}
+
+				}
+
+			} else {
+				aTabs = new ArrayList<IAnsichtTab>();
+				map.put(tableName, aTabs);
+			}
+
+			AnsichtTab viewTab = (AnsichtTab) ansichtTab;
+			if (ansichtTab.getTabAKey().equalsIgnoreCase(tableName)) {
+
+				if (!StringUtils.isBlank(viewTab.getTabelle())) {
+					set.addValidationResult("invalidOfdbConfig.FX_AnsichtTab.TabelleNull", tableName,
+							ansichtTab.getAnsichtDef().getName());
+				}
+
+			} else {
+				if (StringUtils.isBlank(viewTab.getTabelle())) {
+
+					set.addValidationResult("invalidOfdbConfig.FX_AnsichtTab.TabelleNotNull", tableName,
+							ansichtTab.getAnsichtDef().getName());
+
+				}
+			}
+			aTabs = map.get(tableName);
+			aTabs.add(ansichtTab);
+
+		}
+	}
+
+	// @Override
+	public ViewConfigValidationResultSet isAnsichtTabListValid(final IAnsichtDef ansichtDef,
+			final List<IAnsichtTab> ansichtTabList) {
+
+		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
+
+		List<String> foundTables = new ArrayList<String>();
+		for (IAnsichtTab viewTab : ansichtTabList) {
+			if (viewTab.getJoinTyp().equals("x")) {
+				foundTables.add(viewTab.getTabDef().getName());
+			}
+
+			if (foundTables.size() > 1) {
+				set.addValidationResult("invalidOfdbConfig.FX_AnsichtTab.duplicatedMainViewTab", ansichtDef.getName(),
+						foundTables.toString());
+			}
+
+		}
+
+		isViewTabUnique(ansichtTabList, set);
+
+		return set;
+
+	}
+
+	public ViewConfigValidationResultSet isTableValid(final ITabDef tabDef, final List<ITabSpeig> tableProps) {
+
+		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
+		if (StringUtils.isEmpty(tabDef.getFullClassName())) {
+			set.addValidationResult("illegalOfdbNullValue", tabDef.getName(), "fullClassName");
+
+		} else {
+			// check if fullClassName is valid
+			try {
+				ClassNameUtils.getClassType(tabDef.getFullClassName());
+			} catch (ClassNotFoundException e) {
+				set.addValidationResult("invalidOfdbValue", tabDef.getName(), "fullClassName",
+						tabDef.getFullClassName());
+			}
+		}
+
+		// validate tabSpeigs
+		List<ITabSpeig> tempPrimKeys = new ArrayList<ITabSpeig>();
+		for (ITabSpeig tabSpeig : tableProps) {
+			if (tabSpeig.getPrimSchluessel()) {
+				tempPrimKeys.add(tabSpeig);
+			}
+		}
+
+		if (tempPrimKeys.size() > 1) {
+			set.addValidationResult("invalidOfdbConfig.FX_TabSpeig.combinedPrimKeyColumns", tabDef.getName());
+		}
+
+		return set;
+	}
+
+	public ViewConfigValidationResultSet isAnsichtSpalteValid(final IAnsichtSpalte spalte,
+			final ViewConfigHandle viewHandle) {
+
+		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
+
+		if (!StringUtils.isEmpty(spalte.getAnsichtSuchen())) {
+
+			if (StringUtils.isEmpty(spalte.getSuchwertAusTabAKey())
+					|| StringUtils.isEmpty(spalte.getSuchwertAusSpalteAKey())) {
+				set.addValidationResult("invalidOfdbConfig.FX_AnsichtSpalten.AnsichtSuchen", spalte.getSpalteAKey(),
+						spalte.getName());
+			}
+
+			ViewConfigHandle viewHandleSuchen = this.ofdbCacheManager.getViewConfig(spalte.getAnsichtSuchen());
+			if (spalte.getSuchwertAusTabAKey().equals(spalte.getTabAKey())) {
+				viewHandleSuchen = viewHandle;
+			}
+
+			IAnsichtDef ansichtDef = viewHandleSuchen.getViewDef();
+
+			// FIXME: null-check no more needed when we use db-foreign-keys on ansichtDefId
+			if (null == ansichtDef) {
+				// String msg =
+				// "Fehlende AnsichtDef für Verknüpfung im Feld
+				// FX_AnsichtSpalten_K.AnsichtSuchen für Ansicht: "
+				// + spalte.getName() + ", Spalte: " + spalte.getSpalteAKey();
+				// result.setErrorMessage( msg );
+				set.addValidationResult("invalidOfdbConfig.FX_AnsichtSpalten.AnsichtSuchen_missingEntry",
+						spalte.getName(), spalte.getSpalteAKey());
+			}
+
+			ITabDef suchTabDef = this.ofdbCacheManager.findRegisteredTableDef(spalte.getSuchwertAusTabAKey());
+			if (spalte.getSuchwertAusTabAKey().equals(spalte.getTabAKey())) {
+				viewHandleSuchen = viewHandle;
+				suchTabDef = viewHandle.getMainAnsichtTab().getTabDef();
+			} else if (null == suchTabDef) {
+				set.addValidationResult(
+						"invalidOfdbConfig.FX_AnsichtTab.missingTabDef_AnsichtSpalte_SuchWertAusTabAKey",
+						spalte.getName(), spalte.getSpalteAKey()); // -> siehe aufruf createOfdbFields()
+			}
+
+			IAnsichtTab ansichtTabSuchen = viewHandleSuchen.findAnsichtTabByTabAKey(spalte.getSuchwertAusTabAKey());
+			if (null == ansichtTabSuchen) {
+				// String message =
+				// "Fehlende Tabelle für Verknüpfung in FX_AnsichtTab_K zum Feld
+				// FX_AnsichtSpalten_K.SuchWertAusTabAKey für Ansicht: "
+				// + spalte.getName() + ", Spalte: " + spalte.getSpalteAKey();
+				set.addValidationResult(
+						"invalidOfdbConfig.FX_AnsichtTab.missingMapping_AnsichtSpalte_SuchWertAusTabAKey",
+						spalte.getName(), spalte.getSpalteAKey()); // -> siehe aufruf createOfdbFields()
+			}
+
+			if (!StringUtils.isEmpty(spalte.getVerdeckenDurchTabAKey())
+					&& !StringUtils.isEmpty(spalte.getVerdeckenDurchSpalteAKey())) {
+
+				if (!spalte.getVerdeckenDurchTabAKey().equals(spalte.getSuchwertAusTabAKey())) {
+					// String message = LocalizedMessages.getString( Config.BUNDLE_NAME,
+					// "invalidOfdbConfig.FX_AnsichtSpalten.VerdeckenDurchTabAKey",
+					// spalte.getVerdeckenDurchTabAKey() );
+					// result.setErrorMessage( message );
+					set.addValidationResult("invalidOfdbConfig.FX_AnsichtSpalten.VerdeckenDurchTabAKey",
+							spalte.getVerdeckenDurchTabAKey());
+				}
+
+				ITabDef verdeckenTabDef = this.ofdbCacheManager
+						.findRegisteredTableDef(spalte.getVerdeckenDurchTabAKey());
+				if (spalte.getSuchwertAusTabAKey().equals(spalte.getTabAKey())) {
+					verdeckenTabDef = viewHandle.getMainAnsichtTab().getTabDef();
+				}
+				if (null == verdeckenTabDef) {
+					set.addValidationResult(
+							"invalidOfdbConfig.FX_AnsichtTab.missingTabDef_AnsichtSpalte_VerdeckenDurchTabAKey",
+							spalte.getName(), spalte.getSpalteAKey()); // -> siehe aufruf createOfdbFields()
+				}
+
+			}
+
+		}
+
+		return set;
+
+	}
+
+	public ViewConfigValidationResultSet isViewOrderByValid(final IAnsichtOrderBy ansichtOrderBy,
+			final ViewConfigHandle viewHandle) {
+
+		return new ViewConfigValidationResultSet();
 	}
 
 }

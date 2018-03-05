@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
@@ -66,8 +65,7 @@ public interface IOfdbDao {
 	public Map<String, OfdbPropMapper> initializeMapper(final Class<? extends AbstractMWEntity> type,
 			final String tableName);
 
-	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex)
-			throws OfdbMissingMappingException;
+	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex);
 
 	public Object setEntityValue(final AbstractMWEntity entity, final Object value, final ITabSpeig tabSpeig,
 			final OfdbPropMapper propMapper);

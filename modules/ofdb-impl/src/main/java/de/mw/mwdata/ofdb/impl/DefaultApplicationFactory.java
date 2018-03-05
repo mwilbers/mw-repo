@@ -9,7 +9,6 @@ import de.mw.mwdata.core.ofdb.ApplicationFactory;
 import de.mw.mwdata.core.ofdb.ApplicationState;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
-import de.mw.mwdata.ofdb.cache.OfdbValidatable;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
@@ -32,8 +31,6 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 	private String servletPath;
 
-	protected OfdbValidatable ofdbValidator;
-
 	protected ViewConfigFactory viewConfigFactory;
 
 	protected OfdbCacheManager ofdbCacheManager;
@@ -50,10 +47,6 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 	public void setOfdbService(final IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
-	}
-
-	public void setOfdbValidator(final OfdbValidatable ofdbValidator) {
-		this.ofdbValidator = ofdbValidator;
 	}
 
 	@Override

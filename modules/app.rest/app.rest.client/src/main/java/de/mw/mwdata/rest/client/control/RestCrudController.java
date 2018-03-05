@@ -39,13 +39,10 @@ import de.mw.mwdata.rest.service.InvalidRestUrlException;
 import de.mw.mwdata.rest.service.RestbasedMwUrl;
 import de.mw.mwdata.rest.service.service.RestUrlService;
 
-/**
- * FIXME rename controller i.e. to RestCrudController
- */
 @RestController
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequestMapping("/rest/**")
-public class OfdbRestController<E extends AbstractMWEntity> {
+public class RestCrudController<E extends AbstractMWEntity> {
 
 	private IPagingEntityService entityService;
 

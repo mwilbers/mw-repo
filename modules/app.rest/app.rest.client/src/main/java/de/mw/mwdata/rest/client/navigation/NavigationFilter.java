@@ -18,7 +18,7 @@ import org.springframework.web.servlet.FrameworkServlet;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.rest.client.control.OfdbRestController;
+import de.mw.mwdata.rest.client.control.RestCrudController;
 import de.mw.mwdata.rest.client.util.SessionUtils;
 
 public class NavigationFilter implements Filter {
@@ -53,7 +53,7 @@ public class NavigationFilter implements Filter {
 
 		if (null == state) {
 
-			OfdbRestController<AbstractMWEntity> controller = (OfdbRestController<AbstractMWEntity>) webContext
+			RestCrudController<AbstractMWEntity> controller = (RestCrudController<AbstractMWEntity>) webContext
 					.getBean("restController");
 			EntityTO<? extends AbstractMWEntity> filterSet = controller.populateFilterSet();
 

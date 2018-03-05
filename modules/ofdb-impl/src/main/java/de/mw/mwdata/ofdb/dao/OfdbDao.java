@@ -20,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingObjectException;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
@@ -76,8 +75,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	 *
 	 */
 	@Override
-	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex)
-			throws OfdbMissingMappingException {
+	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex) {
 		return this.ofdbMapper.getPropertyValue(entity, propPersistenceIndex);
 	}
 

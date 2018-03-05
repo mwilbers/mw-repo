@@ -18,3 +18,17 @@
 /modules/mw.parent/.settings
 /modules/ofdb-api/.settings
 /modules/ui-api/.settings
+/modules/app.admin/app.admin.client/.settings
+/modules/app.admin/app.admin.server/target
+/modules/app.admin/app.admin.server/test-output
+/modules/app.rest/.settings
+.settings
+test-output
+/modules/ofdb-api/target
+/modules/ofdb-impl/.classpath
+/modules/ofdb-impl/.gitignore
+/modules/ofdb-impl/.project
+/modules/core/.classpath
+/modules/core/.gitignore
+/modules/core/.project
+/modules/core/.springBeans
