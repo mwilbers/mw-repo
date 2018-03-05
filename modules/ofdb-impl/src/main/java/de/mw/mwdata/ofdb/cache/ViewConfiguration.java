@@ -11,8 +11,8 @@ import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 
 public class ViewConfiguration {
@@ -44,7 +44,7 @@ public class ViewConfiguration {
 	 */
 	private Map<ITabDef, List<ITabSpeig>> tableProps = new HashMap<ITabDef, List<ITabSpeig>>();
 
-	private Map<String, OfdbPropMapper> propertyMap = new HashMap<String, OfdbPropMapper>();
+	private OfdbEntityMapping entityMapping;
 
 	private OfdbQueryModel queryModel;
 
@@ -82,8 +82,8 @@ public class ViewConfiguration {
 			return this;
 		}
 
-		public Builder setPropertyMap(final Map<String, OfdbPropMapper> propertyMap) {
-			this.viewConfig.propertyMap = propertyMap;
+		public Builder setEntityMapping(final OfdbEntityMapping entityMapping) {
+			this.viewConfig.entityMapping = entityMapping;
 			return this;
 		}
 
@@ -152,8 +152,8 @@ public class ViewConfiguration {
 		return this.viewColumns;
 	}
 
-	Map<String, OfdbPropMapper> getPropertyMap() {
-		return this.propertyMap;
+	OfdbEntityMapping getEntityMapping() {
+		return this.entityMapping;
 	}
 
 	OfdbQueryModel getQueryModel() {

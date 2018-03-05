@@ -1,11 +1,10 @@
 package de.mw.mwdata.ofdb.cache;
 
 import java.util.List;
-import java.util.Map;
 
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.domain.ITabDef;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public interface OfdbCacheManager {
 
@@ -40,7 +39,7 @@ public interface OfdbCacheManager {
 	 */
 	public ITabDef findRegisteredTableDef(final String tabAKey);
 
-	public Map<String, OfdbPropMapper> getPropertyMap(String tableName);
+	public OfdbEntityMapping getEntityMapping(String tableName);
 
 	public ViewConfigHandle getViewConfig(String ansichtSuchen);
 

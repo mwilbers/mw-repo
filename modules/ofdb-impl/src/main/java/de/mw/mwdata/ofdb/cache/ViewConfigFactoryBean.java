@@ -3,7 +3,6 @@ package de.mw.mwdata.ofdb.cache;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +28,11 @@ import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
 import de.mw.mwdata.ofdb.impl.OfdbFieldComparator;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbUtils;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 import de.mw.mwdata.ofdb.query.impl.DefaultOfdbQueryModel;
 import de.mw.mwdata.ofdb.service.IOfdbService;
@@ -96,10 +97,11 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		// before validating ansichtTab-objects do validation to underlying tabDefs and
 		// tabSpeigs
 		String tableName = null;
-		Map<String, OfdbPropMapper> mainPropertyMap = new HashMap<String, OfdbPropMapper>();
+		IAnsichtTab mainAnsichtTab = OfdbUtils.getMainAnsichtTab(ansichtTabList);
+		OfdbEntityMapping mainEntityMapping = new OfdbEntityMapping(mainAnsichtTab.getTabDef().getName());
 		for (IAnsichtTab ansichtTab : ansichtTabList) {
 
-			tableName = ansichtTab.findTableName(); // this.getTableNameByViewTab( ansichtTab );
+			tableName = ansichtTab.findTableName();
 
 			// check if table is already registered. possible because one table can belong
 			// to several views
@@ -120,16 +122,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				LOGGER.warn(msg);
 			}
 
-			// // validate tabSpeigs
-			// for (ITabSpeig tabSpeig : tabSpeigs) {
-			// partSet = this.ofdbService.isTabSpeigValid(tabSpeig);
-			// set.merge(partSet);
-			// }
-			// set.merge(partSet);
-			// if (set.hasErrors()) {
-			// handleValidationErrors(set);
-			// }
-
 			builder.addTableDef(tabDef);
 			builder.addTableProps(tabDef, tabSpeigs);
 
@@ -143,18 +135,17 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 			// if table props are called for first time, than do initialize properties and
 			// add them to cache
-			if (CollectionUtils.isEmpty(this.ofdbCacheManager.getPropertyMap(tableName))) {
+			OfdbEntityMapping mappingFromCache = this.ofdbCacheManager.getEntityMapping(tableName);
+			if (null == mappingFromCache) {
 
 				Class<? extends AbstractMWEntity> entityClassType = checkFullClassName(ansichtTab.getTabDef());
-				Map<String, OfdbPropMapper> propertyMap = this.ofdbService.initializeMapping(entityClassType, tableName,
+				OfdbEntityMapping entityMapping = this.ofdbService.initializeMapping(entityClassType, tableName,
 						builder.getTableProps(ansichtTab.getTabDef()));
 
-				checkMappingTabSpeig2Property(tabSpeigs, propertyMap);
-
-				builder.setPropertyMap(propertyMap);
-
+				checkMappingTabSpeig2Property(tabSpeigs, entityMapping);
+				builder.setEntityMapping(entityMapping);
 				if (builder.buildHandle().getMainAnsichtTab().getTabDef().equals(tabDef)) {
-					mainPropertyMap = propertyMap;
+					mainEntityMapping = entityMapping;
 				}
 
 			}
@@ -192,19 +183,19 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		// ... FIXME: no mainAnsichtTab for ADAnsichtenDef
 		initQueryModel(viewName, builder);
 
-		List<OfdbField> ofFieldList = createOfdbFields(builder.buildHandle(), CRUD.SELECT, mainPropertyMap);
+		List<OfdbField> ofFieldList = createOfdbFields(builder.buildHandle(), CRUD.SELECT, mainEntityMapping);
 		builder.setOfdbFields(ofFieldList);
 
 		return builder.buildHandle();
 	}
 
-	private void checkMappingTabSpeig2Property(final List<ITabSpeig> tabSpeigs,
-			final Map<String, OfdbPropMapper> propertyMap) {
+	private void checkMappingTabSpeig2Property(final List<ITabSpeig> tabSpeigs, final OfdbEntityMapping entityMapping) {
 
 		for (ITabSpeig tabProp : tabSpeigs) {
 
-			OfdbPropMapper ofdbPropMapper = propertyMap.get(tabProp.getSpalte().toUpperCase());
-			if (null == ofdbPropMapper) {
+			// OfdbPropMapper ofdbPropMapper = entityMapping.getMapper(tabProp); //
+			// .get(tabProp.getSpalte().toUpperCase());
+			if (!entityMapping.hasMapping(tabProp)) {
 				String msg = MessageFormat.format("Table property {0} of table {1} could not be mapped to property.",
 						tabProp.getSpalte(), tabProp.getTabDef().getName());
 				LOGGER.warn(msg);
@@ -300,7 +291,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	private List<OfdbField> createOfdbFields(final ViewConfigHandle viewHandle, final CRUD crud,
-			final Map<String, OfdbPropMapper> mainPropertyMap) {
+			final OfdbEntityMapping mainEntityMapping) {
 		List<OfdbField> ofFields = new ArrayList<OfdbField>();
 
 		Map<String, IAnsichtSpalte> ansichtSpalten = viewHandle.getViewColumns();
@@ -326,7 +317,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 			OfdbField ofField = new OfdbField(tabSpeig, entry.getValue());
 
-			OfdbPropMapper propMapper = mainPropertyMap.get(tabSpeig.getSpalte().toUpperCase());
+			OfdbPropMapper propMapper = mainEntityMapping.getMapper(tabSpeig); // .get(tabSpeig.getSpalte().toUpperCase());
 
 			String propName = StringUtils.EMPTY;
 			if (null != propMapper) {
@@ -381,7 +372,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 					// e.g. TableA references TableA recursively ...
 					OfdbPropMapper suchPropMapper = null;
 					if (tabSpeig.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
-						suchPropMapper = mainPropertyMap.get(suchWertTabSpeig.getSpalte().toUpperCase());
+						suchPropMapper = mainEntityMapping.getMapper(suchWertTabSpeig);
+						// .get(suchWertTabSpeig.getSpalte().toUpperCase());
 					} else {
 						suchPropMapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
 						// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
@@ -399,7 +391,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 						OfdbPropMapper mapper = null;
 						if (tabSpeig.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
-							mapper = mainPropertyMap.get(suchWertTabSpeig.getSpalte().toUpperCase());
+							mapper = mainEntityMapping.getMapper(suchWertTabSpeig);
+							// .get(suchWertTabSpeig.getSpalte().toUpperCase());
 						} else {
 							mapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
 							// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );

@@ -21,8 +21,8 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 /**
  * This interface should provide only readonly-methods from ofdb-tables.
@@ -91,8 +91,8 @@ public interface IOfdbService {
 	 * @param tabSpeigs
 	 * @return
 	 */
-	public Map<String, OfdbPropMapper> initializeMapping(final Class<? extends AbstractMWEntity> type,
-			final String tableName, final List<ITabSpeig> tabSpeigs);
+	public OfdbEntityMapping initializeMapping(final Class<? extends AbstractMWEntity> type, final String tableName,
+			final List<ITabSpeig> tabSpeigs);
 
 	/**
 	 * Loads all AnsichtOrderBy-Domain-Objects for the given ansichtId

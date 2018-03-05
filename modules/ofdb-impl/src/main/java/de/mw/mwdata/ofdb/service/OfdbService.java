@@ -56,6 +56,7 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.impl.OfdbUtils;
@@ -421,8 +422,9 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	@Override
 	public String mapTabSpeig2Property(final ITabSpeig tabSpeig) {
-		Map<String, OfdbPropMapper> propertyMap = this.ofdbCacheManager.getPropertyMap(tabSpeig.getTabDef().getName());
-		return propertyMap.get(tabSpeig.getSpalte().toUpperCase()).getPropertyName();
+		OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName());
+		return entityMapping.getMapper(tabSpeig).getPropertyName();
+		// propertyMap.get(tabSpeig.getSpalte().toUpperCase()).getPropertyName();
 	}
 
 	/**
@@ -538,7 +540,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	@Override
 	public void presetDefaultValues(final AbstractMWEntity entity) {
 
-		// AbstractMWEntity entity = changedEntity.getEntity();
 		String urlPath = ClassNameUtils.convertClassNameToUrlPath(entity.getClass().getName());
 		IAnsichtDef viewDef = this.findAnsichtByUrlPath(urlPath);
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewDef.getName());
@@ -690,18 +691,18 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	}
 
 	@Override
-	public Map<String, OfdbPropMapper> initializeMapping(final Class<? extends AbstractMWEntity> type,
-			final String tableName, final List<ITabSpeig> tabSpeigs) {
+	public OfdbEntityMapping initializeMapping(final Class<? extends AbstractMWEntity> type, final String tableName,
+			final List<ITabSpeig> tabSpeigs) {
 
-		Map<String, OfdbPropMapper> propMap = this.getOfdbDao().initializeMapper(type, tableName);
+		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapper(type, tableName);
 
 		for (ITabSpeig tabSpeig : tabSpeigs) {
 			if (tabSpeig.getPrimSchluessel()) {
 				// TODO: how can we get the propertyname of the hibernate-@id-column ? FIXME:
 				// this does not work for combined Primary keys (e.g. two columns or more )
-				OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
+				// OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
 
-				if (null == propMapper) {
+				if (!entityMapping.hasMapping(tabSpeig)) {
 					throw new OfdbInvalidConfigurationException("Invalid Property Mapping on primary key column "
 							+ tabSpeig.getSpalte().toUpperCase() + ". No property found on entity "
 							+ type.getClass().getName() + " with this columnname.");
@@ -710,7 +711,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			}
 		}
 
-		return propMap;
+		return entityMapping;
 
 	}
 
@@ -810,9 +811,9 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 		TabDef tabDef = findTableDefByEntity(entity);
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(tabDef.getName());
-		Map<String, OfdbPropMapper> propMap = viewHandle.getPropertyMap();
+		OfdbEntityMapping entityMapping = viewHandle.getEntityMapping();
 
-		for (Map.Entry<String, OfdbPropMapper> entry : propMap.entrySet()) {
+		for (Map.Entry<String, OfdbPropMapper> entry : entityMapping.getMapperSet()) {
 			OfdbPropMapper propMapper = entry.getValue();
 
 			if (propMapper.isAssociationType()) {
@@ -837,20 +838,11 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		ITabDef tabDef = tableProp.getTabDef();
 		if (tableProp.isEindeutig()) {
 
-			// 4. vergleichen mit den dirty feldern und unique prüfung durchführen
-			// ViewConfigHandle viewHandle = ofdbCacheManager.findViewConfigByTableName(
-			// tabDef.getName() );
-
 			ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(tabDef.getName());
 			List<ITabSpeig> uniqueTabSpeigs = viewHandle.getTabSpeigsByUniqueIdentifier(tableProp.getEindeutig(),
 					tabDef);
 
-			// UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket( tableProps );
-			// // this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
-			// List<ITabSpeig> uniqueTabSpeigs = uniqueMap.getTabSpeigsByUniqueIdentifier(
-			// tableProp.getEindeutig() );
-
-			Map<String, OfdbPropMapper> propMap = this.ofdbCacheManager.getPropertyMap(tabDef.getName());
+			OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tabDef.getName());
 
 			OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
 			builder.selectTable(entity.getClass().getSimpleName(), "tAlias")
@@ -862,7 +854,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 				// of all
 
 				Object entityValue = null;
-				OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
+				OfdbPropMapper propMapper = entityMapping.getMapper(tabSpeig);
 				String uniquePropNameItem = propMapper.getPropertyName();
 
 				entityValue = this.ofdbDao.getEntityValue(entity, propMapper.getPropertyIndex());

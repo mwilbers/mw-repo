@@ -40,6 +40,7 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
@@ -145,7 +146,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	}
 
 	protected TabDef saveOrUpdateTabDefAndTableProps(final String tableName, final String fullClassName,
-			final Map<String, OfdbPropMapper> propMap) {
+			final OfdbEntityMapping entityMapping) {
 
 		// save TabDef
 		TabDef tabDef = (TabDef) this.getCrudDao().findByName(TabDef.class, tableName);
@@ -156,7 +157,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			saveForTest(tabDef);
 
 			// create and save all Tabprops
-			saveOrUpdateAllTabProps(propMap, tabDef, true);
+			saveOrUpdateAllTabProps(entityMapping, tabDef, true);
 
 		} else {
 			tabDef.setFullClassName(fullClassName);
@@ -166,11 +167,11 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		return tabDef;
 	}
 
-	protected void saveOrUpdateAllTabProps(final Map<String, OfdbPropMapper> propMap, final TabDef tabDef,
+	protected void saveOrUpdateAllTabProps(final OfdbEntityMapping entityMapping, final TabDef tabDef,
 			final boolean setDefaultCredentials) {
 
 		int reihenfolge = 0;
-		for (Map.Entry<String, OfdbPropMapper> propEntry : propMap.entrySet()) {
+		for (Map.Entry<String, OfdbPropMapper> propEntry : entityMapping.getMapperSet()) {
 			OfdbPropMapper propMapper = propEntry.getValue();
 			reihenfolge++;
 
@@ -197,7 +198,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	protected AnsichtTab setUpAnsichtAndTab(final String tableName, final String fullClassName, final String urlPath,
 			final Class<? extends AbstractMWEntity> type) {
 
-		Map<String, OfdbPropMapper> propMap = this.getOfdbDao().initializeMapper(type, tableName);
+		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapper(type, tableName);
 
 		// save TabDef
 		TabDef tabDef = (TabDef) this.getCrudDao().findByName(TabDef.class, tableName);
@@ -213,7 +214,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			saveForTest(tabDef);
 
 			// create and save all Tabprops
-			saveOrUpdateAllTabProps(propMap, tabDef, true);
+			saveOrUpdateAllTabProps(entityMapping, tabDef, true);
 
 		} else {
 			tabDef.setFullClassName(fullClassName);
@@ -236,7 +237,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			saveForTest(ansichtTabMock);
 
 			// create and save all ViewColumns
-			saveOrUpdateAllViewProps(propMap, ansichtDefMock, ansichtTabMock);
+			saveOrUpdateAllViewProps(entityMapping, ansichtDefMock, ansichtTabMock);
 
 		} else {
 			ansichtDefMock.setUrlPath(urlPath);
@@ -250,10 +251,10 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		return ansichtTabMock;
 	}
 
-	private void saveOrUpdateAllViewProps(final Map<String, OfdbPropMapper> propMap, final AnsichtDef ansichtDefMock,
+	private void saveOrUpdateAllViewProps(final OfdbEntityMapping entityMapping, final AnsichtDef ansichtDefMock,
 			final IAnsichtTab ansichtTabMock) {
 
-		for (Map.Entry<String, OfdbPropMapper> propEntry : propMap.entrySet()) {
+		for (Map.Entry<String, OfdbPropMapper> propEntry : entityMapping.getMapperSet()) {
 			OfdbPropMapper propMapper = propEntry.getValue();
 
 			ITabSpeig tabProp = this.ofdbService.loadTablePropByTableName(ansichtTabMock.getTabDef().getName(),

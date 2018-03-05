@@ -36,6 +36,7 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 /**
@@ -61,8 +62,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	private OfdbMapper ofdbMapper;
 
 	@Override
-	public Map<String, OfdbPropMapper> initializeMapper(final Class<? extends AbstractMWEntity> type,
-			final String tableName) {
+	public OfdbEntityMapping initializeMapper(final Class<? extends AbstractMWEntity> type, final String tableName) {
 		LOGGER.debug(
 				"Loading Cache for Dao : " + tableName + " ....................................." + type.toString());
 		return this.ofdbMapper.init(type, tableName);

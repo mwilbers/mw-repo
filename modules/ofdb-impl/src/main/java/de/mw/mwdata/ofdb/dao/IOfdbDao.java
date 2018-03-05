@@ -13,6 +13,7 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 /**
@@ -62,8 +63,7 @@ public interface IOfdbDao {
 	 * @return map containing key = db column name and value = {@link OfdbMapper}
 	 *         object
 	 */
-	public Map<String, OfdbPropMapper> initializeMapper(final Class<? extends AbstractMWEntity> type,
-			final String tableName);
+	public OfdbEntityMapping initializeMapper(final Class<? extends AbstractMWEntity> type, final String tableName);
 
 	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex);
 

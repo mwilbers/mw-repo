@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.mw.mwdata.core.utils.SortKey;
+import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 
 public class OfdbUtils {
@@ -39,6 +40,20 @@ public class OfdbUtils {
 		}
 
 		return map;
+
+	}
+
+	public static IAnsichtTab getMainAnsichtTab(final List<IAnsichtTab> ansichtTabList) {
+
+		for (IAnsichtTab ansichtTab : ansichtTabList) {
+
+			// FIXME: refactor expression x, do in ofdbvalidator
+			if (ansichtTab.getJoinTyp().equalsIgnoreCase("x")) {
+				return ansichtTab;
+			}
+		}
+
+		return null;
 
 	}
 

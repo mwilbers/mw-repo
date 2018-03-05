@@ -2,7 +2,6 @@ package de.mw.mwdata.ofdb.cache;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public class DefaultOfdbCacheManager implements OfdbCacheManager {
 
@@ -30,8 +29,8 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	 *         of the requested tableName
 	 */
 	@Override
-	public Map<String, OfdbPropMapper> getPropertyMap(final String tableName) {
-		return this.ofdbCache.getPropertyMap(tableName);
+	public OfdbEntityMapping getEntityMapping(final String tableName) {
+		return this.ofdbCache.getEntityMapping(tableName);
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 			ITabDef tabDef = ansichtTab.getTabDef();
 			isReferenced = this.isReferencedByCachedAnsichtTab(tabDef, ansichtTab);
 			if (!isReferenced) {
-				this.ofdbCache.addPropertyMap(tabDef.getName(), viewHandle.getPropertyMap());
+				this.ofdbCache.addPropertyMap(tabDef.getName(), viewHandle.getEntityMapping());
 			}
 		}
 

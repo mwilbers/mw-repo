@@ -2,9 +2,7 @@ package de.mw.mwdata.ofdb.dao;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.ManyToMany;
 
@@ -26,7 +24,7 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.FxEnumType;
 import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public class OfdbMapper extends HibernateDaoSupport {
 
@@ -39,25 +37,26 @@ public class OfdbMapper extends HibernateDaoSupport {
 	 * Method is called when instantiating the spring-defined DAO-Beans in
 	 * appContext-ofdb.xml
 	 */
-	public Map<String, OfdbPropMapper> init(final Class<? extends AbstractMWEntity> type, final String tableName) {
+	public OfdbEntityMapping init(final Class<? extends AbstractMWEntity> type, final String tableName) {
 
 		AbstractEntityPersister persister = getEntityPersister(type);
 		ClassMetadata meta = this.getSessionFactory().getClassMetadata(type);
 		// NOTE: the property with the @Id-Annotation stays undocumented here
 		// this.props = meta.getPropertyNames();
 
-		Map<String, OfdbPropMapper> propMap = buildNameToIndexMapping(tableName, persister, meta.getPropertyNames());
+		OfdbEntityMapping entityMapping = buildNameToIndexMapping(tableName, persister, meta.getPropertyNames());
 
 		String[] keyColumnNames = persister.getKeyColumnNames();
 		for (int i = 0; i < keyColumnNames.length; i++) {
-			OfdbPropMapper mapper = new OfdbPropMapper(tableName, keyColumnNames[i]);
-			mapper.setPropertyName(persister.getIdentifierPropertyName());
-			mapper.setDbType(DBTYPE.LONGINTEGER);
+			// OfdbPropMapper mapper = new OfdbPropMapper(tableName, keyColumnNames[i]);
+			// mapper.setPropertyName(persister.getIdentifierPropertyName());
+			// mapper.setDbType(DBTYPE.LONGINTEGER);
 
-			propMap.put(keyColumnNames[i], mapper);
+			// propMap.put(keyColumnNames[i], mapper);
+			entityMapping.addMapping(keyColumnNames[i], persister.getIdentifierPropertyName(), 0, DBTYPE.LONGINTEGER);
 		}
 
-		return propMap;
+		return entityMapping;
 	}
 
 	/**
@@ -67,10 +66,11 @@ public class OfdbMapper extends HibernateDaoSupport {
 	 *
 	 * @param props
 	 */
-	private Map<String, OfdbPropMapper> buildNameToIndexMapping(final String tableName,
-			final AbstractEntityPersister persister, final String[] props) {
+	private OfdbEntityMapping buildNameToIndexMapping(final String tableName, final AbstractEntityPersister persister,
+			final String[] props) {
 
-		Map<String, OfdbPropMapper> propMap = new HashMap<String, OfdbPropMapper>();
+		OfdbEntityMapping entityMapping = new OfdbEntityMapping(tableName);
+		// Map<String, OfdbPropMapper> propMap = new HashMap<String, OfdbPropMapper>();
 
 		for (int i = 0; i < props.length; i++) {
 
@@ -84,19 +84,20 @@ public class OfdbMapper extends HibernateDaoSupport {
 				}
 
 				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
-				OfdbPropMapper propMapper = new OfdbPropMapper(tableName, columnNameDb);
-				propMapper.setPropertyName(props[i]);
-				propMapper.setPropertyIndex(new Integer(i));
+				// OfdbPropMapper propMapper = new OfdbPropMapper(tableName, columnNameDb);
+				// propMapper.setPropertyName(props[i]);
+				// propMapper.setPropertyIndex(new Integer(i));
 
 				DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
-				propMapper.setDbType(dbType);
+				// propMapper.setDbType(dbType);
+				entityMapping.addMapping(columnNameDb, props[i], new Integer(i), dbType);
 
-				propMap.put(columnNameDb, propMapper);
+				// propMap.put(columnNameDb, propMapper);
 
 			}
 		}
 
-		return propMap;
+		return entityMapping;
 	}
 
 	private DBTYPE convertTypeToDbType(final Type type) {

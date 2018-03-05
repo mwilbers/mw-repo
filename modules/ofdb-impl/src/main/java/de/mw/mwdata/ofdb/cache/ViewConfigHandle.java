@@ -13,8 +13,10 @@ import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbUtils;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 
 /**
@@ -41,14 +43,14 @@ public class ViewConfigHandle {
 		return this.viewConfig.getTableProps(tableDef);
 	}
 
-	public Map<String, OfdbPropMapper> getPropertyMap() {
-		return this.viewConfig.getPropertyMap();
+	public OfdbEntityMapping getEntityMapping() {
+		return this.viewConfig.getEntityMapping();
 	}
 
 	private OfdbPropMapper findOfdbPropMapperByProperty(final String propertyName) {
 
-		Map<String, OfdbPropMapper> propertyMap = getPropertyMap();
-		for (Map.Entry<String, OfdbPropMapper> entry : propertyMap.entrySet()) {
+		OfdbEntityMapping entityMapping = getEntityMapping();
+		for (Map.Entry<String, OfdbPropMapper> entry : entityMapping.getMapperSet()) {
 			if (entry.getValue().getPropertyName().equals(propertyName)) {
 				return entry.getValue();
 			}
@@ -85,7 +87,7 @@ public class ViewConfigHandle {
 	 */
 	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
 
-		for (Map.Entry<String, OfdbPropMapper> entry : this.getPropertyMap().entrySet()) {
+		for (Map.Entry<String, OfdbPropMapper> entry : this.getEntityMapping().getMapperSet()) {
 			OfdbPropMapper mapper = entry.getValue();
 			if (mapper.getColumnName().toUpperCase().equals(tableProp.getSpalte().toUpperCase())) {
 				return mapper;
@@ -109,17 +111,8 @@ public class ViewConfigHandle {
 	 */
 	public IAnsichtTab getMainAnsichtTab() {
 
-		List<IAnsichtTab> ansichtTabList = this.viewConfig.getViewTabs(); // .ofdbCacheManager.getAnsichtTabList(
-		// viewName );
-		for (IAnsichtTab ansichtTab : ansichtTabList) {
-
-			// FIXME: refactor expression x, do in ofdbvalidator
-			if (ansichtTab.getJoinTyp().equalsIgnoreCase("x")) {
-				return ansichtTab;
-			}
-		}
-
-		return null;
+		List<IAnsichtTab> ansichtTabList = this.viewConfig.getViewTabs();
+		return OfdbUtils.getMainAnsichtTab(ansichtTabList);
 	}
 
 	public IAnsichtDef getViewDef() {

@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
+import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 /**
- * Stateful cache for holding all ofdb-relevant ansicht- and tab-informations for all used views in application.
+ * Stateful cache for holding all ofdb-relevant ansicht- and tab-informations
+ * for all used views in application.
  *
  * @author mwilbers
  * @since Nov, 2012
@@ -19,59 +20,61 @@ public class OfdbCache implements Iterable<String> {
 		// no constructor, use singleton-pattern
 	}
 
-	public static OfdbCache	cache	= new OfdbCache();
+	public static OfdbCache cache = new OfdbCache();
 
 	public static OfdbCache createInstance() {
 		return cache;
 	}
 
 	/**
-	 * map with key = tableName and value = (map of tabSpeig.spalte (key) and propertyname (value) of the given
-	 * tableName)
+	 * map with key = tableName and value = (map of tabSpeig.spalte (key) and
+	 * propertyname (value) of the given tableName)
 	 */
-	private Map<String, Map<String, OfdbPropMapper>>	tablePropertyMap	= new HashMap<String, Map<String, OfdbPropMapper>>();
+	private Map<String, OfdbEntityMapping> tableEntityMapping = new HashMap<String, OfdbEntityMapping>();
 
-	private Map<String, ViewConfiguration>				viewConfigs			= new HashMap<String, ViewConfiguration>();
+	private Map<String, ViewConfiguration> viewConfigs = new HashMap<String, ViewConfiguration>();
 
-	public void putViewConfiguration( final String viewName, final ViewConfiguration viewConfig ) {
-		this.viewConfigs.put( viewName, viewConfig );
+	public void putViewConfiguration(final String viewName, final ViewConfiguration viewConfig) {
+		this.viewConfigs.put(viewName, viewConfig);
 	}
 
 	// FIXME: move method to OfdbCacheManager, class OfdbCache should be stupid ...
-	public void removeViewData( final String viewName ) {
-		this.viewConfigs.remove( viewName );
+	public void removeViewData(final String viewName) {
+		this.viewConfigs.remove(viewName);
 	}
 
 	/**
-	 * Adds a map containing key = tabSpeig.spalte and value = propertyname of the given tableName to the cache
+	 * Adds a map containing key = tabSpeig.spalte and value = propertyname of the
+	 * given tableName to the cache
 	 *
 	 * @param tableName
-	 * @param map
+	 * @param ofdbEntityMapping
 	 */
-	public void addPropertyMap( final String tableName, final Map<String, OfdbPropMapper> map ) {
-		this.tablePropertyMap.put( tableName, map );
+	public void addPropertyMap(final String tableName, final OfdbEntityMapping ofdbEntityMapping) {
+		this.tableEntityMapping.put(tableName, ofdbEntityMapping);
 	}
 
 	/**
 	 *
 	 * @param tableName
-	 * @return a map containing a map with key = tabSpeig.spalte and value = propertname of the requested tableName
+	 * @return a map containing a map with key = tabSpeig.spalte and value =
+	 *         propertname of the requested tableName
 	 */
-	public Map<String, OfdbPropMapper> getPropertyMap( final String tableName ) {
+	public OfdbEntityMapping getEntityMapping(final String tableName) {
 		// ... fehler bei laden der ansicht FX_TabSpeig_K
-		return this.tablePropertyMap.get( tableName );
+		return this.tableEntityMapping.get(tableName);
 	}
 
-	public void removePropertyMap( final String tableName ) {
-		this.tablePropertyMap.remove( tableName );
+	public void removePropertyMap(final String tableName) {
+		this.tableEntityMapping.remove(tableName);
 	}
 
-	public ViewConfigHandle getViewConfig( final String viewName ) {
+	public ViewConfigHandle getViewConfig(final String viewName) {
 
-		ViewConfiguration viewConfig = this.viewConfigs.get( viewName );
+		ViewConfiguration viewConfig = this.viewConfigs.get(viewName);
 
-		if ( null != viewConfig ) {
-			return new ViewConfigHandle( viewConfig );
+		if (null != viewConfig) {
+			return new ViewConfigHandle(viewConfig);
 		} else {
 			return null;
 		}
