@@ -15,10 +15,9 @@ import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidCheckException;
-import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
-import de.mw.mwdata.core.ofdb.intercept.CrudChain;
-import de.mw.mwdata.core.ofdb.intercept.ICrudInterceptable;
+import de.mw.mwdata.core.intercept.CrudChain;
+import de.mw.mwdata.core.intercept.ICrudInterceptable;
+import de.mw.mwdata.core.intercept.InvalidChainCheckException;
 
 // FIXME: rename class to CrudService
 public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptable {
@@ -96,9 +95,9 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 			// doActionsBeforeDml( entity );
 			// }
 
-		} catch (OfdbInvalidCheckException e) {
+		} catch (InvalidChainCheckException e) {
 			LOGGER.error("Invalid ofdb check" + e.getLocalizedMessage());
-			throw new OfdbRuntimeException("Invalid ofdb check", e);
+			throw e;
 		}
 
 		this.getCrudDao().insert(entity);
@@ -126,10 +125,9 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 			// doActionsBeforeDml( entity );
 			// }
 
-		} catch (OfdbInvalidCheckException e) {
+		} catch (InvalidChainCheckException e) {
 			LOGGER.error("Invalid ofdb check" + e.getLocalizedMessage(), e);
-
-			throw new OfdbRuntimeException("Invalid ofdb check", e);
+			throw e;
 		}
 
 		this.getCrudDao().update(entity);
@@ -187,7 +185,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
-	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws OfdbInvalidCheckException {
+	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException {
 		this.crudChain.doChainCheck(entity, crud);
 	}
 

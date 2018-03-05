@@ -10,14 +10,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
-import de.mw.mwdata.core.service.IPagingEntityService;
+import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -25,6 +23,8 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
+import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
@@ -41,16 +41,13 @@ import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
 public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 	@Autowired
-	private IPagingEntityService entityService;
+	private IEntityService<IEntity> entityService;
 
 	@Autowired
 	private IOfdbService ofdbService;
 
 	@Autowired
 	private ApplicationFactory applicationFactory;
-
-	// @Autowired
-	// private IOfdbDao ofdbDao;
 
 	@Autowired
 	private ICrudDao crudDao;

@@ -12,9 +12,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.Constants;
-import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -28,6 +27,7 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
 

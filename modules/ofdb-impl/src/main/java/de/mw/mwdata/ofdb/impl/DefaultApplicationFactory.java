@@ -5,9 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.ApplicationState;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
+import de.mw.mwdata.core.ApplicationFactory;
+import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -55,7 +54,7 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 	}
 
 	@Override
-	public void init() throws OfdbMissingMappingException {
+	public void init() {
 		this.state = ApplicationState.INITIALIZE;
 
 		// FIXME: here add feature toggle for loading or not loading viewConfigs to

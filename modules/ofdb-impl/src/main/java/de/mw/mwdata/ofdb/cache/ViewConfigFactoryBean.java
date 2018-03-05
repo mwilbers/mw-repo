@@ -17,7 +17,6 @@ import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.cache.ViewConfiguration.Builder;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -27,6 +26,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
+import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
@@ -198,7 +198,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			if (!entityMapping.hasMapping(tabProp)) {
 				String msg = MessageFormat.format("Table property {0} of table {1} could not be mapped to property.",
 						tabProp.getSpalte(), tabProp.getTabDef().getName());
-				LOGGER.warn(msg);
+				LOGGER.info(msg);
 			}
 
 		}

@@ -12,8 +12,7 @@
     	<!-- <constructor-arg name="tableName" value="BenutzerBereicheDef" />
     	 TODO: value tablename sollte case-insensitiv sein -->
     </bean>
-	<bean id="entityService" class="de.mw.mwdata.ofdb.service.PagingEntityService">
-		<property name="ofdbDao" ref="ofdbDao" />
+	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="crudService" ref="crudService"></property>
 	 	<property name="ofdbService" ref="ofdbService" />		

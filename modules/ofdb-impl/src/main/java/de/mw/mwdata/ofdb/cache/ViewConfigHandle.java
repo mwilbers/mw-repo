@@ -50,9 +50,9 @@ public class ViewConfigHandle {
 	private OfdbPropMapper findOfdbPropMapperByProperty(final String propertyName) {
 
 		OfdbEntityMapping entityMapping = getEntityMapping();
-		for (Map.Entry<String, OfdbPropMapper> entry : entityMapping.getMapperSet()) {
-			if (entry.getValue().getPropertyName().equals(propertyName)) {
-				return entry.getValue();
+		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
+			if (mapper.getPropertyName().equals(propertyName)) {
+				return mapper;
 			}
 		}
 
@@ -86,15 +86,7 @@ public class ViewConfigHandle {
 	 * @return can be null if ITabSpeig is not mapped
 	 */
 	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
-
-		for (Map.Entry<String, OfdbPropMapper> entry : this.getEntityMapping().getMapperSet()) {
-			OfdbPropMapper mapper = entry.getValue();
-			if (mapper.getColumnName().toUpperCase().equals(tableProp.getSpalte().toUpperCase())) {
-				return mapper;
-			}
-		}
-
-		return null;
+		return this.getEntityMapping().findPropertyMapperByTabProp(tableProp);
 	}
 
 	public OfdbQueryModel getQueryModel() {

@@ -25,14 +25,8 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.IFxEnum;
-import de.mw.mwdata.core.ofdb.exception.OfdbFormatException;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidCheckException;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingObjectException;
-import de.mw.mwdata.core.ofdb.exception.OfdbNullValueException;
-import de.mw.mwdata.core.ofdb.exception.OfdbUniqueConstViolationException;
-import de.mw.mwdata.core.ofdb.intercept.AbstractCrudChain;
+import de.mw.mwdata.core.intercept.AbstractCrudChain;
+import de.mw.mwdata.core.intercept.InvalidChainCheckException;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OperatorEnum;
@@ -55,6 +49,12 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
+import de.mw.mwdata.ofdb.exception.OfdbFormatException;
+import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
+import de.mw.mwdata.ofdb.exception.OfdbMissingObjectException;
+import de.mw.mwdata.ofdb.exception.OfdbNullValueException;
+import de.mw.mwdata.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
@@ -551,7 +551,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			Object value = null;
 
 			OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-			// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+
 			if (null == propMapper) {
 				continue;
 			}
@@ -561,11 +561,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 				value = getOfdbDefault(tabSpeig);
 				if (null != value) {
 					this.getOfdbDao().setEntityValue(entity, value, tabSpeig, propMapper);
-					// changedEntity.setNewValue( propMapper.getPropertyName(), result );
-					// ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig( viewName
-					// );
-					// String mainTableName = viewHandle.getMainAnsichtTab().getTabDef().getName();
-					// this.getMainAnsichtTab( viewName ).getTabDef().getName();
 					LOGGER.info("Default Value set for Table " + viewToTable.getTabDef().getName() + ", TabSpeig "
 							+ tabSpeig.getSpalte() + ", defaultvalue: " + value);
 				}
@@ -582,12 +577,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
 		List<OfdbField> ofFields = viewHandle.getOfdbFieldList();
 
-		// for (OfdbField ofField : ofFields) {
-		// ofField.refreshEditMode(crud);
-		// }
-
 		return ofFields;
-
 	}
 
 	@Override
@@ -698,10 +688,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 		for (ITabSpeig tabSpeig : tabSpeigs) {
 			if (tabSpeig.getPrimSchluessel()) {
-				// TODO: how can we get the propertyname of the hibernate-@id-column ? FIXME:
-				// this does not work for combined Primary keys (e.g. two columns or more )
-				// OfdbPropMapper propMapper = propMap.get(tabSpeig.getSpalte().toUpperCase());
-
 				if (!entityMapping.hasMapping(tabSpeig)) {
 					throw new OfdbInvalidConfigurationException("Invalid Property Mapping on primary key column "
 							+ tabSpeig.getSpalte().toUpperCase() + ". No property found on entity "
@@ -813,21 +799,19 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(tabDef.getName());
 		OfdbEntityMapping entityMapping = viewHandle.getEntityMapping();
 
-		for (Map.Entry<String, OfdbPropMapper> entry : entityMapping.getMapperSet()) {
-			OfdbPropMapper propMapper = entry.getValue();
-
-			if (propMapper.isAssociationType()) {
+		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
+			if (mapper.isAssociationType()) {
 				continue;
 			}
 
-			ITabSpeig tableProp = viewHandle.findTablePropByProperty(tabDef, propMapper.getPropertyName());
+			ITabSpeig tableProp = viewHandle.findTablePropByProperty(tabDef, mapper.getPropertyName());
 			if (null == tableProp) {
 				continue; // e.g. TabSpeig.getName() runs here ...
 			}
 
 			checkUnique(tableProp, entity);
 
-		} // end for
+		}
 
 	}
 
@@ -896,7 +880,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	// @Override
 	@Override
-	public void doChainCheck(final AbstractMWEntity entity, final CRUD crud) throws OfdbInvalidCheckException {
+	public void doChainCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException {
 
 		try {
 
@@ -919,7 +903,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 			checkAllUniques(entity, crud);
 
 		} catch (OfdbUniqueConstViolationException e) {
-			throw new OfdbInvalidCheckException("Unique check violation: " + e.getLocalizedMessage(), e);
+			throw new InvalidChainCheckException("Unique check violation: " + e.getLocalizedMessage(), e);
 		}
 
 		if (null != this.nextChainItem) {

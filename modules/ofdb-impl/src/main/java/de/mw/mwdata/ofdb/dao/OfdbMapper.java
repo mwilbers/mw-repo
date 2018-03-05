@@ -22,8 +22,8 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import de.mw.mwdata.core.db.FxBooleanType;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.FxEnumType;
-import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
+import de.mw.mwdata.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public class OfdbMapper extends HibernateDaoSupport {

@@ -1,14 +1,14 @@
 package de.mw.mwdata.ofdb.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 
 /**
- * Class holds all column - propertyname mapping pairs for one table in OFDB
+ * Class holds mapping informations for all columns of one table in OFDB
  * database.
  * 
  * @author WilbersM
@@ -41,13 +41,21 @@ public class OfdbEntityMapping {
 	}
 
 	public OfdbPropMapper getMapper(final ITabSpeig tableProp) {
-		// FIXME: method necessary ? better OfdbPropMapper is package visible
 		return this.mapping.get(tableProp.getSpalte().toUpperCase());
 	}
 
-	public Set<Map.Entry<String, OfdbPropMapper>> getMapperSet() {
-		// FIXME method still needed ? only in tests ... ugly ...
-		return this.mapping.entrySet();
+	public Collection<OfdbPropMapper> getMappings() {
+		return this.mapping.values();
+	}
+
+	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
+		for (OfdbPropMapper mapper : this.getMappings()) {
+			if (mapper.getColumnName().toUpperCase().equals(tableProp.getSpalte().toUpperCase())) {
+				return mapper;
+			}
+		}
+
+		return null;
 	}
 
 }

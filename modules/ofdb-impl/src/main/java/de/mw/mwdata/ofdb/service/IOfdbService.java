@@ -6,8 +6,6 @@ import java.util.Map;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
-import de.mw.mwdata.core.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
@@ -21,6 +19,8 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
+import de.mw.mwdata.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbField;
 

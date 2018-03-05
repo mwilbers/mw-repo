@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.mw.mwdata.core.ofdb.exception;
+package de.mw.mwdata.ofdb.exception;
 
 /**
  * Base-class for all Fx-Ofdb-Exception-types.
@@ -16,14 +16,10 @@ public class OfdbException extends Exception {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -5793167547261286798L;
+	private static final long serialVersionUID = -5793167547261286798L;
 
 	public OfdbException(final String message) {
-		super( message );
-	}
-
-	public OfdbException(final String message, final Throwable cause) {
-		super( message, cause );
+		super(message);
 	}
 
 }

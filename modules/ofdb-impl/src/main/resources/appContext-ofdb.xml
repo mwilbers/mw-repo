@@ -49,8 +49,7 @@
 		<property name="crudService" ref="crudService" />
 	</bean>
 	
-	<bean id="entityService" class="de.mw.mwdata.ofdb.service.PagingEntityService">
-		<property name="ofdbDao" ref="ofdbDao" />
+	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />		
 		<property name="crudService" ref="crudService" />

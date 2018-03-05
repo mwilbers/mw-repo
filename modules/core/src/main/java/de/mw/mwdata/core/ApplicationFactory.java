@@ -1,6 +1,4 @@
-package de.mw.mwdata.core.ofdb;
-
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
+package de.mw.mwdata.core;
 
 /**
  * Does the standard-initialization-loading of all necessary ofdb-data and
@@ -19,7 +17,7 @@ public interface ApplicationFactory {
 	 *
 	 * @throws OfdbMissingMappingException
 	 */
-	public void init() throws OfdbMissingMappingException;
+	public void init();
 
 	/**
 	 * The factory knows about the current initialization state of building up the

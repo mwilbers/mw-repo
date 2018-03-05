@@ -10,10 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.exception.OfdbInvalidConfigurationException;
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
-import de.mw.mwdata.core.ofdb.exception.OfdbRuntimeException;
+import de.mw.mwdata.core.ApplicationFactory;
+import de.mw.mwdata.core.intercept.InvalidChainCheckException;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -23,6 +21,8 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
+import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
 
@@ -143,7 +143,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 		try {
 			saveForTest(view2);
 			Assert.fail();
-		} catch (OfdbRuntimeException e) {
+		} catch (InvalidChainCheckException e) {
 			// test ok
 			LOGGER.info("Exception thrown, Test ok.");
 		}

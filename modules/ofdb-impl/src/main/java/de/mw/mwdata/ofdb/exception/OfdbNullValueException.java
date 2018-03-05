@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.mw.mwdata.core.ofdb.exception;
+package de.mw.mwdata.ofdb.exception;
 
 /**
  * @author Wilbers, Markus
@@ -14,15 +14,11 @@ public class OfdbNullValueException extends OfdbRuntimeException {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -2739638025282496405L;
+	private static final long serialVersionUID = -2739638025282496405L;
 
 	public OfdbNullValueException(final String message) {
-		super( message );
+		super(message);
 
-	}
-
-	public OfdbNullValueException(final String message, final Throwable t) {
-		super( message, t );
 	}
 
 }

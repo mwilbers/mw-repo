@@ -3,7 +3,6 @@ package de.mw.mwdata.ofdb.test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.sql.DataSource;
@@ -20,6 +19,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import de.mw.mwdata.core.ApplicationFactory;
+import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.daos.IGenericDao;
@@ -27,8 +28,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.Sequence;
-import de.mw.mwdata.core.ofdb.ApplicationFactory;
-import de.mw.mwdata.core.ofdb.ApplicationState;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
@@ -171,17 +170,17 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			final boolean setDefaultCredentials) {
 
 		int reihenfolge = 0;
-		for (Map.Entry<String, OfdbPropMapper> propEntry : entityMapping.getMapperSet()) {
-			OfdbPropMapper propMapper = propEntry.getValue();
+		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
+			// OfdbPropMapper propMapper = propEntry.getValue();
 			reihenfolge++;
 
-			TabSpeig tabSpeig = DomainMockFactory.createTabSpeigMock(tabDef, propMapper.getColumnName(), reihenfolge,
-					propMapper.getDbType());
+			TabSpeig tabSpeig = DomainMockFactory.createTabSpeigMock(tabDef, mapper.getColumnName(), reihenfolge,
+					mapper.getDbType());
 
-			if ("ANGELEGTAM".equals(propMapper.getColumnName().toUpperCase())) {
+			if ("ANGELEGTAM".equals(mapper.getColumnName().toUpperCase())) {
 				tabSpeig.setDefaultWert(Constants.MWDATADEFAULT.NOW.getName());
 			}
-			if ("ANGELEGTVON".equals(propMapper.getColumnName().toUpperCase())) {
+			if ("ANGELEGTVON".equals(mapper.getColumnName().toUpperCase())) {
 				tabSpeig.setDefaultWert(Constants.MWDATADEFAULT.USERID.getName());
 			}
 
@@ -254,16 +253,16 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	private void saveOrUpdateAllViewProps(final OfdbEntityMapping entityMapping, final AnsichtDef ansichtDefMock,
 			final IAnsichtTab ansichtTabMock) {
 
-		for (Map.Entry<String, OfdbPropMapper> propEntry : entityMapping.getMapperSet()) {
-			OfdbPropMapper propMapper = propEntry.getValue();
+		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
+			// OfdbPropMapper propMapper = propEntry.getValue();
 
 			ITabSpeig tabProp = this.ofdbService.loadTablePropByTableName(ansichtTabMock.getTabDef().getName(),
-					propMapper.getColumnName());
+					mapper.getColumnName());
 			AnsichtSpalten viewColumn = DomainMockFactory.createAnsichtSpalteMock(ansichtDefMock, tabProp,
 					ansichtTabMock);
 
-			ITabSpeig tableProp = this.ofdbService.loadTablePropByTableName(propMapper.getTableName(),
-					propMapper.getColumnName());
+			ITabSpeig tableProp = this.ofdbService.loadTablePropByTableName(mapper.getTableName(),
+					mapper.getColumnName());
 			viewColumn.setTabSpEig(tableProp);
 			viewColumn.setViewTab(ansichtTabMock);
 

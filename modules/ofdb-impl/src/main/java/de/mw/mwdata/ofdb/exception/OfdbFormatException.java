@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.mw.mwdata.core.ofdb.exception;
+package de.mw.mwdata.ofdb.exception;
 
 /**
  * @author mwilbers

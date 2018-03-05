@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.ofdb;
+package de.mw.mwdata.core;
 
 /**
  * State enum that identifies the current state of the application. The {@link DefaultApplicationFactory} keeps this

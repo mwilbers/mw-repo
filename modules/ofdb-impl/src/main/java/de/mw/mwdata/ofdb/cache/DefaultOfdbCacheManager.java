@@ -6,7 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
@@ -34,7 +33,7 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 	}
 
 	@Override
-	public void registerView(final ViewConfigHandle viewHandle) throws OfdbMissingMappingException {
+	public void registerView(final ViewConfigHandle viewHandle) {
 		this.addViewConfiguration(viewHandle);
 
 		List<IAnsichtTab> ansichtTabList = viewHandle.getViewTabs();

@@ -25,7 +25,7 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.service.ICrudService;
-import de.mw.mwdata.core.service.IPagingEntityService;
+import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -44,7 +44,7 @@ import de.mw.mwdata.rest.service.service.RestUrlService;
 @RequestMapping("/rest/**")
 public class RestCrudController<E extends AbstractMWEntity> {
 
-	private IPagingEntityService entityService;
+	private IEntityService<IEntity> entityService;
 
 	private IOfdbService ofdbService;
 
@@ -54,7 +54,7 @@ public class RestCrudController<E extends AbstractMWEntity> {
 
 	private RestUrlService urlService;
 
-	public void setEntityService(IPagingEntityService entityService) {
+	public void setEntityService(IEntityService entityService) {
 		this.entityService = entityService;
 	}
 

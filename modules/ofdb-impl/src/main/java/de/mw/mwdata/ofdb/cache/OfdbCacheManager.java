@@ -2,7 +2,6 @@ package de.mw.mwdata.ofdb.cache;
 
 import java.util.List;
 
-import de.mw.mwdata.core.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
@@ -18,7 +17,7 @@ public interface OfdbCacheManager {
 	 * Loads view information to cache given by the {@link ViewConfigHandle}
 	 * 
 	 */
-	public void registerView(final ViewConfigHandle viewHandle) throws OfdbMissingMappingException;
+	public void registerView(final ViewConfigHandle viewHandle);
 
 	/**
 	 * @return true if view information given by the viewname is in cache
