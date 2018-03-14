@@ -12,14 +12,14 @@ function mwGrid() {
 	
 	/* private functions */
 	
-	function initializeColumns( ofdbFields, gridPropertiesModel ) {
+	function initializeColumns( ofdbFields, appConfig ) {
 		
 		var columnCounter = 0;
 		columns = [];	// FIXME: why to clear local columns array here ?
 		for(var i = 0; i < ofdbFields.length; i++) {
 			var ofdbField = ofdbFields[i];
 			
-			if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
+			if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 				columns[columnCounter] = {};
 				
 				columns[columnCounter]["id"] = ofdbField.propOfdbName;
@@ -110,10 +110,10 @@ function mwGrid() {
 		return true;
 	};
 	
-	this.load = function( rows, ofdbFields, gridPropertiesModel ) {
+	this.load = function( rows, ofdbFields, appConfig ) {
 		console.log("mwGrid load");
 		
-		initializeColumns( ofdbFields, gridPropertiesModel );
+		initializeColumns( ofdbFields, appConfig );
 		
 		// NOTE: because mwGrid.data references memory of rows we must not reinitialize data objects by '{}' every time
 		if(rows.length > 0 && undefined == this.data[0]) {
@@ -126,7 +126,7 @@ function mwGrid() {
 			
 			for(var j=0; j < ofdbFields.length; j++) {
 				var ofdbField = ofdbFields[j];
-				if( evaluator.isShowColumn( ofdbField, gridPropertiesModel ) ) {
+				if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 					this.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
 				}
 				

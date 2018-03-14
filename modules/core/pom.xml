@@ -63,24 +63,6 @@
 		    <artifactId>jackson-core</artifactId>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.hibernate</groupId> -->
-<!-- 			<artifactId>hibernate-annotations</artifactId> -->
-<!-- 		</dependency> -->
-<!--
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-dbcp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
--->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -114,13 +96,6 @@
 			<groupId>de.mw.common</groupId>
 			<artifactId>common-utils</artifactId>
 		</dependency>
-		
-		
-		<!-- FIXME: dep to ofdb-api should be removed -->
-<!-- 		<dependency>  -->
-<!-- 			<groupId>de.mw.mwdata.core</groupId> -->
-<!-- 			<artifactId>ofdb-api</artifactId> -->
-<!-- 		</dependency> -->
 
 		<!-- Test-Utils -->
 		<dependency>

@@ -51,18 +51,17 @@
   	<bean id="requestMappingHandlerMapping" 
   		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
 	
-	
 	<bean id="app.admin.indexController" class="de.mw.mwdata.app.admin.client.controller.IndexController" >
 	</bean>
 	
 	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" >
-		<property name="urlService" ref="rest.UrlService"></property>
-		<property name="applicationConfigService" ref="app.admin.applicationConfigService"></property>
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 	
 	<bean id="app.admin.menuController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
-		<property name="menuService" ref="menuService"></property>
-		<property name="urlService" ref="rest.UrlService"></property>
+		<property name="menuService" ref="menuService" />
+		<property name="urlService" ref="rest.UrlService" />
 	</bean>
     
    <!--  ...................... more snippets .............. -->

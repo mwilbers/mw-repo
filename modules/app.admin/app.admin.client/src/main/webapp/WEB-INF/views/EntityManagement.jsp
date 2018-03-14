@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
   <head>  
     <title>AngularJS based MWDATA Web Admin Interface</title>  
@@ -26,41 +25,40 @@
 
     </style>
     <!-- simple angularjs readonly table -->
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-     <link rel="stylesheet" href="<c:url value='/static/css/app.css' />"></link>
+     <link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+     <link rel="stylesheet" href="./../static/css/app.css"></link>
 	 
      <!-- slickgrid grid -->
-     <link rel="stylesheet" href="<c:url value='/static/slickgrid/slick.grid.css' />">
-     <link rel="stylesheet" href="<c:url value='/static/slickgrid/examples/examples.css' />"> 
-	 <link rel="stylesheet" href="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.css' />">
+     <link rel="stylesheet" href="./../static/slickgrid/slick.grid.css">
+     <link rel="stylesheet" href="./../static/slickgrid/examples/examples.css"> 
+	 <link rel="stylesheet" href="./../static/jQuery/jquery-ui-1.8.16.custom.css">
      
-	 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
-	  <script src="<c:url value='/static/js/angular/angular-route.min.js' />"></script>
+	  <script src="./../static/js/angular/angular.js"></script>
+	  <script src="./../static/js/angular/angular-route.min.js"></script>
 	  
-	  <script src="<c:url value='/static/jQuery/jquery-1.7.min.js' />"></script>
-	  <script src="<c:url value='/static/jQuery/jquery.event.drag-2.2.js' />"></script>
-	  <script src="<c:url value='/static/jQuery/jquery-ui-1.8.16.custom.min.js' />"></script>
+	  <script src="./../static/jQuery/jquery-1.7.min.js"></script>
+	  <script src="./../static/jQuery/jquery.event.drag-2.2.js"></script>
+	  <script src="./../static/jQuery/jquery-ui-1.8.16.custom.min.js"></script>
 	  
 	  
-	  <script src="<c:url value='/static/slickgrid/slick.core.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/slick.grid.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/slick.editors.js' />"></script>
+	  <script src="./../static/slickgrid/slick.core.js"></script>
+	  <script src="./../static/slickgrid/slick.grid.js"></script>
+	  <script src="./../static/slickgrid/slick.editors.js"></script>
 	  
-	  <script src="<c:url value='/static/slickgrid/slick.formatters.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangedecorator.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellrangeselector.js' />"></script>
-	  <script src="<c:url value='/static/slickgrid/plugins/slick.cellselectionmodel.js' />"></script>
+	  <script src="./../static/slickgrid/plugins/slick.cellrangedecorator.js"></script>
+	  <script src="./../static/slickgrid/plugins/slick.cellrangeselector.js"></script>
+	  <script src="./../static/slickgrid/plugins/slick.cellselectionmodel.js"></script>
 	  
-	  <script src="<c:url value='/static/slickgrid/slick.dataview.js' />"></script>	  
-	  <script src="<c:url value='/static/js/slickgrid_addons/slick.selectcelleditor.js' />"></script>
-	  <script src="<c:url value='/static/js/slickgrid_addons/mwgrid.js' />"></script>
+	  <script src="./../static/slickgrid/slick.dataview.js"></script>	  
+	  <script src="./../static/js/slickgrid_addons/slick.selectcelleditor.js"></script>
+	  <script src="./../static/js/slickgrid_addons/mwgrid.js"></script>
 	  
-      <script src="<c:url value='/static/js/app.js' />"></script>
+      <script src="./../static/js/app.js"></script>
 	  
-	  <script src="<c:url value='/static/js/angular/angular-tree-control.js' />"></script>
-	  <script src="<c:url value='/static/js/controller/menuController.js' />"></script>
-	  <script src="<c:url value='/static/js/controller/entityController.js' />"></script>
-	  <script src="<c:url value='/static/js/service/entityService.js' />"></script>
+	  <script src="./../static/js/angular/angular-tree-control.js"></script>
+	  <script src="./../static/js/service/entityService.js"></script>
+	  <script src="./../static/js/controller/entityController.js"></script>
+	  <script src="./../static/js/controller/menuController.js"></script>
 	  
 	 
 	  
@@ -180,14 +178,8 @@
           <!-- slickgrid grid -->
 		  <div ng-controller="EntityController as ctrl" id="controllerScope">
 			  <div ng-view>
-				  
-				   
 			  </div>
 		  </div>
-      </div>
-	  
-
-	  
-      
+      </div>      
   </body>
 </html>

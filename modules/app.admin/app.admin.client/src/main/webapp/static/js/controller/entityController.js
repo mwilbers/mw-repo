@@ -2,12 +2,12 @@
 
 function OfdbFieldEvaluator() {
 	
-	this.isShowColumn = function( ofdbField, gridPropertiesModel ) {
+	this.isShowColumn = function( ofdbField, appConfig ) {
 		
 		if(ofdbField.mapped) {
 			return true;
 		} else {
-			if(gridPropertiesModel.showNotMappedColumns) {
+			if(appConfig.showNotMappedColumns) {
 				return true;
 			} else {
 				return false;
@@ -63,9 +63,7 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 			return;
 	}
 	
-	var appConfig = [];
 	console.log('Promise is now resolved: '+appConfigService.getApplicationConfig().data);
-	appConfig['defaultRestUrl'] = appConfigService.getApplicationConfig().defaultRestUrl;
 	
 	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;
@@ -86,13 +84,13 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
     var rowDirty = false;
 	var currentRowIndex = 0;
 	var rowChanged = false;
-	var currentUrl = null;
-    
+	
     $scope.state = {};
     $scope.state.rows = [];
 	
-	$scope.gridPropertiesModel = {
-		showNotMappedColumns: false
+	$scope.appConfig = {
+		showNotMappedColumns: appConfigService.getApplicationConfig().showNotMappedColumnsInGrid,
+		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl
 	};
 	
 	$scope.reloadGrid = function() {
@@ -111,16 +109,12 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	}
 	
 	function setCurrentUrl( newUrl ) {
-		currentUrl = newUrl;
+//		currentUrl = newUrl;
+		$scope.appConfig.currentUrl = newUrl;
 	}
 	
-	function getCurrentUrl() {
-		if(null !== currentUrl) {
-			return currentUrl;
-		} else {
-			return appConfig['defaultRestUrl'];
-		}
-		
+	function getCurrentUrl() {		
+		return $scope.appConfig.currentUrl;		
 	}
 	
     function loadGridRows( entityTOs, ofdbFields ){
@@ -153,7 +147,7 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 				
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.ofdbFields );
-				mwGrid.load( $scope.state.rows, d.ofdbFields, $scope.gridPropertiesModel );
+				mwGrid.load( $scope.state.rows, d.ofdbFields, $scope.appConfig );
 				
             },
             function(errResponse){
