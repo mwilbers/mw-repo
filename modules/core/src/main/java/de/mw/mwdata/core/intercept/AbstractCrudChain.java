@@ -7,8 +7,14 @@ public abstract class AbstractCrudChain implements CrudChain {
 
 	protected CrudChain nextChainItem;
 
+	@Override
 	public void setNextChainItem(final CrudChain item) {
 		this.nextChainItem = item;
+	}
+
+	@Override
+	public CrudChain getNextChainItem() {
+		return this.nextChainItem;
 	}
 
 	public abstract void doChainActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud);

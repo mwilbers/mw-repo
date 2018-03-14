@@ -1,6 +1,5 @@
 package de.mw.mwdata.core.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.daos.ICrudDao;
@@ -24,56 +22,26 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrudService.class);
 
-	// ...
-	// crudchain verschieben
-	// neue id-felder und foreign keys testen
-	// spring-xmls anpassen
-	// crudtest
-
 	@Autowired
 	private ICrudDao<T> crudDao;
 
 	private CrudChain crudChain;
 
-	/**
-	 * ordered list of interceptors. Have to be registered first
-	 */
-	private List<CrudChain> crudChainItems = new ArrayList<CrudChain>();
-
-	/**
-	 * unordered list of additional interceptors. Can be used for registering
-	 * further interceptors from consumer applications
-	 */
-	private List<CrudChain> additionalCrudChainItems = new ArrayList<CrudChain>();
-
 	protected ICrudDao<T> getCrudDao() {
 		return this.crudDao;
 	}
 
-	public void init() {
-		buildChain();
-	}
+	public void setCrudInterceptors(final List<CrudChain> argCrudChainItems) {
 
-	public void setCrudInterceptors(final List<CrudChain> crudChainItems) {
-		this.crudChainItems = crudChainItems;
-	}
+		int size = argCrudChainItems.size();
+		if (size > 0) {
+			this.crudChain = argCrudChainItems.get(0);
 
-	public void buildChain() {
-
-		if (CollectionUtils.isEmpty(this.crudChainItems)) {
-			return;
-		}
-
-		int size = this.crudChainItems.size();
-		this.crudChain = this.crudChainItems.get(0);
-		for (int i = 0; i < size - 1; i++) {
-			this.crudChainItems.get(i).setNextChainItem(this.crudChainItems.get(i + 1));
-		}
-
-		size = this.additionalCrudChainItems.size();
-		for (int i = 0; i < size - 1; i++) {
-			// we copy additional interceptors to main interceptor list
-			this.crudChainItems.get(i).setNextChainItem(this.additionalCrudChainItems.get(i + 1));
+			CrudChain lastItem = this.crudChain;
+			for (int i = 0; i < size - 1; i++) {
+				lastItem.setNextChainItem(argCrudChainItems.get(i + 1));
+				lastItem = argCrudChainItems.get(i + 1);
+			}
 		}
 
 	}
@@ -174,19 +142,94 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
-	public void registerCrudInterceptor(final CrudChain crudChainItem) {
-		this.additionalCrudChainItems.add(crudChainItem);
+	public void registerCrudInterceptor(final CrudChain crudChainItem, final int insertAtPosition) {
+		// this.additionalCrudChainItems.add(crudChainItem);
 
+		// FIXME: write unit-test for testing correct ordering of chain item variants
+		// ...
+		// 1. write unit-test for crudChain
+		// 2. continue test SequenceTest.java and check evaluation of crudChain.
+		// Therefor continue DefaultCrudInterceptor in core with presetDefaultValues
+		//
+		CrudChain item = null;
+		if (insertAtPosition <= -1) {
+			item = getChainItemAtPosition(Integer.MAX_VALUE);
+			if (null == item) {
+				this.crudChain = crudChainItem;
+				return;
+			}
+			item.setNextChainItem(crudChainItem);
+			return;
+
+		} else if (insertAtPosition == 0) {
+			if (null == this.crudChain) {
+				this.crudChain = crudChainItem;
+			} else {
+				CrudChain oldItem = this.crudChain;
+				this.crudChain = crudChainItem;
+				this.crudChain.setNextChainItem(oldItem);
+			}
+			return;
+
+		} else {
+			item = getChainItemAtPosition(insertAtPosition - 1);
+			CrudChain nextItem = item.getNextChainItem();
+			item.setNextChainItem(crudChainItem);
+			crudChainItem.setNextChainItem(nextItem);
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param argPos
+	 *            0-based. can be null. Than last item will be returned.
+	 * @return the chain item at given position. Can be null.
+	 */
+	private CrudChain getChainItemAtPosition(final Integer argPos) {
+		if (null == this.crudChain) {
+			return null;
+		}
+		if (argPos.intValue() == 0) {
+			return this.crudChain;
+		}
+
+		CrudChain nextItem = this.crudChain;
+		CrudChain lastItem = null;
+		int pos = 0;
+		while (null != nextItem) {
+			lastItem = nextItem;
+			if (argPos.intValue() == pos) {
+				break;
+			}
+
+			nextItem = nextItem.getNextChainItem();
+			if (null == nextItem && argPos.intValue() >= pos) { // if next empty but called position still not reached
+				break;
+			}
+			pos++;
+
+		}
+
+		return lastItem;
 	}
 
 	@Override
 	public void doActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud) {
-		this.crudChain.doChainActionsBeforeCheck(entity, crud);
+
+		if (null != this.crudChain) {
+			this.crudChain.doChainActionsBeforeCheck(entity, crud);
+		}
+
 	}
 
 	@Override
 	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException {
-		this.crudChain.doChainCheck(entity, crud);
+
+		if (null != this.crudChain) {
+			this.crudChain.doChainCheck(entity, crud);
+		}
+
 	}
 
 	@Override
@@ -195,8 +238,8 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
-	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex) {
-		return this.crudDao.executeSqlPaginated(sql, pageIndex);
+	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex, final int pageSize) {
+		return this.crudDao.executeSqlPaginated(sql, pageIndex, pageSize);
 	}
 
 	@Override

@@ -131,7 +131,6 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		// FIXME: use here getClass().getName() instead hardcoded packagename
 		IAnsichtTab aTabBenutzerBereich = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH,
 				BenutzerBereich.class.getName(), "benutzerBereich", BenutzerBereich.class);
 		IAnsichtTab aTabTabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),

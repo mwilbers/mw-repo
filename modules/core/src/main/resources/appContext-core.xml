@@ -67,15 +67,16 @@
 	<bean id="crudDao" class="de.mw.mwdata.core.daos.CrudDao" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+	<bean id="core.crudDefaultInterceptor" class="de.mw.mwdata.core.intercept.DefaultCrudInterceptor" />
 
-	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService" init-method="init">
-		<property name="crudInterceptors"> <!-- add interceptors for chain of responsibility in crud process -->
+	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService" >
+		<!-- add interceptors for chain of responsibility in crud process -->
+		<property name="crudInterceptors"> 
 			<list>
-				<ref bean="ofdbService" />
-
+				<ref bean="core.crudDefaultInterceptor" />
 			</list>
 		</property>
-		<!-- <property name="applicationFactory" ref="applicationFactory"></property> -->
 	</bean>
 
 </beans>

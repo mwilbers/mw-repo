@@ -53,6 +53,7 @@
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />		
 		<property name="crudService" ref="crudService" />
+		<property name="applicationConfigService" ref="${app.spring.appConfigService.springBeanId}" />
 	</bean>
 	
 	<!-- TypeZEITTYP -->

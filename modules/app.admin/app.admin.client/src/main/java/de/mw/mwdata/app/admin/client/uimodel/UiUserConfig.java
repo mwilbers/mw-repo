@@ -21,6 +21,7 @@ public class UiUserConfig implements UiJsonConvertable {
 	// "http://localhost:8080/app.admin.client/admin/tabDef/";
 
 	private String defaultRestUrl;
+	private boolean showNotMappedColumnsInGrid;
 
 	public String getDefaultRestUrl() {
 		return this.defaultRestUrl;
@@ -28,6 +29,14 @@ public class UiUserConfig implements UiJsonConvertable {
 
 	public void setDefaultRestUrl(final String defaultRestUrl) {
 		this.defaultRestUrl = defaultRestUrl;
+	}
+
+	public boolean isShowNotMappedColumnsInGrid() {
+		return showNotMappedColumnsInGrid;
+	}
+
+	public void setShowNotMappedColumnsInGrid(boolean showNotMappedColumnsInGrid) {
+		this.showNotMappedColumnsInGrid = showNotMappedColumnsInGrid;
 	}
 
 }

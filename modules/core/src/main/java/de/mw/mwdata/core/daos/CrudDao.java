@@ -145,13 +145,18 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex) {
+	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex, final int pageSize) {
 
 		Query query = this.getCurrentSession().createQuery(sql);
 
-		int start = (pageIndex - 1) * PaginatedList.DEFAULT_STEPSIZE;
+		int currentPageSize = pageSize;
+		if (pageSize < 1) {
+			currentPageSize = PaginatedList.DEFAULT_STEPSIZE;
+		}
+
+		int start = (pageIndex - 1) * currentPageSize;
 		query.setFirstResult(start);
-		query.setMaxResults(PaginatedList.DEFAULT_STEPSIZE);
+		query.setMaxResults(currentPageSize);
 
 		return query.list();
 	}

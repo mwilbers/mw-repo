@@ -7,6 +7,8 @@ public interface CrudChain {
 
 	public void setNextChainItem(final CrudChain item);
 
+	public CrudChain getNextChainItem();
+
 	public void doChainActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud);
 
 	public void doChainCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException;

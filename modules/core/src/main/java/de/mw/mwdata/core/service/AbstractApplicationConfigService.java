@@ -27,10 +27,10 @@ public abstract class AbstractApplicationConfigService implements ApplicationCon
 
 	@Override
 	public String getPropertyValue(final String key) {
-		return this.getString(this.bundleName, key);
+		return getString(this.bundleName, key);
 	}
 
-	public String getString(final String bundleName, final String key, final Object... arguments) {
+	protected String getString(final String bundleName, final String key, final Object... arguments) {
 		if (StringUtils.isBlank(bundleName)) {
 			return CONFIG_NO_BUNDLE_SET;
 		}
@@ -50,14 +50,5 @@ public abstract class AbstractApplicationConfigService implements ApplicationCon
 			return '%' + key + '%';
 		}
 	}
-
-	// @Override
-	// public List<String> getPropertyValueList(String key, String delimiter) {
-	//
-	// String valueString = this.getPropertyValue(key);
-	// String[] valueArray = StringUtils.split(valueString, delimiter);
-	//
-	// return CollectionUtils.arrayToList(valueArray);
-	// }
 
 }

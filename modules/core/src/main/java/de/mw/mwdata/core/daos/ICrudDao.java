@@ -55,7 +55,7 @@ public interface ICrudDao<T> {
 
 	public List<IEntity[]> executeSql(String sql);
 
-	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex);
+	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex, final int pageSize);
 
 	public long executeCountSql(String sqlCount);
 

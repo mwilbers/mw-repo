@@ -4,7 +4,6 @@
 package de.mw.mwdata.ofdb.service.test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +15,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.mw.common.utils.FxDateUtils;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.domain.Sequence;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OperatorEnum;
@@ -48,10 +45,6 @@ import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
  * @author mwilbers
  *
  */
-// @ContextHierarchy({ @ContextConfiguration(classes = TestAppConfig.class),
-// @ContextConfiguration(classes = WebConfig.class) })
-// @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-// @Test(groups = "hsql")
 @ContextConfiguration(locations = { "classpath:/appContext-ofdb.xml", "classpath:/appContext-ofdb-test.xml",
 		"classpath:/appContext-common-test-db.xml" })
 @TransactionConfiguration
@@ -69,88 +62,6 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 	// 4. validierungsregeln prüfen, ob überflüssige dabei sind
 	// 5. dann weiter mit Umbau ofdbCrudInterceptor und die chain verlegen nach
 	// ofdbService
-
-	@Test
-	public void testSequenceIncrementationAndInterceptor() throws OfdbMissingMappingException {
-
-		// FIXME: check if test belongs to core component
-
-		// ... check oracle compatibility:
-		// http://hsqldb.org/doc/2.0/guide/management-chapt.html#mtc_compatibility_oracle
-		// ... check oracle param:
-		// http://stackoverflow.com/questions/4628857/junit-hsqldb-how-to-get-around-errors-with-oracle-syntax-when-testing-using-hsq?rq=1
-
-		// http://stackoverflow.com/questions/3805478/internal-hsql-database-complains-about-privileges
-		// hibernate incompatibility:
-		// You need to use Hibernate 3.5.6 or later, together with HSQLDB version 2.2.x
-		// or later. Otherwise, older
-		// Hibernte jars work with HSQLDB 1.8.x.
-
-		LOGGER.info("++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		LOGGER.info("+++++testSequenceIncrementationAndInterceptor+++++++++");
-		LOGGER.info("++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-		this.applicationFactory.configure();
-
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
-
-		this.applicationFactory.init();
-
-		// insert TabDef for tests
-		TabDef tabDef = DomainMockFactory.createTabDefMock("Testtable1", this.getTestBereich(), !isAppInitialized());
-
-		// test state before insert
-		Assert.assertNull(tabDef.getAngelegtAm(), "AngelegtAm is not null.");
-		Assert.assertNull(tabDef.getAngelegtVon(), "AngelegtVon is not null.");
-
-		// first get next expected TabDef.ID
-		String sql = " SELECT LetzteBelegteNr, Inkrement  FROM " + TestConstants.TABLENAME_SYSSEQUENZ
-				+ "  WHERE name = '" + tabDef.getSequenceKey() + "' ";
-		List<Map<String, Object>> items = this.jdbcTemplate.queryForList(sql);
-		// List<Map<String, Object>> items = this.simpleJdbcTemplate.queryForList( sql
-		// );
-		Map<String, Object> map = items.get(0);
-		Long letzteBelegteNr = (Long) (map.get("LetzteBelegteNr"));
-		Long inkrement = (Long) (map.get("Inkrement"));
-		Sequence sequence3 = new Sequence();
-		sequence3.setLetzteBelegteNr(letzteBelegteNr.longValue());
-		sequence3.setInkrement(inkrement.longValue());
-
-		// do Test
-		// saveForTest( tabDef );
-		this.getCrudService().insert(tabDef);
-
-		// here we have to query the hibernate-session-factory for objects. This way the
-		// factory does in implicit flush
-		// to db before we use the simpleJdbcTemplate for querying new saved objects
-		// (e.g. sequence-values)
-		List<TabDef> allTabDefs = this.getCrudDao().findAll(TabDef.class);
-		Assert.assertTrue(allTabDefs.size() == 2, "Wrong number of TabDef objects was saved.");
-
-		// Test 1: check if inteceptor- and field-defaults were set
-		Assert.assertNotNull(tabDef.getAngelegtVon(), "AngelegtVon is null.");
-		Assert.assertNotNull(tabDef.getAngelegtAm(), "AngelegtAm is null.");
-		Assert.assertNotNull(tabDef.getId(), "Id not correctly set.");
-		Assert.assertEquals(tabDef.getAngelegtVon(), Constants.SYS_USER_DEFAULT);
-		Assert.assertEquals(0, FxDateUtils.compare(new Date(), tabDef.getAngelegtAm(), false),
-				"AngelegtAm not correctly set.");
-
-		// Test 2: check if next id was set for tabDef
-		Assert.assertEquals(sequence3.getNaechsteNr(), tabDef.getId(), "Wrong Sequence-ID was set");
-
-		// Test 3: check incrementation of next number in TabDef-Sequence-Generator
-		items = this.jdbcTemplate.queryForList(sql);
-		map = items.get(0);
-		Long neueLetzteBelegteNr = (Long) (map.get("LetzteBelegteNr"));
-		Assert.assertNotSame(letzteBelegteNr.longValue(), neueLetzteBelegteNr.longValue(),
-				"Sequence-number not incremented after insert-operation.");
-
-		this.getCrudDao().delete(tabDef);
-		List<TabDef> tabDefs = this.getCrudDao().findAll(TabDef.class);
-		Assert.assertEquals(tabDefs.size(), 1);
-
-	}
 
 	@Test
 	public void testFindAllWithSorting() throws OfdbMissingMappingException {
@@ -323,20 +234,13 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		tabSpeigId.setPrimSchluessel(Boolean.TRUE);
 
 		// start test ...
-		// List<TabSpeig> tList = new ArrayList<TabSpeig>();
-		// tList.add( tabSpeigMock );
-		// tList.add( tabSpeigId );
-		// IOfdbService oService = this.ofdbService;
 		ViewConfigHandle viewHandle = this.ofdbCacheManager
 				.findViewConfigByTableName(tabSpeigMock.getTabDef().getName());
 
 		OfdbPropMapper propMapMock = viewHandle.findPropertyMapperByTabProp(tabSpeigMock);
-		// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigMock );
 		String propNameMock = propMapMock.getPropertyName();
 		OfdbPropMapper propMapId = viewHandle.findPropertyMapperByTabProp(tabSpeigId);
-		// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeigId );
 		String propNameId = propMapId.getPropertyName();
-		// Map<String, OfdbPropMapper> propMap = oService.loadPropertyMapping( tList );
 
 		// Assert.assertTrue( propMap.size() == tList.size() );
 		Assert.assertEquals(propNameMock, "alias");

@@ -42,6 +42,11 @@ public class UserConfigController {
 		UiUserConfig userConfig = new UiUserConfig();
 		userConfig.setDefaultRestUrl(restUrl);
 
+		String sShowNotMappedColumnsInGrid = this.configService
+				.getPropertyValue("app.admin.showNotMappedColumnsInGrid");
+		Boolean show = Boolean.valueOf(sShowNotMappedColumnsInGrid);
+		userConfig.setShowNotMappedColumnsInGrid(show.booleanValue());
+
 		return new ResponseEntity<UiUserConfig>(userConfig, HttpStatus.OK);
 
 	}

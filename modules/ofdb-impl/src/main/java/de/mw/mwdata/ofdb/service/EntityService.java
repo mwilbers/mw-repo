@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.utils.PaginatedList;
@@ -23,11 +26,15 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 
 public class EntityService implements IEntityService<IEntity> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EntityService.class);
+
 	private OfdbCacheManager ofdbCacheManager;
 
 	private IOfdbService ofdbService;
 
 	private ICrudService<IEntity> crudService;
+
+	private ApplicationConfigService applicationConfigService;
 
 	public void setOfdbService(final IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
@@ -35,6 +42,10 @@ public class EntityService implements IEntityService<IEntity> {
 
 	public void setCrudService(ICrudService<IEntity> crudService) {
 		this.crudService = crudService;
+	}
+
+	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
+		this.applicationConfigService = applicationConfigService;
 	}
 
 	protected IOfdbService getOfdbService() {
@@ -93,8 +104,11 @@ public class EntityService implements IEntityService<IEntity> {
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
 		String sql = this.getOfdbService().buildFilteredSQL(viewName, entityTO, cols);
 
+		int pageSize = loadPageSize();
+		// FIXME sqlCount not the same as sql string ... entityTO is not evaluated for
+		// count ...
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
-		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex, pageSize);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
 		long count = this.getCrudService().executeCountSql(sqlCount);
@@ -103,6 +117,21 @@ public class EntityService implements IEntityService<IEntity> {
 
 		return pagingList;
 
+	}
+
+	private int loadPageSize() {
+
+		String pageSizeString = this.applicationConfigService.getPropertyValue("app.hibernate.pageSizeForLoad");
+
+		int pageSize = 0;
+		try {
+			pageSize = Integer.parseInt(pageSizeString);
+		} catch (NumberFormatException e) {
+			LOGGER.warn(
+					"Configuration of application property 'app.hibernate.pageSizeForLoad' is not valid integer. Will use default page size.");
+		}
+
+		return pageSize;
 	}
 
 	@Override
@@ -114,12 +143,11 @@ public class EntityService implements IEntityService<IEntity> {
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
 		long count = getCrudService().executeCountSql(sqlCount);
 
-		// FIXME: change load logic: first get count and pageSize from
-		// applicationConfigService, then decide if
-		// 1. loadView or 2. loadViewPaginated
+		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
 
+		int pageSize = loadPageSize();
 		String sql = getOfdbService().buildSQL(viewName, cols);
-		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex, pageSize);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
 		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pageIndex);

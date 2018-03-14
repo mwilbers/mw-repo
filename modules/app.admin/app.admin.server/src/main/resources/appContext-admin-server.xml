@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <bean id="app.admin.applicationConfigService" class="de.mw.mwdata.app.admin.server.config.AdminConfigurationService" >
+    <bean id="app.applicationConfigService" class="de.mw.mwdata.app.admin.server.config.AdminConfigurationService" >
     	<property name="propertyBundle" value="de.mw.mwdata.app.admin.config" />
     	
     </bean>

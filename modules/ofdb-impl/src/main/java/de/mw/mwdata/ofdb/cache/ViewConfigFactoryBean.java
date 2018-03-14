@@ -269,26 +269,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 	}
 
-	/**
-	 *
-	 * @param tabDef
-	 * @return the simple name of the entity given by the fullclassname of the
-	 *         TabDef-column
-	 */
-	private String getSimpleName(final ITabDef tabDef) {
-
-		if (null == tabDef) {
-			return StringUtils.EMPTY;
-		}
-
-		String simpleName = ClassNameUtils.getSimpleClassName(tabDef.getFullClassName());
-		if (null == simpleName) {
-			// FIXME: throw exception: better: do validation in registration-method
-		}
-		return simpleName;
-
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	private List<OfdbField> createOfdbFields(final ViewConfigHandle viewHandle, final CRUD crud,
 			final OfdbEntityMapping mainEntityMapping) {
@@ -406,12 +386,12 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 						ofField.setResultIndex(++resultIndex);
 						ofField.setColumnTitle(suchWertTabSpeig.getSpaltenkopf());
 						ofField.setItemValue(listPropValueName);
-						itemKey = getSimpleName(suchWertTabSpeig.getTabDef()) + "." + listPropValueName;
+						itemKey = OfdbUtils.getSimpleName(suchWertTabSpeig.getTabDef()) + "." + listPropValueName;
 
 					} else {
 
 						ofField.setResultIndex(0);
-						itemKey = getSimpleName(ansichtTab.getTabDef()) + "." + listPropValueName;
+						itemKey = OfdbUtils.getSimpleName(ansichtTab.getTabDef()) + "." + listPropValueName;
 
 					}
 					queryModel.addJoinTable(ansichtTab);

@@ -52,7 +52,7 @@ public interface IOfdbService {
 	public String buildFilteredSQL(final String viewName, final EntityTO<? extends AbstractMWEntity> filterEntityTO,
 			final List<SortKey> sortKeys);
 
-	public void presetDefaultValues(final AbstractMWEntity entity);
+	// public void presetDefaultValues(final AbstractMWEntity entity);
 
 	public List<AnsichtDef> loadViewsForRegistration(final String applicationContextPath);
 

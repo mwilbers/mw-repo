@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
+import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 
 public class OfdbUtils {
@@ -55,6 +59,22 @@ public class OfdbUtils {
 
 		return null;
 
+	}
+
+	/**
+	 *
+	 * @param tabDef
+	 * @return the simple name of the entity given by the fullclassname of the
+	 *         TabDef-column
+	 *
+	 */
+	public static String getSimpleName(final ITabDef tabDef) {
+
+		if (null == tabDef) {
+			return StringUtils.EMPTY;
+		}
+
+		return ClassNameUtils.getSimpleClassName(tabDef.getFullClassName());
 	}
 
 }

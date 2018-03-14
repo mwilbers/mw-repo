@@ -26,6 +26,8 @@ import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.IFxEnum;
 import de.mw.mwdata.core.intercept.AbstractCrudChain;
+import de.mw.mwdata.core.intercept.ICrudInterceptable;
+import de.mw.mwdata.core.intercept.ICrudInterceptor;
 import de.mw.mwdata.core.intercept.InvalidChainCheckException;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
@@ -71,7 +73,7 @@ import de.mw.mwdata.ofdb.query.OfdbWhereRestriction;
  * @author mwilbers
  * @version 1.0
  */
-public class OfdbService extends AbstractCrudChain implements IOfdbService {
+public class OfdbService extends AbstractCrudChain implements IOfdbService, ICrudInterceptor {
 
 	// TODO: 1. build own logging-component
 	// 2. Idee: MBeans anlegen für ausgabe der ofdb-informationen
@@ -81,6 +83,13 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 	private OfdbCacheManager ofdbCacheManager;
 
 	private ICrudService<IEntity> crudService;
+
+	// public void init() {
+	// if (this.crudService instanceof ICrudInterceptable) {
+	// ICrudInterceptable interceptor = (ICrudInterceptable) this.crudService;
+	// interceptor.registerCrudInterceptor(this);
+	// }
+	// }
 
 	protected IOfdbDao getOfdbDao() {
 		return this.ofdbDao;
@@ -96,6 +105,10 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 	public void setCrudService(final ICrudService crudService) {
 		this.crudService = crudService;
+		if (this.crudService instanceof ICrudInterceptable) {
+			ICrudInterceptable interceptor = (ICrudInterceptable) this.crudService;
+			interceptor.registerCrudInterceptor(this, 0);
+		}
 	}
 
 	@Override
@@ -188,7 +201,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		if (setCount) {
 			queryBuilder.setCount(true);
 		} else {
-			queryBuilder.selectTable(getSimpleName(fromTabDef), fromTabDef.getAlias());
+			queryBuilder.selectTable(OfdbUtils.getSimpleName(fromTabDef), fromTabDef.getAlias());
 		}
 
 		// add select-alias-columns
@@ -199,7 +212,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		}
 
 		// build from-part
-		queryBuilder.fromTable(getSimpleName(fromTabDef), fromTabDef.getAlias());
+		queryBuilder.fromTable(OfdbUtils.getSimpleName(fromTabDef), fromTabDef.getAlias());
 
 		for (IAnsichtTab ansichtTab : queryModel.getJoinedViews()) {
 			ViewConfigHandle joinedViewHandle = this.ofdbCacheManager
@@ -212,7 +225,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 
 			// join tables
 			ITabDef joinTabDef = ansichtTab.getTabDef();
-			queryBuilder.joinTable(getSimpleName(joinTabDef), joinTabDef.getAlias());
+			queryBuilder.joinTable(OfdbUtils.getSimpleName(joinTabDef), joinTabDef.getAlias());
 
 			// FIXME: validation-check that ansichTab.join1spalteakey =
 			// ansichtSpalte.spalteakey
@@ -427,30 +440,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		// propertyMap.get(tabSpeig.getSpalte().toUpperCase()).getPropertyName();
 	}
 
-	/**
-	 *
-	 * @param tabDef
-	 * @return the simple name of the entity given by the fullclassname of the
-	 *         TabDef-column
-	 *
-	 *         FIXME: duplicated method in ViewConfigFactory -> typical method for
-	 *         util-class
-	 *
-	 */
-	private String getSimpleName(final ITabDef tabDef) {
-
-		if (null == tabDef) {
-			return StringUtils.EMPTY;
-		}
-
-		String simpleName = ClassNameUtils.getSimpleClassName(tabDef.getFullClassName());
-		if (null == simpleName) {
-			// FIXME: throw exception: better: do validation in registration-method
-		}
-		return simpleName;
-
-	}
-
 	private Object getOfdbDefault(final ITabSpeig tabSpeig) throws OfdbNullValueException {
 
 		Object result = null;
@@ -472,7 +461,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService {
 		case STRING:
 			if (null != tabSpeig.getDefaultWert()) {
 				if (Constants.MWDATADEFAULT.USERID.getName().equals(tabSpeig.getDefaultWert())) {
-					result = Constants.SYS_USER_DEFAULT;
+					result = Constants.SYS_USER_DEFAULT; // FIXME: has to be replaced by real userid
 				} else {
 					result = tabSpeig.getDefaultWert();
 				}

@@ -55,7 +55,7 @@ public interface ICrudService<T> {
 
 	public List<IEntity[]> executeSql(String sql);
 
-	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex);
+	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex, final int pageSize);
 
 	public long executeCountSql(final String sqlCount);
 

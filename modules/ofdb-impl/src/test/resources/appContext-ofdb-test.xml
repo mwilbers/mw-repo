@@ -14,8 +14,9 @@
     </bean>
 	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
-		<property name="crudService" ref="crudService"></property>
-	 	<property name="ofdbService" ref="ofdbService" />		
+		<property name="crudService" ref="crudService" />
+	 	<property name="ofdbService" ref="ofdbService" />	
+	 	<property name="applicationConfigService" ref="app.applicationConfigService" />	
 	</bean>
     <bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
 	 	<constructor-arg index="0"  value="admin" /> <!--  FIXME: remove admin here -->
@@ -26,12 +27,16 @@
 	<bean id="crudDao" class="de.mw.mwdata.core.daos.CrudDao" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService" init-method="init">
-		<property name="crudInterceptors"> <!-- add interceptors for chain of responsibility in crud process -->
+	
+	<bean id="core.crudDefaultInterceptor" class="de.mw.mwdata.core.intercept.DefaultCrudInterceptor" />
+	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService">
+		<property name="crudInterceptors"> 
 			<list>
-				<ref bean="ofdbService" />
+				<ref bean="core.crudDefaultInterceptor" />
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="app.applicationConfigService" class="de.mw.mwdata.ofdb.mocks.ApplicationConfigServiceMock" />
 
 </beans>

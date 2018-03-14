@@ -37,101 +37,101 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 @Table(name = "FX_ANSICHTSPALTEN_K" /* , schema = Constants.DB_SCHEMA */)
 public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 
-	private static final long	serialVersionUID	= -8040480474359231162L;
+	private static final long serialVersionUID = -8040480474359231162L;
 
-	private final static String	SEQUENCE_KEY		= "FX_AnsichtSpalten_K:DSID";
+	private final static String SEQUENCE_KEY = "FX_AnsichtSpalten_K:DSID";
 
+	// FIXME: sequenceGenerator to replace by global constant
 	@Id
 	@GeneratedValue(generator = "SEQ_GEN")
 	@GenericGenerator(name = "SEQ_GEN", strategy = "de.mw.mwdata.core.db.FxSequenceGenerator")
 	@Column(name = "DSID")
-	private Long				id;
+	private Long id;
 
-	// @Transient
-	// @Column(name = "ANSICHT", insertable = false, updatable = false, nullable = false, unique = true)
 	@Column(name = "SPALTEAKEY", updatable = false, insertable = false, nullable = false, unique = false)
-	private String				name;
+	private String name;
 
 	@Column(name = "SPALTEAKEY", updatable = true, insertable = true, nullable = false, unique = false)
-	private String				spalteAKey;
+	private String spalteAKey;
 
 	@Column(name = "INDEXGRID", updatable = true, nullable = false, unique = false)
-	private Integer				indexGrid;
+	private Integer indexGrid;
 
 	@Column(name = "TABAKEY", updatable = true, nullable = false, unique = false)
-	private String				tabAKey;
+	private String tabAKey;
 
-	// @Column(name = "ANSICHT", insertable = false, updatable = false, nullable = false, unique = false)
+	// @Column(name = "ANSICHT", insertable = false, updatable = false, nullable =
+	// false, unique = false)
 	// private String ansicht;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ANSICHTDEFID", referencedColumnName = "DSID", nullable = false, insertable = false, updatable = false)
-	private AnsichtDef			ansichtDef;
+	private AnsichtDef ansichtDef;
 
 	@Column(name = "ANSICHTDEFID", insertable = true, updatable = true, nullable = false, unique = false)
-	private Long				ansichtDefId;
+	private Long ansichtDefId;
 
 	@Column(name = "TABSPEIGID", insertable = false, updatable = false, nullable = false, unique = false)
-	private Long				tabSpeigId;
+	private Long tabSpeigId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "TABSPEIGID", referencedColumnName = "DSID", updatable = true, insertable = true, nullable = true)
-	private TabSpeig			tabSpeig;
+	private TabSpeig tabSpeig;
 
 	@Column(name = "ANSICHTTABID", insertable = false, updatable = false, nullable = false, unique = false)
-	private Long				viewTabId;
+	private Long viewTabId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "ANSICHTTABID", referencedColumnName = "DSID", updatable = true, insertable = true, nullable = true)
-	private AnsichtTab			viewTab;
+	private AnsichtTab viewTab;
 
 	@Column(name = "INGRIDANZEIGEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				inGridAnzeigen;
+	private Boolean inGridAnzeigen;
 
 	@Column(name = "INGRIDLADEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				inGridLaden;
+	private Boolean inGridLaden;
 
 	@Column(name = "FILTER", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				filter;
+	private Boolean filter;
 
 	@Column(name = "ANZAHLNACHKOMMASTELLEN", updatable = true, nullable = true)
-	private Integer				anzahlNachkommastellen;
+	private Integer anzahlNachkommastellen;
 
 	@Column(name = "BEARBHINZUFZUGELASSEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				bearbHinzufZugelassen;
+	private Boolean bearbHinzufZugelassen;
 
 	@Column(name = "BEARBZUGELASSEN", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				bearbZugelassen;
+	private Boolean bearbZugelassen;
 
 	@Column(name = "EINGABENOTWENDIG", columnDefinition = "NUMBER(11) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				eingabeNotwendig;
+	private Boolean eingabeNotwendig;
 
 	@Column(name = "ANSICHTSUCHEN", updatable = true, nullable = true, unique = false)
-	private String				ansichtSuchen;
+	private String ansichtSuchen;
 
 	@Column(name = "SUCHWERTAUSTABAKEY", updatable = true, nullable = true, unique = false)
-	private String				suchwertAusTabAKey;
+	private String suchwertAusTabAKey;
 
 	@Column(name = "SUCHWERTAUSSPALTEAKEY", updatable = true, nullable = true, unique = false)
-	private String				suchwertAusSpalteAKey;
+	private String suchwertAusSpalteAKey;
 
 	@Column(name = "WHERETABAKEY", updatable = true, nullable = true, unique = false)
-	private String				whereTabAKey;
+	private String whereTabAKey;
 
 	@Column(name = "WHERESPALTEAKEY", updatable = true, nullable = true, unique = false)
-	private String				whereSpalteAKey;
+	private String whereSpalteAKey;
 
 	@Column(name = "VERDECKENDURCHTABAKEY", updatable = true, nullable = true, unique = false)
-	private String				verdeckenDurchTabAKey;
+	private String verdeckenDurchTabAKey;
 
 	@Column(name = "VERDECKENDURCHSPALTEAKEY", updatable = true, nullable = true, unique = false)
-	private String				verdeckenDurchSpalteAKey;
+	private String verdeckenDurchSpalteAKey;
 
 	/*
 	 * (non-Javadoc)
@@ -149,7 +149,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 	}
 
 	@Override
-	public void setId( final Long id ) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -159,7 +159,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 	}
 
 	@Override
-	public void setName( final String name ) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -167,7 +167,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.indexGrid;
 	}
 
-	public void setIndexGrid( final Integer indexGrid ) {
+	public void setIndexGrid(final Integer indexGrid) {
 		this.indexGrid = indexGrid;
 	}
 
@@ -175,7 +175,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.tabAKey;
 	}
 
-	public void setTabAKey( final String tabAKey ) {
+	public void setTabAKey(final String tabAKey) {
 		this.tabAKey = tabAKey;
 	}
 
@@ -183,7 +183,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.spalteAKey;
 	}
 
-	public void setSpalteAKey( final String spalteAKey ) {
+	public void setSpalteAKey(final String spalteAKey) {
 		this.spalteAKey = spalteAKey;
 		this.name = spalteAKey;
 	}
@@ -192,7 +192,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.inGridAnzeigen;
 	}
 
-	public void setInGridAnzeigen( final Boolean inGridAnzeigen ) {
+	public void setInGridAnzeigen(final Boolean inGridAnzeigen) {
 		this.inGridAnzeigen = inGridAnzeigen;
 	}
 
@@ -200,7 +200,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.inGridLaden;
 	}
 
-	public void setInGridLaden( final Boolean inGridLaden ) {
+	public void setInGridLaden(final Boolean inGridLaden) {
 		this.inGridLaden = inGridLaden;
 	}
 
@@ -208,7 +208,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.filter;
 	}
 
-	public void setFilter( final Boolean filter ) {
+	public void setFilter(final Boolean filter) {
 		this.filter = filter;
 	}
 
@@ -216,7 +216,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.anzahlNachkommastellen;
 	}
 
-	public void setAnzahlNachkommastellen( final Integer anzahlNachkommastellen ) {
+	public void setAnzahlNachkommastellen(final Integer anzahlNachkommastellen) {
 		this.anzahlNachkommastellen = anzahlNachkommastellen;
 	}
 
@@ -224,7 +224,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.bearbHinzufZugelassen;
 	}
 
-	public void setBearbHinzufZugelassen( final Boolean bearbHinzufZugelassen ) {
+	public void setBearbHinzufZugelassen(final Boolean bearbHinzufZugelassen) {
 		this.bearbHinzufZugelassen = bearbHinzufZugelassen;
 	}
 
@@ -232,7 +232,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.bearbZugelassen;
 	}
 
-	public void setBearbZugelassen( final Boolean bearbZugelassen ) {
+	public void setBearbZugelassen(final Boolean bearbZugelassen) {
 		this.bearbZugelassen = bearbZugelassen;
 	}
 
@@ -240,7 +240,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.eingabeNotwendig;
 	}
 
-	public void setEingabeNotwendig( final Boolean eingabeNotwendig ) {
+	public void setEingabeNotwendig(final Boolean eingabeNotwendig) {
 		this.eingabeNotwendig = eingabeNotwendig;
 	}
 
@@ -248,7 +248,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.suchwertAusTabAKey;
 	}
 
-	public void setSuchwertAusTabAKey( final String suchwertAusTabAKey ) {
+	public void setSuchwertAusTabAKey(final String suchwertAusTabAKey) {
 		this.suchwertAusTabAKey = suchwertAusTabAKey;
 	}
 
@@ -256,7 +256,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.suchwertAusSpalteAKey;
 	}
 
-	public void setSuchwertAusSpalteAKey( final String suchwertAusSpalteAKey ) {
+	public void setSuchwertAusSpalteAKey(final String suchwertAusSpalteAKey) {
 		this.suchwertAusSpalteAKey = suchwertAusSpalteAKey;
 	}
 
@@ -264,7 +264,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.whereTabAKey;
 	}
 
-	public void setWhereTabAKey( final String whereTabAKey ) {
+	public void setWhereTabAKey(final String whereTabAKey) {
 		this.whereTabAKey = whereTabAKey;
 	}
 
@@ -272,16 +272,18 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.whereSpalteAKey;
 	}
 
-	public void setWhereSpalteAKey( final String whereSpalteAKey ) {
+	public void setWhereSpalteAKey(final String whereSpalteAKey) {
 		this.whereSpalteAKey = whereSpalteAKey;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte#setAnsichtDef(de.mw.mwdata.core.ofdb.domain.AnsichtDef)
+	 * @see
+	 * de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte#setAnsichtDef(de.mw.mwdata.core.
+	 * ofdb.domain.AnsichtDef)
 	 */
-	public void setAnsichtDef( final IAnsichtDef ansichtDef ) {
+	public void setAnsichtDef(final IAnsichtDef ansichtDef) {
 		this.ansichtDef = (AnsichtDef) ansichtDef;
 		this.ansichtDefId = ansichtDef.getId();
 	}
@@ -296,7 +298,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 	}
 
 	// @Override
-	public void setTabSpEig( final ITabSpeig tabSpeig ) {
+	public void setTabSpEig(final ITabSpeig tabSpeig) {
 		this.tabSpeig = (TabSpeig) tabSpeig;
 		this.tabSpeigId = tabSpeig.getId();
 	}
@@ -308,9 +310,11 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte#setViewTab(de.mw.mwdata.core.ofdb.domain.AnsichtTab)
+	 * @see
+	 * de.mw.mwdata.core.ofdb.domain.IAnsichtSpalte#setViewTab(de.mw.mwdata.core.
+	 * ofdb.domain.AnsichtTab)
 	 */
-	public void setViewTab( final IAnsichtTab viewTab ) {
+	public void setViewTab(final IAnsichtTab viewTab) {
 		this.viewTab = (AnsichtTab) viewTab;
 		this.viewTabId = viewTab.getId();
 	}
@@ -329,7 +333,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return "AnsichtSpalte [" + this.getTabAKey() + " : " + this.getSpalteAKey() + "]";
 	}
 
-	public void setAnsichtSuchen( final String ansichtSuchen ) {
+	public void setAnsichtSuchen(final String ansichtSuchen) {
 		this.ansichtSuchen = ansichtSuchen;
 	}
 
@@ -337,7 +341,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.ansichtSuchen;
 	}
 
-	public void setVerdeckenDurchTabAKey( final String verdeckenDurchTabAKey ) {
+	public void setVerdeckenDurchTabAKey(final String verdeckenDurchTabAKey) {
 		this.verdeckenDurchTabAKey = verdeckenDurchTabAKey;
 	}
 
@@ -345,7 +349,7 @@ public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 		return this.verdeckenDurchTabAKey;
 	}
 
-	public void setVerdeckenDurchSpalteAKey( final String verdeckenDurchSpalteAKey ) {
+	public void setVerdeckenDurchSpalteAKey(final String verdeckenDurchSpalteAKey) {
 		this.verdeckenDurchSpalteAKey = verdeckenDurchSpalteAKey;
 	}
 
