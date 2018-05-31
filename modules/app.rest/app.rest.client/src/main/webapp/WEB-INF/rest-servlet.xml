@@ -28,23 +28,10 @@
 		</mvc:annotation-driven>
     	
 
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-	</bean>
-  	<bean id="requestMappingHandlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-  	</bean>
- <!-- 
-	<context:annotation-config />
-   	<context:component-scan base-package="de.mw.mwdata.core.web.control" >
-	</context:component-scan>
-	 -->
-	 
-	 <bean id="app.rest.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-		 	<constructor-arg index="0"  value="rest" />		 <!-- FIXME: remove rest here -->	
-		 	<property name="ofdbService" ref="ofdbService"></property>
-		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
-		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-		</bean>
-	 
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+
+  	<bean id="requestMappingHandlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+ 
     <bean id="restController" class="de.mw.mwdata.rest.client.control.RestCrudController">
 		<property name="ofdbService" ref="ofdbService"></property>
 		<property name="navigationManager" ref="navigationManager"></property>
@@ -53,5 +40,4 @@
 		<property name="urlService" ref="rest.UrlService" />
 	</bean>
 	
-   <!--  ...................... more snippets .............. -->
 </beans>

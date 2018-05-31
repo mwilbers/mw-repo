@@ -39,18 +39,14 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="app.admin.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-		 	<constructor-arg index="0"  value="admin" />		 <!-- FIXME: remove admin here -->	
-		 	<property name="ofdbService" ref="ofdbService"></property>
-		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
-		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-		</bean>
+		
 
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
 	
   	<bean id="requestMappingHandlerMapping" 
   		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
 	
+	<!-- FIXME: move following beans to appContext-adminClient.xml -->
 	<bean id="app.admin.indexController" class="de.mw.mwdata.app.admin.client.controller.IndexController" >
 	</bean>
 	

@@ -12,7 +12,7 @@ public abstract class AbstractApplicationConfigService implements ApplicationCon
 	private static final String CONFIG_NO_BUNDLE_SET = "%No bundlename provided%"; //$NON-NLS-1$
 	private static final String CONFIG_NO_KEY_SET = "%No key provided for bundle%"; //$NON-NLS-1$
 
-	private String bundleName;
+	private String bundleName; // FIXME: should be final !
 
 	protected abstract ResourceBundle getResourceBundle();
 

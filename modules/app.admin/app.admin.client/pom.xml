@@ -12,7 +12,7 @@
 	<packaging>war</packaging>
 	<name>MWDATA Administration Webapp - Client</name>
 
-	<properties>
+	<properties> <!-- FIXME: move settings to mw.parent pom -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.version>4.3.1.RELEASE</springframework.version>
 		<jackson.version>2.7.5</jackson.version>
