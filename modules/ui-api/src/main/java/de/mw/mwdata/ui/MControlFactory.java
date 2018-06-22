@@ -2,7 +2,7 @@ package de.mw.mwdata.ui;
 
 import java.util.List;
 
-import de.mw.mwdata.ofdb.impl.OfdbField;
+import de.mw.mwdata.core.to.OfdbField;
 
 public interface MControlFactory {
 

@@ -15,6 +15,7 @@
 		<property name="location">
 			<value>classpath:/hibernate-test.properties</value>
 		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="order" value="1" />
 	</bean>
 	

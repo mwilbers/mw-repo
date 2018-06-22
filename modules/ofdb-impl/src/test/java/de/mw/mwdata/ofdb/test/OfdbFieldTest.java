@@ -5,13 +5,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.domain.BenutzerBereich;
+import de.mw.mwdata.core.domain.DBTYPE;
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
-import de.mw.mwdata.ofdb.impl.OfdbField;
+import de.mw.mwdata.ofdb.impl.OfdbUtils;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 
 public class OfdbFieldTest {
@@ -39,7 +40,7 @@ public class OfdbFieldTest {
 
 		// 1. eingabeNotwendig
 		this.tabSpeig.setEingabeNotwendig(true);
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isNullable());
 
 	}
@@ -49,21 +50,21 @@ public class OfdbFieldTest {
 
 		// 2. bearbErlaubt
 		this.tabSpeig.setBearbErlaubt(false);
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isEditable());
 
 		this.tabSpeig.setBearbErlaubt(true);
 		this.ansichtSpalte.setBearbZugelassen(false);
-		ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isEditable());
 
 		this.ansichtSpalte.setBearbZugelassen(true);
-		ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertTrue(ofField.isEditable());
 
 		// 3. systemWert
 		this.tabSpeig.setSystemWert(true);
-		ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isEditable());
 
 	}
@@ -72,7 +73,7 @@ public class OfdbFieldTest {
 	public void testOfdbFieldIsFilterable() {
 
 		this.ansichtSpalte.setFilter(true);
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertTrue(ofField.isFilterable());
 
 	}
@@ -83,17 +84,17 @@ public class OfdbFieldTest {
 		// inGridLaden false
 		this.ansichtSpalte.setInGridLaden(false);
 		this.ansichtSpalte.setInGridAnzeigen(false);
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isVisible());
 
 		// inGridAnzeigen false
 		this.ansichtSpalte.setInGridLaden(true);
 		this.ansichtSpalte.setInGridAnzeigen(false);
-		ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isVisible());
 
 		this.ansichtSpalte.setInGridAnzeigen(true);
-		ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertTrue(ofField.isVisible());
 
 	}
@@ -101,7 +102,7 @@ public class OfdbFieldTest {
 	@Test
 	public void testOfdbFieldIsMapped() {
 
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertFalse(ofField.isMapped());
 
 		ofField.setPropName("xxx");
@@ -113,7 +114,7 @@ public class OfdbFieldTest {
 	public void testOfdbFieldCurrency() {
 
 		this.ansichtSpalte.setAnzahlNachkommastellen(42);
-		OfdbField ofField = new OfdbField(this.tabSpeig, this.ansichtSpalte);
+		OfdbField ofField = OfdbUtils.createOfdbField(this.tabSpeig, this.ansichtSpalte);
 		Assert.assertEquals(42, ofField.getCurrency());
 
 	}

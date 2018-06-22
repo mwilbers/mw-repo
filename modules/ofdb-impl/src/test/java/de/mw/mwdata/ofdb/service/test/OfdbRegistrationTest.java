@@ -28,6 +28,7 @@ import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
+import de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory;
 
 /**
  * @author Wilbers, Markus
@@ -186,13 +187,12 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Assert.assertTrue(item instanceof Object[]);
 		Object[] resArray = item;
 		Assert.assertTrue(resArray[0] instanceof TabDef);
-		Assert.assertTrue(resArray[1].equals("Testbereich"));
+
+		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
+		Assert.assertTrue(resArray[1].equals(appFactory.getNameBenutzerBereich()));
 
 		EntityTO<TabDef> entityTO = new EntityTO<TabDef>(new TabDef());
-		// Map<String, MapValue> map = new HashMap<String, MapValue>();
-		// map.put( "BenutzerBereich.name", new MapValue( "Testbereich" ) );
-		// entityTO.setMap( map );
-		entityTO.addJoinedValue("BenutzerBereich.name", "Testbereich");
+		entityTO.addJoinedValue("BenutzerBereich.name", appFactory.getNameBenutzerBereich());
 
 		PaginatedList<IEntity[]> items = this.entityService.findByCriteriaPaginated(TestConstants.TABLENAME_TABDEF,
 				entityTO, 0, null);

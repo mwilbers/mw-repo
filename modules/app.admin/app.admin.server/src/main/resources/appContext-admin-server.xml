@@ -13,8 +13,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <bean id="app.applicationConfigService" class="de.mw.mwdata.app.admin.server.config.AdminConfigurationService" >
-    	<property name="propertyBundle" value="de.mw.mwdata.app.admin.config" />
-    	
+    	<constructor-arg index="0" value="de.mw.mwdata.app.admin.config" />    	
     </bean>
     
     <bean id="app.admin.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

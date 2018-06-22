@@ -4,16 +4,19 @@
 package de.mw.mwdata.core.domain;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+
 import de.mw.mwdata.core.Constants;
 
 /**
@@ -31,56 +34,51 @@ public class Sequence extends AbstractMWEntity {
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	public final static String	SEQUENCE_KEY		= "SysSequenz:SequenzID";
+	public final static String SEQUENCE_KEY = "SysSequenz:SequenzID";
 
-	private final static String	SEQUENCENAME		= Constants.DB_SCHEMA + ".SysSequenz";
+	private final static String SEQUENCENAME = Constants.DB_SCHEMA + ".SysSequenz";
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SEQUENCE")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_SEQUENCE")
-	// @TableGenerator(name = "SEQ_SEQUENCE", table = "KD_RRE_PROD.SysSequenz", pkColumnName = "NAME", valueColumnName =
-	// "LETZTEBELEGTENR", pkColumnValue = SEQUENCE_KEY, allocationSize = 1)
-	// @SequenceGenerator(name = "SEQ_SEQUENCE", sequenceName = SEQUENCENAME)
 	@GenericGenerator(name = "SEQ_SEQUENCE", strategy = "de.mw.mwdata.core.db.FxSequenceGenerator")
-	// , strategy = "de.mw.mwdata.core.db.FxSequenceGenerator"
 	@Column(name = "SEQUENZID", updatable = false, nullable = false)
-	private Long				id;
+	private Long id;
 
 	@Column(name = "NAME", updatable = true, nullable = false)
-	private String				name;
+	private String name;
 
 	@Column(name = "LETZTEBELEGTENR", updatable = true, nullable = false)
-	private Long				letzteBelegteNr;
+	private Long letzteBelegteNr;
 
 	@Column(name = "INKREMENT", updatable = true, nullable = false)
-	private Long				inkrement;
+	private Long inkrement;
 
 	// @Column(name = "BLOCKGROESSE", updatable = true, nullable = false)
 	// private Long blockGroesse;
 
 	@Column(name = "GESPERRTVONLOGINID", updatable = true, nullable = true)
-	private Long				gesperrtVonLoginId;
+	private Long gesperrtVonLoginId;
 
 	@Column(name = "SYSTEMDS", columnDefinition = "NUMBER(1) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				systemDs;
+	private Boolean systemDs;
 
 	@Column(name = "ZULETZTBEARBEITETVON", updatable = true, nullable = true)
-	private Long				zuletztBearbeitetVon;
+	private Long zuletztBearbeitetVon;
 
 	@Column(name = "ZULETZTGEAENDERTAM", updatable = true, nullable = true)
-	private Date				zuletztGeaendertAm;
+	private Date zuletztGeaendertAm;
 
 	@Column(name = "BESCHREIBUNG", updatable = true, nullable = true)
-	private String				beschreibung;
+	private String beschreibung;
 
 	public Long getLetzteBelegteNr() {
 		return this.letzteBelegteNr;
 	}
 
-	public void setLetzteBelegteNr( final Long letzteBelegteNr ) {
+	public void setLetzteBelegteNr(final Long letzteBelegteNr) {
 		this.letzteBelegteNr = letzteBelegteNr;
 	}
 
@@ -88,7 +86,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.inkrement;
 	}
 
-	public void setInkrement( final Long inkrement ) {
+	public void setInkrement(final Long inkrement) {
 		this.inkrement = inkrement;
 	}
 
@@ -104,7 +102,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.gesperrtVonLoginId;
 	}
 
-	public void setGesperrtVonLoginId( final Long gesperrtVonLoginId ) {
+	public void setGesperrtVonLoginId(final Long gesperrtVonLoginId) {
 		this.gesperrtVonLoginId = gesperrtVonLoginId;
 	}
 
@@ -112,7 +110,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.systemDs;
 	}
 
-	public void setSystemDs( final Boolean systemDs ) {
+	public void setSystemDs(final Boolean systemDs) {
 		this.systemDs = systemDs;
 	}
 
@@ -120,7 +118,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.zuletztBearbeitetVon;
 	}
 
-	public void setZuletztBearbeitetVon( final Long zuletztBearbeitetVon ) {
+	public void setZuletztBearbeitetVon(final Long zuletztBearbeitetVon) {
 		this.zuletztBearbeitetVon = zuletztBearbeitetVon;
 	}
 
@@ -128,7 +126,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.zuletztGeaendertAm;
 	}
 
-	public void setZuletztGeaendertAm( final Date zuletztGeaendertAm ) {
+	public void setZuletztGeaendertAm(final Date zuletztGeaendertAm) {
 		this.zuletztGeaendertAm = zuletztGeaendertAm;
 	}
 
@@ -136,7 +134,7 @@ public class Sequence extends AbstractMWEntity {
 		return this.beschreibung;
 	}
 
-	public void setBeschreibung( final String beschreibung ) {
+	public void setBeschreibung(final String beschreibung) {
 		this.beschreibung = beschreibung;
 	}
 
@@ -156,12 +154,12 @@ public class Sequence extends AbstractMWEntity {
 	}
 
 	@Override
-	public void setId( final Long id ) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
 	@Override
-	public void setName( final String name ) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 

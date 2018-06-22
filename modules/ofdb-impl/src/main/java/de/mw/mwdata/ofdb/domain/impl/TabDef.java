@@ -33,10 +33,6 @@ import de.mw.mwdata.ofdb.domain.ITabDef;
  * @since July, 2010
  *
  */
-// @JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS,
-// include = JsonTypeInfo.As.PROPERTY,
-// property = "type")
-// @JsonTypeName("tabDef")
 @TypeDefs({ @TypeDef(name = "fxenum", typeClass = de.mw.mwdata.ofdb.domain.enums.TypeZEITTYP.class),
 		@TypeDef(name = "fxdatenbank", typeClass = de.mw.mwdata.ofdb.domain.enums.TypeDATENBANK.class) })
 @Entity
@@ -51,10 +47,6 @@ public class TabDef extends AbstractMWEntity implements ITabDef {
 	private static final long serialVersionUID = 1L;
 
 	private final static String SEQUENCE_KEY = "FX_TabDef_K:DSID";
-
-	// public TabDef() {
-	// this.zeittyp = ZEITTYP.NULL;
-	// }
 
 	// Important: Id-annotation here else the EAGER-Load from TabSpeig to TagDef
 	// will not work

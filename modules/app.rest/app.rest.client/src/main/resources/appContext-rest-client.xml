@@ -24,7 +24,7 @@
 	</bean>
 	
 	 <bean id="app.rest.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-	 	<constructor-arg index="0"  value="${app.registeredScopes}" />	
+	 	<constructor-arg index="0"  value="rest" />	
 	 	<property name="ofdbService" ref="ofdbService"></property>
 	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>

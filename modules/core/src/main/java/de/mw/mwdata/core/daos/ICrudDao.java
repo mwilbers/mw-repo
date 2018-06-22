@@ -53,10 +53,32 @@ public interface ICrudDao<T> {
 	 */
 	public T findByName(final Class<T> clazz, final String name);
 
+	/**
+	 * Executes the given sql without restrictions (on sizing, filtering)
+	 * 
+	 * @param sql
+	 * @return
+	 */
 	public List<IEntity[]> executeSql(String sql);
 
+	/**
+	 * Executes the given sql for a certain range of result sets filtered by paging
+	 * parameters (pageIndex, pageSize)
+	 * 
+	 * @param sql
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
 	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex, final int pageSize);
 
+	/**
+	 * Executes the given sql and returns a long parameter for interpreting the
+	 * count of the result sets.
+	 * 
+	 * @param sqlCount
+	 * @return
+	 */
 	public long executeCountSql(String sqlCount);
 
 }

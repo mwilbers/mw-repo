@@ -2,9 +2,9 @@ package de.mw.mwdata.ui;
 
 import org.springframework.util.CollectionUtils;
 
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
-import de.mw.mwdata.ofdb.impl.OfdbField;
+import de.mw.mwdata.core.to.OfdbField;
 
 /**
  * Class that builds full qualified ui access path to properties of

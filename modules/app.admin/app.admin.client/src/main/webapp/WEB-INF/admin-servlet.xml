@@ -56,9 +56,16 @@
 	</bean>
 	
 	<bean id="app.admin.menuController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
-		<property name="menuService" ref="menuService" />
+		<property name="menuService" ref="ofdbMenuService" />
+		<property name="urlService" ref="rest.UrlService" />
+	</bean>
+	
+	<bean id="rest.ofdb.crudController" class="de.mw.mwdata.app.admin.client.controller.AdminCrudController">
+		<property name="ofdbService" ref="ofdbService"></property>
+		<property name="navigationManager" ref="navigationManager"></property>
+		<property name="entityService" ref="entityService"></property>
+		<property name="crudService" ref="crudService"></property>
 		<property name="urlService" ref="rest.UrlService" />
 	</bean>
     
-   <!--  ...................... more snippets .............. -->
 </beans>

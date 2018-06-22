@@ -47,13 +47,12 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 			ITabDef tabDef = ansichtTab.getTabDef();
 			isReferenced = this.isReferencedByCachedAnsichtTab(tabDef, ansichtTab);
 			if (!isReferenced) {
-				this.ofdbCache.addPropertyMap(tabDef.getName(), viewHandle.getEntityMapping());
+				this.ofdbCache.addPropertyMap(tabDef.getName(), viewHandle.getEntityMapping(tabDef.getName()));
 			}
 		}
 
 	}
 
-	// @Override
 	@Override
 	public void unregisterView(final String viewName) {
 
@@ -114,11 +113,15 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		for (String viewName : this.ofdbCache) {
 			ViewConfigHandle viewHandle = this.ofdbCache.getViewConfig(viewName);
 
-			for (IAnsichtTab viewTab : viewHandle.getViewTabs()) {
-				if (viewTab.getTabDef().getName().equals(tableName)) {
-					return viewTab.getTabDef();
-				}
+			ITabDef tableDef = viewHandle.findTableDefByName(tableName);
+			if (null != tableDef) {
+				return tableDef;
 			}
+			// for (IAnsichtTab viewTab : viewHandle.getViewTabs()) {
+			// if (viewTab.getTabDef().getName().equals(tableName)) {
+			// return viewTab.getTabDef();
+			// }
+			// }
 
 		}
 

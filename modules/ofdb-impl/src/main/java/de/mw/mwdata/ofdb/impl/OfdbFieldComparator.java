@@ -2,6 +2,8 @@ package de.mw.mwdata.ofdb.impl;
 
 import java.util.Comparator;
 
+import de.mw.mwdata.core.to.OfdbField;
+
 public class OfdbFieldComparator implements Comparator<OfdbField> {
 
 	public int compare(final OfdbField o1, final OfdbField o2) {

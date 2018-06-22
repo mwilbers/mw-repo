@@ -1,10 +1,9 @@
 package de.mw.mwdata.ofdb.domain.enums;
 
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.FxEnumType;
-import de.mw.mwdata.ofdb.domain.ITabSpeig;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 
-public class TypeDATENTYP extends FxEnumType<ITabSpeig.DBTYPE> {
+public class TypeDATENTYP extends FxEnumType<DBTYPE> {
 
 	/**
 	 *

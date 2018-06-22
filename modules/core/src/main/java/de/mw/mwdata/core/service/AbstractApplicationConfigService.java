@@ -7,17 +7,23 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Abstract base class for all usage of application specific configuration
+ * settings at initialization time done by property bundles.
+ * 
+ * @author WilbersM
+ *
+ */
 public abstract class AbstractApplicationConfigService implements ApplicationConfigService {
 
 	private static final String CONFIG_NO_BUNDLE_SET = "%No bundlename provided%"; //$NON-NLS-1$
 	private static final String CONFIG_NO_KEY_SET = "%No key provided for bundle%"; //$NON-NLS-1$
 
-	private String bundleName; // FIXME: should be final !
+	private String bundleName;
 
 	protected abstract ResourceBundle getResourceBundle();
 
-	@Override
-	public void setPropertyBundle(final String bundleName) {
+	public AbstractApplicationConfigService(final String bundleName) {
 		this.bundleName = bundleName;
 	}
 

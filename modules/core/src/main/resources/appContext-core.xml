@@ -20,7 +20,7 @@
 	<!-- === Hibernate Session Factory === -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" >
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="${app.hibernate.packagesToScan}"></property>
+		<property name="packagesToScan" value="${app.hibernate.packagesToScan}" /> <!-- property set by registered dependant app -->
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
@@ -51,18 +51,8 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-
-	<!-- === Fx Custom UserTypes === -->
-
 	<!-- FxBooleanType, FxEnumType -->
 	<context:component-scan base-package="de.mw.mwdata.core.db" />
-
-	
-
-	<bean id="ofdbSequenceDao" class="de.mw.mwdata.core.daos.GenericDao">
-		<constructor-arg value="#{ T(de.mw.mwdata.core.domain.Sequence)}" />
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
 
 	<bean id="crudDao" class="de.mw.mwdata.core.daos.CrudDao" >
 		<property name="sessionFactory" ref="sessionFactory" />

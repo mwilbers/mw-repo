@@ -1,71 +1,73 @@
 package de.mw.mwdata.ofdb.domain;
 
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.domain.IFxEnum;
 
 public interface ITabSpeig extends IEntity {
 
-	public enum DBTYPE implements IFxEnum {
+	// public enum DBTYPE implements IFxEnum {
+	//
+	// LONGINTEGER("LONGINTEGER"), STRING("STRING"), BOOLEAN("BOOLEAN"),
+	// DATE("DATE"), DATETIME("DATETIME"), DOUBLE(
+	// "DOUBLE"), BYTE("BYTE"), SINGLE("SINGLE"), ENUM("ENUM"), ENTITY("ENTITY"); //
+	// new: 23.04. Type for
+	// // enumerations
+	//
+	// // with bounded number of items
+	//
+	// private String description;
+	//
+	// private DBTYPE() {
+	//
+	// }
+	//
+	// private DBTYPE(final String description) {
+	// this.setDescription( description );
+	// }
+	//
+	// public void setDescription( final String description ) {
+	// this.description = description;
+	// }
+	//
+	// public String getDescription() {
+	// return this.description;
+	// }
+	//
+	// @Override
+	// public String toString() {
+	// return getDescription();
+	// }
+	//
+	// // // @Override
+	// // public DBTYPE getValue( final String value ) {
+	// // return DBTYPE.valueOf( value );
+	// // }
+	//
+	// public boolean isEmpty() {
+	// return ("".equals( this.getDescription() ));
+	// }
+	//
+	// public Object getName() {
+	// return this.name();
+	// }
+	//
+	// }
 
-		LONGINTEGER("LONGINTEGER"), STRING("STRING"), BOOLEAN("BOOLEAN"), DATE("DATE"), DATETIME("DATETIME"), DOUBLE(
-				"DOUBLE"), BYTE("BYTE"), SINGLE("SINGLE"), ENUM("ENUM"), ENTITY("ENTITY"); // new: 23.04. Type for
-		// enumerations
+	public void setTabDef(ITabDef tabDef);
 
-		// with bounded number of items
+	public ITabDef getTabDef();
 
-		private String	description;
+	public String getSpalte();
 
-		private DBTYPE() {
+	public void setSpalte(String spalte);
 
-		}
+	public Long getEindeutig();
 
-		private DBTYPE(final String description) {
-			this.setDescription( description );
-		}
+	public void setEindeutig(Long eindeutig);
 
-		public void setDescription( final String description ) {
-			this.description = description;
-		}
+	public void setDbDatentyp(DBTYPE dbDatentyp);
 
-		public String getDescription() {
-			return this.description;
-		}
-
-		@Override
-		public String toString() {
-			return getDescription();
-		}
-
-		// // @Override
-		// public DBTYPE getValue( final String value ) {
-		// return DBTYPE.valueOf( value );
-		// }
-
-		public boolean isEmpty() {
-			return ("".equals( this.getDescription() ));
-		}
-
-		public Object getName() {
-			return this.name();
-		}
-
-	}
-	
-	public  void setTabDef( ITabDef tabDef );
-
-	public  ITabDef getTabDef();
-
-	public  String getSpalte();
-
-	public  void setSpalte( String spalte );
-
-	public  Long getEindeutig();
-
-	public  void setEindeutig( Long eindeutig );
-
-	public  void setDbDatentyp( DBTYPE dbDatentyp );
-
-	public  DBTYPE getDbDatentyp();
+	public DBTYPE getDbDatentyp();
 
 	/**
 	 * 
@@ -73,7 +75,7 @@ public interface ITabSpeig extends IEntity {
 	 */
 	public boolean isEindeutig();
 
-	public void setTabDefId( Long tabDefId );
+	public void setTabDefId(Long tabDefId);
 
 	public Long getTabDefId();
 
@@ -109,7 +111,7 @@ public interface ITabSpeig extends IEntity {
 
 	/**
 	 * 
-	 * @return the maximum value. Can be numer or maybe string 
+	 * @return the maximum value. Can be numer or maybe string
 	 */
 	public Object getMaximum();
 
@@ -117,13 +119,13 @@ public interface ITabSpeig extends IEntity {
 	 * 
 	 * @return true if the column has a special range of valid values
 	 */
-	public  boolean isEnum();
+	public boolean isEnum();
 
 	/**
 	 * 
 	 * @return common object for a default value if no value is given by user
 	 */
-	public  Object getDefaultWert();
+	public Object getDefaultWert();
 
 	/**
 	 * 

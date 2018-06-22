@@ -15,8 +15,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class Constants {
 
-	public static final String APPLICATION_NAME = "MWDATA";
-
 	public static final String DB_SCHEMA = "KD_RRE_PROD"; // KD_RRE_PROD // Config.getString(
 	// Config.CONFIG_BUNDLE,
 	// "db.schemaname" );
@@ -97,21 +95,6 @@ public final class Constants {
 	public static final String SYS_VAL_FALSE_STRING = "false";
 	public static final String SYS_VAL_NULL_STRING = StringUtils.EMPTY;
 
-	public static final String SYS_CONTEXTPATH_ADMIN = "admin";
-
-	/*
-	 * Code-Idee:
-	 *
-	 * public enum TESTENUM { ITEM1, ITEM2, ITEM3; public String namexx() {
-	 * switch(this) { case ITEM1: return "ITEM1"; case ITEM2: return "ITEM2"; case
-	 * ITEM3: return "ITEM3"; default: return ""; } } }
-	 */
-
-	// public enum CRUD {
-	// SELECT, INSERT, UPDATE, DELETE;
-	// }
-
-	// public static final String BUNDLE_NAME_OFDB = "de.mw.mwdata.ofdb.messages";
 	public static final String BUNDLE_NAME_COMMON = "de.mw.mwdata.core.common.messages";
 
 	/**

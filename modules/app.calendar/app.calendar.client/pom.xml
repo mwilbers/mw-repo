@@ -40,6 +40,10 @@
 			<groupId>de.mw.mwdata.calendar</groupId>
 			<artifactId>app.calendar.server</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.mw.mwdata.rest</groupId>
+			<artifactId>rest.api</artifactId>
+		</dependency>
 <!-- 		<dependency> -->
 <!-- 			<groupId>de.mw.mwdata.core</groupId> -->
 <!-- 			<artifactId>core</artifactId> -->

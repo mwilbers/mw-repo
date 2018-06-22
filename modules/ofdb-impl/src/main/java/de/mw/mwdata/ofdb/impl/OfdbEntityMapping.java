@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 
 /**
  * Class holds mapping informations for all columns of one table in OFDB
@@ -17,10 +19,30 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 public class OfdbEntityMapping {
 
 	private String tableName;
+
+	/**
+	 * key = columnNameDb
+	 */
 	private Map<String, OfdbPropMapper> mapping = new HashMap<>();
 
 	public OfdbEntityMapping(String tableName) {
 		this.tableName = tableName;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer b = new StringBuffer();
+		b.append("table = '");
+		b.append(this.tableName);
+		b.append("', mappings = [");
+		if (!CollectionUtils.isEmpty(this.mapping.entrySet())) {
+			for (Map.Entry<String, OfdbPropMapper> entry : this.mapping.entrySet()) {
+				b.append(entry.getValue().toString());
+				b.append(" ");
+			}
+		}
+		b.append("]");
+		return b.toString();
 	}
 
 	public void addMapping(String columnNameDb, String propertyName, Integer propertyIndex, DBTYPE dbType) {

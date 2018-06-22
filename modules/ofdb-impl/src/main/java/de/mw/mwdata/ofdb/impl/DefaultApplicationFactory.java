@@ -1,11 +1,9 @@
 package de.mw.mwdata.ofdb.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.ApplicationState;
@@ -30,51 +28,31 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 	private IOfdbService ofdbService;
 
-	private List<String> registeredScopes;
-
 	protected ViewConfigFactory viewConfigFactory;
 
 	protected OfdbCacheManager ofdbCacheManager;
 
 	private ApplicationState state;
 
+	protected String nameBenutzerBereich;
+
 	public void setViewConfigFactory(final ViewConfigFactory viewConfigFactory) {
 		this.viewConfigFactory = viewConfigFactory;
 	}
 
-	public DefaultApplicationFactory(final String registeredScopes) {
-		
-		... hier den Bereiche-String einlesen, splitten und setzen. Dies sind für die Rest-Anwendung der string
-		"Administrator, Termine"
-		diese werden über die DefaultApplicationfActory einglesen und der OfdbCache aufgebaut.
-		weiteres vorgehen:
-		admin-app erweiteren um das Hinzufügen der OFDB-Datensätze für MWIV_ORT, MWIV_KATEGORIE, MWIV_GRUPPE etc.
-		
-		noch wichtiger: neues Ticket-SYstem verwenden, dort weitere Tickets anlegen:
-			1. admin-app: neues Featuer Hinzufügen von Datensätzen ergänzen (verarbeitung von System-DS, defaults, etc.)
-			2. insert-statements generieren und ins sql-changelog der app INTERVEREIN einfügen
-			
-		
-		this.registeredScopes = parseScopes(registeredScopes);
-	}
+	public DefaultApplicationFactory(final String nameBenutzerBereich) {
 
-	private List<String> parseScopes(final String scopeToken) {
+		// weiteres vorgehen:
+		// admin-app erweiteren: alle konfig-datensätze der Tabellen MWIV_ORT,
+		// MWIV_KATEGORIE, MWIV_GRUPPE hinzufügen etc.
+		//
+		// noch wichtiger: neues Ticket-SYstem verwenden, dort weitere Tickets anlegen:
+		// 1. admin-app: neues Featuer Hinzufügen von Datensätzen ergänzen (verarbeitung
+		// von System-DS, defaults, etc.)
+		// 2. insert-statements generieren und ins sql-changelog der app INTERVEREIN
+		// einfügen
 
-		List<String> scopes = new ArrayList<>();
-		if (StringUtils.isEmpty(scopeToken)) {
-			return scopes;
-		}
-
-		String[] tokens = StringUtils.split(scopeToken, ",");
-		for (int i = 0; i < tokens.length; i++) {
-			if (StringUtils.isEmpty(tokens[i])) {
-				continue;
-			}
-
-			scopes.add(tokens[i]);
-		}
-
-		return scopes;
+		this.nameBenutzerBereich = nameBenutzerBereich;
 	}
 
 	public void setOfdbService(final IOfdbService ofdbService) {
@@ -93,7 +71,10 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 		// FIXME: here add feature toggle for loading or not loading viewConfigs to
 		// cache ...
 
-		List<AnsichtDef> viewList = this.ofdbService.loadViewsForRegistration(this.servletPath);
+		// ... hier prüfen, ob statt AnsichtDef.appcontextpath auch das Feld bereich =
+		// 'Administrator' verwendet werden könnte
+		// dann wäre appcontextpath vielleicht überflüssig
+		List<AnsichtDef> viewList = this.ofdbService.loadViewsForRegistration(this.nameBenutzerBereich);
 
 		if (null == viewList) {
 			return;

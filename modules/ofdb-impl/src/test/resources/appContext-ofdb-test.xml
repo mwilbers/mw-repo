@@ -6,24 +6,31 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
-
-	<bean id="benutzerBereichDao" class="de.mw.mwdata.core.daos.GenericDao" parent="abstractHbnDao">
-    	<constructor-arg value="#{ T(de.mw.mwdata.core.domain.BenutzerBereich)}"/>
-    	<!-- <constructor-arg name="tableName" value="BenutzerBereicheDef" />
-    	 TODO: value tablename sollte case-insensitiv sein -->
-    </bean>
+    
 	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="crudService" ref="crudService" />
 	 	<property name="ofdbService" ref="ofdbService" />	
 	 	<property name="applicationConfigService" ref="app.applicationConfigService" />	
 	</bean>
-    <bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
-	 	<constructor-arg index="0"  value="admin" /> <!--  FIXME: remove admin here -->
+    <bean id="ofdb.test.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+            <list>
+<!--                 <value>classpath:/hibernate.properties</value> -->
+                <value>classpath:/de/mw/mwdata/ofdb/test/config.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="order" value="2" />
+	</bean>
+	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
+	 	<constructor-arg index="0"  value="${app.rights.benutzerBereiche}" /> <!--  FIXME: remove admin here -->
 	 	<property name="ofdbService" ref="ofdbService"></property>
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
 	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
 	</bean>
+	
+	
 	<bean id="crudDao" class="de.mw.mwdata.core.daos.CrudDao" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>

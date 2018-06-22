@@ -17,6 +17,7 @@ import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.cache.ViewConfiguration.Builder;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -29,7 +30,6 @@ import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
-import de.mw.mwdata.ofdb.impl.OfdbField;
 import de.mw.mwdata.ofdb.impl.OfdbFieldComparator;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.impl.OfdbUtils;
@@ -105,9 +105,9 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 			// check if table is already registered. possible because one table can belong
 			// to several views
-			ITabDef tabDef = this.ofdbCacheManager.findRegisteredTableDef(tableName);
+			// ITabDef tabDef = this.ofdbCacheManager.findRegisteredTableDef(tableName);
 			List<ITabSpeig> tabSpeigs = null;
-			tabDef = ansichtTab.getTabDef();
+			ITabDef tabDef = ansichtTab.getTabDef();
 			tabSpeigs = this.ofdbService.loadTablePropListByTableName(tableName);
 
 			partSet = this.ofdbService.isTableValid(tabDef, tabSpeigs);
@@ -122,8 +122,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				LOGGER.warn(msg);
 			}
 
-			builder.addTableDef(tabDef);
-			builder.addTableProps(tabDef, tabSpeigs);
+			// builder.addTableDef(tabDef);
+			// builder.addTableProps(tabDef, tabSpeigs);
 
 			// // initialize TabBez
 			// List<TabBez> tabBez = this.ofdbDao.findTabBezByTable( tableName );
@@ -135,20 +135,23 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 			// if table props are called for first time, than do initialize properties and
 			// add them to cache
-			OfdbEntityMapping mappingFromCache = this.ofdbCacheManager.getEntityMapping(tableName);
-			if (null == mappingFromCache) {
+			OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tableName);
+			if (null == entityMapping) {
 
 				Class<? extends AbstractMWEntity> entityClassType = checkFullClassName(ansichtTab.getTabDef());
-				OfdbEntityMapping entityMapping = this.ofdbService.initializeMapping(entityClassType, tableName,
-						builder.getTableProps(ansichtTab.getTabDef()));
+				entityMapping = this.ofdbService.initializeMapping(entityClassType, tableName, tabSpeigs);
 
 				checkMappingTabSpeig2Property(tabSpeigs, entityMapping);
-				builder.setEntityMapping(entityMapping);
+				// builder.setEntityMapping(entityMapping);
 				if (builder.buildHandle().getMainAnsichtTab().getTabDef().equals(tabDef)) {
 					mainEntityMapping = entityMapping;
 				}
 
+			} else {
+				// builder.setEntityMapping(entityMapping);
 			}
+
+			builder.addTableConfig(tabDef, tabSpeigs, entityMapping);
 
 		} // end for each AnsichtTab
 
@@ -295,7 +298,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				throw new OfdbInvalidConfigurationException(msg);
 			}
 
-			OfdbField ofField = new OfdbField(tabSpeig, entry.getValue());
+			OfdbField ofField = OfdbUtils.createOfdbField(tabSpeig, entry.getValue());
 
 			OfdbPropMapper propMapper = mainEntityMapping.getMapper(tabSpeig); // .get(tabSpeig.getSpalte().toUpperCase());
 
@@ -386,12 +389,12 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 						ofField.setResultIndex(++resultIndex);
 						ofField.setColumnTitle(suchWertTabSpeig.getSpaltenkopf());
 						ofField.setItemValue(listPropValueName);
-						itemKey = OfdbUtils.getSimpleName(suchWertTabSpeig.getTabDef()) + "." + listPropValueName;
+						itemKey = OfdbUtils.generateItemKey(suchWertTabSpeig.getTabDef(), listPropValueName);
 
 					} else {
 
 						ofField.setResultIndex(0);
-						itemKey = OfdbUtils.getSimpleName(ansichtTab.getTabDef()) + "." + listPropValueName;
+						itemKey = OfdbUtils.generateItemKey(ansichtTab.getTabDef(), listPropValueName);
 
 					}
 					queryModel.addJoinTable(ansichtTab);

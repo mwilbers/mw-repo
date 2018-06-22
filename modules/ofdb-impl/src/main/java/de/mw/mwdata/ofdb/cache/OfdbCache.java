@@ -7,8 +7,8 @@ import java.util.Map;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 /**
- * Stateful cache for holding all ofdb-relevant ansicht- and tab-informations
- * for all used views in application.
+ * Stateful cache for holding all ofdb-relevant view- and table informations for
+ * all used views in application.
  *
  * @author mwilbers
  * @since Nov, 2012
@@ -46,6 +46,9 @@ public class OfdbCache implements Iterable<String> {
 	/**
 	 * Adds a map containing key = tabSpeig.spalte and value = propertyname of the
 	 * given tableName to the cache
+	 *
+	 * FIXME: why tableEntityMapping here AND in ViewConfiguration that is also
+	 * saved in ofdbCache
 	 *
 	 * @param tableName
 	 * @param ofdbEntityMapping

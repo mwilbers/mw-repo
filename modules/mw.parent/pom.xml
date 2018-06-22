@@ -40,13 +40,10 @@
 	<modules>
 		<module>../common-utils</module>
     	<module>../common-testframework</module>
-		
 		<module>../core</module>
-
 		<module>../ofdb-impl</module>
-		
-		<module>../app.rest</module>
-    	<module>../ui-api</module>
+		<module>../rest</module>
+		<!-- <module>../ui-api</module> -->
 		<module>../ui.web.base.angularjs</module>
 		<module>../ui.web.comp.slickgrid</module>
 		
@@ -174,14 +171,15 @@
 			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc5</artifactId>
-				<version>11.2.0.1.0</version>
+				<version>11.2.0.2.0</version>
 			</dependency>
 			
 			<!-- For spring 4 hibernate 4 configuration see http://www.baeldung.com/hibernate-4-spring -->			
 			<dependency>
-				<groupId>javassist</groupId>
+				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
 				<version>3.18.2-GA</version>
+				<!-- <version>3.12.0.GA</version> -->
 			</dependency>
 			<dependency>
 			  <groupId>org.hibernate.javax.persistence</groupId>
@@ -306,11 +304,11 @@
 				<artifactId>ofdb-impl</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
-			<dependency>
-				<groupId>de.mw.mwdata.ui</groupId>
-				<artifactId>ui-api</artifactId>
-				<version>1.0-SNAPSHOT</version>
-			</dependency>	
+			<!-- <dependency> -->
+				<!-- <groupId>de.mw.mwdata.ui</groupId> -->
+				<!-- <artifactId>ui-api</artifactId> -->
+				<!-- <version>1.0-SNAPSHOT</version> -->
+			<!-- </dependency>	 -->
 			<dependency>
 				<groupId>de.mw.mwdata.ui</groupId>
 				<artifactId>ui.web.base.angularjs</artifactId>
@@ -320,17 +318,19 @@
 				<groupId>de.mw.mwdata.ui</groupId>
 				<artifactId>ui.web.comp.slickgrid</artifactId>
 				<version>1.0-SNAPSHOT</version>
-			</dependency>			
+			</dependency>	
+			
+			<!-- REST  -->
 			<dependency>
 				<groupId>de.mw.mwdata.rest</groupId>
-				<artifactId>app.rest.service</artifactId>
+				<artifactId>rest.ofdb.impl</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.mw.mwdata.rest</groupId>
-				<artifactId>app.rest.client</artifactId>
+				<artifactId>rest.api</artifactId>
 				<version>1.0-SNAPSHOT</version>
-			</dependency>		    
+			</dependency>
 			<dependency>
 				<groupId>de.mw.mwdata.admin</groupId>
 				<artifactId>app.admin.server</artifactId>

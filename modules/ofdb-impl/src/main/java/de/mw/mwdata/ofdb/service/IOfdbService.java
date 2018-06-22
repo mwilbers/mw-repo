@@ -6,6 +6,7 @@ import java.util.Map;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
@@ -22,7 +23,6 @@ import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
-import de.mw.mwdata.ofdb.impl.OfdbField;
 
 /**
  * This interface should provide only readonly-methods from ofdb-tables.
@@ -54,7 +54,7 @@ public interface IOfdbService {
 
 	// public void presetDefaultValues(final AbstractMWEntity entity);
 
-	public List<AnsichtDef> loadViewsForRegistration(final String applicationContextPath);
+	public List<AnsichtDef> loadViewsForRegistration(final String nameBenutzerBereich);
 
 	public boolean isEmpty(final AbstractMWEntity entity) throws OfdbMissingMappingException;
 

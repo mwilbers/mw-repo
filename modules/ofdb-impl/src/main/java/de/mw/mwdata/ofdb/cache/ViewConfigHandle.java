@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.util.CollectionUtils;
 
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -14,7 +15,6 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
-import de.mw.mwdata.ofdb.impl.OfdbField;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.impl.OfdbUtils;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
@@ -43,19 +43,17 @@ public class ViewConfigHandle {
 		return this.viewConfig.getTableProps(tableDef);
 	}
 
-	public OfdbEntityMapping getEntityMapping() {
-		return this.viewConfig.getEntityMapping();
+	public OfdbEntityMapping getEntityMapping(final String tableName) {
+		return this.viewConfig.getEntityMapping(tableName);
 	}
 
-	private OfdbPropMapper findOfdbPropMapperByProperty(final String propertyName) {
-
-		OfdbEntityMapping entityMapping = getEntityMapping();
+	private OfdbPropMapper findOfdbPropMapperByProperty(final String tableName, final String propertyName) {
+		OfdbEntityMapping entityMapping = getEntityMapping(tableName);
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
 			if (mapper.getPropertyName().equals(propertyName)) {
 				return mapper;
 			}
 		}
-
 		return null;
 	}
 
@@ -67,7 +65,7 @@ public class ViewConfigHandle {
 	 */
 	public ITabSpeig findTablePropByProperty(final ITabDef tableDef, final String propertyName) {
 
-		OfdbPropMapper propMapper = findOfdbPropMapperByProperty(propertyName);
+		OfdbPropMapper propMapper = findOfdbPropMapperByProperty(tableDef.getName(), propertyName);
 		List<ITabSpeig> tableProps = getTableProps(tableDef);
 
 		for (ITabSpeig tabProp : tableProps) {
@@ -86,7 +84,7 @@ public class ViewConfigHandle {
 	 * @return can be null if ITabSpeig is not mapped
 	 */
 	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
-		return this.getEntityMapping().findPropertyMapperByTabProp(tableProp);
+		return this.getEntityMapping(tableProp.getTabDef().getName()).findPropertyMapperByTabProp(tableProp);
 	}
 
 	public OfdbQueryModel getQueryModel() {
@@ -116,7 +114,7 @@ public class ViewConfigHandle {
 	}
 
 	public ITabDef getTableByName(final String tableName) {
-		for (ITabDef tabDef : this.viewConfig.getTableDefs()) {
+		for (ITabDef tabDef : this.viewConfig.getTablesDefs()) {
 			if (tabDef.getName().equals(tableName)) {
 				return tabDef;
 			}
@@ -159,7 +157,7 @@ public class ViewConfigHandle {
 
 	public IAnsichtTab findAnsichtTabByTabAKey(final String tabelleName) {
 
-		for (IAnsichtTab ansichtTab : this.getViewTabs()) {
+		for (IAnsichtTab ansichtTab : getViewTabs()) {
 			if (ansichtTab.getTabAKey().equals(tabelleName)) {
 				return ansichtTab;
 			}
@@ -167,6 +165,16 @@ public class ViewConfigHandle {
 
 		return null;
 
+	}
+
+	public ITabDef findTableDefByName(final String tableName) {
+		for (IAnsichtTab viewTab : getViewTabs()) {
+			if (viewTab.getTabDef().getName().equals(tableName)) {
+				return viewTab.getTabDef();
+			}
+		}
+
+		return null;
 	}
 
 	public List<OfdbField> getOfdbFieldList() {

@@ -35,11 +35,10 @@
 			<groupId>de.mw.mwdata.core</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-			<!-- <groupId>de.mw.mwdata.ui</groupId> -->
-			<!-- <artifactId>ui-api</artifactId> -->
-		<!-- </dependency> -->
-
+		<dependency>
+			<groupId>de.mw.mwdata.rest</groupId>
+			<artifactId>rest.api</artifactId>
+		</dependency>
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.testng</groupId>

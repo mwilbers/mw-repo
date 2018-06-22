@@ -23,9 +23,7 @@ public class DefaultCrudInterceptor extends AbstractCrudChain {
 
 	@Override
 	public void doChainActionsBeforeCheck(AbstractMWEntity entity, CRUD crud) {
-
 		presetDefaultValues(entity);
-
 	}
 
 	@Override

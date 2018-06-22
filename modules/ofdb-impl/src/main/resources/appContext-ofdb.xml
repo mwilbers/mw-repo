@@ -44,7 +44,7 @@
 	
 	<!-- +++++++++++++++++++++++++++++++ -->
 	
-	<bean id="menuService" class="de.mw.mwdata.ofdb.service.MenuService">
+	<bean id="ofdbMenuService" class="de.mw.mwdata.ofdb.service.OfdbMenuService">
 		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="crudService" ref="crudService" />
 	</bean>

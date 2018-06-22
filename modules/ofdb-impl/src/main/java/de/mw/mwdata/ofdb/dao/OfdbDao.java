@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
@@ -28,7 +29,6 @@ import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
@@ -62,7 +62,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	private OfdbMapper ofdbMapper;
 
 	@Override
-	public OfdbEntityMapping initializeMapper(final Class<? extends AbstractMWEntity> type, final String tableName) {
+	public OfdbEntityMapping initializeMapping(final Class<? extends AbstractMWEntity> type, final String tableName) {
 		LOGGER.debug(
 				"Loading Cache for Dao : " + tableName + " ....................................." + type.toString());
 		return this.ofdbMapper.init(type, tableName);
@@ -217,12 +217,12 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 	// @Override
 	@Override
-	public List<AnsichtDef> loadViewsForRegistration(final String applicationContextPath) {
+	public List<AnsichtDef> loadViewsForRegistration(final String nameBenutzerBereich) {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable(ConfigOfdb.T_VIEWDEF, "viewDef").fromTable(ConfigOfdb.T_VIEWDEF, "viewDef")
-				.andWhereRestriction("viewDef", "appContextPath", OperatorEnum.Eq, applicationContextPath,
-						ValueType.STRING)
+				.joinEntity("bereich", "bBereich")
+				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, nameBenutzerBereich, ValueType.STRING)
 				.andWhereRestriction("viewDef", "urlPath", OperatorEnum.IsNotNull, "null", ValueType.STRING)
 				.orderBy("viewDef", "reihenfolge", "asc").buildSQL();
 

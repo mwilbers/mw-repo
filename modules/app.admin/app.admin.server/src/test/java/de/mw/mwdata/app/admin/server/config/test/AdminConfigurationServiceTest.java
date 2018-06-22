@@ -11,8 +11,8 @@ public class AdminConfigurationServiceTest {
 	@Test
 	public void testApplicationConfigService() {
 
-		ApplicationConfigService configService = new AdminConfigurationService();
-		configService.setPropertyBundle("de.mw.mwdata.app.admin.config");
+		ApplicationConfigService configService = new AdminConfigurationService("de.mw.mwdata.app.admin.config");
+		// configService.setPropertyBundle("de.mw.mwdata.app.admin.config");
 
 		String urlValue = configService.getPropertyValue(ApplicationConfigService.KEY_APPLICATION_URL);
 		Assert.assertEquals(urlValue, "http://localhost:8080/app.admin.client");

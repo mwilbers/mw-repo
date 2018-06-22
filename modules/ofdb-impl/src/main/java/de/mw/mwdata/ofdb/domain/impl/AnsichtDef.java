@@ -79,9 +79,6 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	@Column(name = "URLPATH", nullable = true)
 	private String urlPath;
 
-	@Column(name = "APPCONTEXTPATH", nullable = true)
-	private String appContextPath;
-
 	@Column(name = "REIHENFOLGE", updatable = true, nullable = true, unique = true)
 	private Integer reihenfolge;
 
@@ -195,16 +192,6 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 
 	public Integer getReihenfolge() {
 		return this.reihenfolge;
-	}
-
-	@Override
-	public void setAppContextPath(final String appContextPath) {
-		this.appContextPath = appContextPath;
-	}
-
-	@Override
-	public String getAppContextPath() {
-		return this.appContextPath;
 	}
 
 	@Override

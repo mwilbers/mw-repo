@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.Constants;
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -22,7 +23,6 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.ofdb.domain.ITabDef.ZEITTYP;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;

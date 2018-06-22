@@ -5,8 +5,12 @@ import de.mw.mwdata.ofdb.impl.DefaultApplicationFactory;
 public class ApplicationTestFactory extends DefaultApplicationFactory {
 
 	public ApplicationTestFactory(final String contextPath) {
-		super( contextPath );
+		super(contextPath);
 
+	}
+
+	public String getNameBenutzerBereich() {
+		return this.nameBenutzerBereich;
 	}
 
 }

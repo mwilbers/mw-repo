@@ -4,7 +4,8 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:appContext-core.xml
 					 classpath:appContext-ofdb.xml
-					 classpath:appContext-rest-service.xml
+					 classpath:appContext-rest-api.xml
+					 classpath:appContext-rest-ofdb.xml
 					 classpath:appContext-adminClient.xml
 					 classpath:appContext-admin-server.xml</param-value>
   </context-param>

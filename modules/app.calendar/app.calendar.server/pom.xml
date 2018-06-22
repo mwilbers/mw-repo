@@ -23,8 +23,8 @@
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mw.mwdata.rest</groupId>
-			<artifactId>app.rest.service</artifactId>
+			<groupId>de.mw.mwdata.core</groupId>
+			<artifactId>core</artifactId>
 		</dependency>
 		
 		<!-- test scope -->

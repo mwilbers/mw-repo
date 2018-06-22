@@ -20,15 +20,8 @@ import de.mw.mwdata.core.domain.IEntity;
  */
 public class Utils {
 
-	// public static SimpleJdbcTemplate getJdbcTemplate() {
-	// return (SimpleJdbcTemplate) Config.getAppContextFx().getBean(
-	// "simpleJdbcTemplate" );
-	// }
-
 	public static Map<String, IEntity> listToMap(final List<IEntity> items) {
 		Map<String, IEntity> map = new HashMap<String, IEntity>();
-		// Map<String,IFxPersistable> map = new
-		// HashMap<String,IFxPersistable>();
 
 		for (IEntity item : items) {
 			// TODO: Test: name has to be unique here ->

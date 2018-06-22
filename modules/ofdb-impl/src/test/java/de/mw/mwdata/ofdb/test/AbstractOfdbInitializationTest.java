@@ -23,7 +23,6 @@ import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
-import de.mw.mwdata.core.daos.IGenericDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.IEntity;
@@ -43,6 +42,7 @@ import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
+import de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTestNGSpringContextTests {
@@ -73,12 +73,14 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	// GRANT DBA TO SA
 
 	@Autowired
-	protected IGenericDao<BenutzerBereich> benutzerBereichDao;
+	@Qualifier(value = "crudDao")
+	protected ICrudDao<BenutzerBereich> benutzerBereichDao;
 
 	private BenutzerBereich testBereich;
 
 	@Autowired
-	protected IGenericDao<Sequence> ofdbSequenceDao;
+	@Qualifier(value = "crudDao")
+	protected ICrudDao<Sequence> ofdbSequenceDao;
 
 	@Autowired
 	protected OfdbCacheManager ofdbCacheManager;
@@ -135,7 +137,8 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		this.ofdbSequenceDao.insert(sequence);
 		this.sequenceCache.add(sequence);
 
-		this.testBereich = DomainMockFactory.createBenutzerBereichMock("Testbereich");
+		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
+		this.testBereich = DomainMockFactory.createBenutzerBereichMock(appFactory.getNameBenutzerBereich());
 		this.benutzerBereichDao.insert(this.testBereich);
 
 	}
@@ -197,7 +200,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	protected AnsichtTab setUpAnsichtAndTab(final String tableName, final String fullClassName, final String urlPath,
 			final Class<? extends AbstractMWEntity> type) {
 
-		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapper(type, tableName);
+		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapping(type, tableName);
 
 		// save TabDef
 		TabDef tabDef = (TabDef) this.getCrudDao().findByName(TabDef.class, tableName);
@@ -226,7 +229,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			ansichtDefMock = DomainMockFactory.createAnsichtDefMock(tableName, this.getTestBereich(),
 					!isAppInitialized());
 			ansichtDefMock.setUrlPath(urlPath);
-			ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
+			// ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
 
 			saveForTest(ansichtDefMock);
 
@@ -240,7 +243,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		} else {
 			ansichtDefMock.setUrlPath(urlPath);
-			ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
+			// ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
 			this.getCrudDao().update(ansichtDefMock);
 
 			ansichtTabMock = (AnsichtTab) this.getCrudDao().findByName(AnsichtTab.class, tableName);

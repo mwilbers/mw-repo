@@ -6,7 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import de.mw.common.testframework.util.TestUtils;
-import de.mw.mwdata.rest.service.RestbasedMwUrl;
+import de.mw.mwdata.rest.url.RestUrl;
 
 @Test
 public class MwUrlTest {
@@ -14,7 +14,7 @@ public class MwUrlTest {
 	@Test
 	public void testRestbasedMwUrl() throws MalformedURLException {
 
-		RestbasedMwUrl aURL = new RestbasedMwUrl("http://localhost:8080/app.admin.web/admin/tabDef/42"); // /list.htm
+		RestUrl aURL = new RestUrl("http://localhost:8080/app.admin.web/admin/tabDef/42"); // /list.htm
 
 		TestUtils.out("protocol = " + aURL.getProtocol());
 		Assert.assertEquals(aURL.getProtocol(), "http");
@@ -42,7 +42,7 @@ public class MwUrlTest {
 	@Test
 	public void testDomainAndRestbasedMwUrl() throws MalformedURLException {
 
-		RestbasedMwUrl aURL = new RestbasedMwUrl("http://www.testdomain.com/app.admin.web/admin/tabDef/42"); // /list.htm
+		RestUrl aURL = new RestUrl("http://www.testdomain.com/app.admin.web/admin/tabDef/42"); // /list.htm
 
 		TestUtils.out("protocol = " + aURL.getProtocol());
 		Assert.assertEquals(aURL.getProtocol(), "http");

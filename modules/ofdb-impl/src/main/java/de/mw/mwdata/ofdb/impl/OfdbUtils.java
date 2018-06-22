@@ -6,10 +6,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.core.utils.SortKey;
+import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
+import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 
 public class OfdbUtils {
@@ -23,6 +26,10 @@ public class OfdbUtils {
 		}
 
 		return null;
+	}
+
+	public static String generateItemKey(final ITabDef tabDef, final String propName) {
+		return OfdbUtils.getSimpleName(tabDef) + "." + propName;
 	}
 
 	/**
@@ -75,6 +82,34 @@ public class OfdbUtils {
 		}
 
 		return ClassNameUtils.getSimpleClassName(tabDef.getFullClassName());
+	}
+
+	public static OfdbField createOfdbField(final ITabSpeig tabSpeig, final IAnsichtSpalte ansichtSpalte) {
+
+		OfdbField ofdbField = new OfdbField();
+
+		ofdbField.setTabSpeigBearbErlaubt(tabSpeig.getBearbErlaubt());
+		ofdbField.setTabSpeigSytemWert(tabSpeig.getSystemWert());
+		ofdbField.setAnsichtSpalteBearbZugelassen(ansichtSpalte.getBearbZugelassen());
+
+		Integer nachkommastellen = ansichtSpalte.getAnzahlNachkommastellen();
+		if (nachkommastellen == null) {
+			ofdbField.setCurrency(ofdbField.DEFAULT_CURRENCY);
+		} else {
+			ofdbField.setCurrency(ansichtSpalte.getAnzahlNachkommastellen());
+		}
+
+		ofdbField.setFilterable(ansichtSpalte.getFilter());
+		ofdbField.setVisible(ansichtSpalte.getInGridAnzeigen());
+		ofdbField.setReihenfolge(tabSpeig.getReihenfolge());
+		ofdbField.setPropOfdbName(tabSpeig.getSpalte());
+		ofdbField.setNullable(!tabSpeig.getEingabeNotwendig() && !ansichtSpalte.getEingabeNotwendig());
+		ofdbField.setDbtype(tabSpeig.getDbDatentyp());
+		ofdbField.setColumnTitle(tabSpeig.getSpaltenkopf());
+
+		// this.refreshEditMode(crud);
+		return ofdbField;
+
 	}
 
 }

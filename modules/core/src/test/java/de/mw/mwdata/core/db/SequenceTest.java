@@ -9,6 +9,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
@@ -20,7 +21,6 @@ import org.testng.annotations.Test;
 import de.mw.common.utils.FxDateUtils;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
-import de.mw.mwdata.core.daos.IGenericDao;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.Sequence;
@@ -34,7 +34,8 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SequenceTest.class);
 
 	@Autowired
-	protected IGenericDao<Sequence> ofdbSequenceDao;
+	@Qualifier(value = "crudDao")
+	protected ICrudDao<Sequence> ofdbSequenceDao;
 
 	private List<Sequence> sequenceCache = new ArrayList<Sequence>();
 	private Stack<IEntity> entityStack = new Stack<IEntity>();
@@ -44,9 +45,6 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 
 	@Autowired
 	private ICrudService<BenutzerBereich> crudService;
-
-	@Autowired
-	protected IGenericDao<BenutzerBereich> benutzerBereichDao;
 
 	private ICrudDao getCrudDao() {
 		return this.crudDao;
@@ -66,9 +64,6 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 		sequence = CoreMockFactory.createSequenceMock(TestConstants.SEQUENCEKEY_BENUTZERBEREICH, 1l, 0l);
 		this.ofdbSequenceDao.insert(sequence);
 		this.sequenceCache.add(sequence);
-
-		// this.testBereich = CoreMockFactory.createBenutzerBereichMock("Testbereich");
-		// this.benutzerBereichDao.insert(this.testBereich);
 
 	}
 
@@ -90,18 +85,6 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 		LOGGER.info("+++++testSequenceIncrementationAndInterceptor+++++++++");
 		LOGGER.info("++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-		// this.applicationFactory.configure();
-		//
-		// IAnsichtTab ansichtTab =
-		// this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF,
-		// TabDef.class.getName(),
-		// "tabDef", TabDef.class);
-
-		// this.applicationFactory.init();
-
-		// insert TabDef for tests
-		// TabDef tabDef = DomainMockFactory.createTabDefMock("Testtable1",
-		// this.getTestBereich(), !isAppInitialized());
 		BenutzerBereich bereich = CoreMockFactory.createBenutzerBereichMock("Testbereich");
 
 		// test state before insert
@@ -120,7 +103,6 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 		sequence3.setInkrement(inkrement.longValue());
 
 		// do Test
-		// saveForTest( tabDef );
 		this.crudService.insert(bereich);
 
 		// here we have to query the hibernate-session-factory for objects. This way the
@@ -160,8 +142,6 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 			this.ofdbSequenceDao.delete(sequence);
 		}
 
-		// this.benutzerBereichDao.delete(this.testBereich);
-
 	}
 
 	@AfterMethod
@@ -175,11 +155,8 @@ public class SequenceTest extends AbstractTransactionalTestNGSpringContextTests 
 
 		// FIXME: do delete all entities after method or better after class ?
 		while (!this.entityStack.empty()) {
-			// this.ofdbService.delete( this.entityStack.pop() );
 			IEntity entity = this.entityStack.pop();
-
 			this.getCrudDao().delete(entity);
-
 		}
 
 	}

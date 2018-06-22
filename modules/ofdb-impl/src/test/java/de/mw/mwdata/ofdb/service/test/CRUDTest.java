@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.BenutzerBereich;
+import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
 import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
@@ -27,7 +28,6 @@ import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
-import de.mw.mwdata.ofdb.domain.ITabSpeig.DBTYPE;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtTab;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
 import de.mw.mwdata.ofdb.domain.impl.TabSpeig;

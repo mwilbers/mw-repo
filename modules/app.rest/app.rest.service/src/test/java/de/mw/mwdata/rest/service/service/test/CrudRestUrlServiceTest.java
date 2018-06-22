@@ -5,7 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.service.ApplicationConfigService;
-import de.mw.mwdata.rest.service.service.CrudRestUrlService;
+import de.mw.mwdata.rest.CrudRestUrlService;
 
 public class CrudRestUrlServiceTest {
 
@@ -16,7 +16,7 @@ public class CrudRestUrlServiceTest {
 		ApplicationConfigService configService = this.createAppConfigServiceMock();
 		restService.setApplicationConfigService(configService);
 
-		String url = restService.createUrlForReadEntities("tabDef");
+		String url = restService.createUrlForReadEntities("myServlet", "tabDef");
 		Assert.assertEquals(url, "http://www.mydomain.com/myApplication/myServlet/tabDef");
 
 	}

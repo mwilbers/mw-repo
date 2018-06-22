@@ -63,14 +63,14 @@ public interface IOfdbDao {
 	 * @return map containing key = db column name and value = {@link OfdbMapper}
 	 *         object
 	 */
-	public OfdbEntityMapping initializeMapper(final Class<? extends AbstractMWEntity> type, final String tableName);
+	public OfdbEntityMapping initializeMapping(final Class<? extends AbstractMWEntity> type, final String tableName);
 
 	public Object getEntityValue(final AbstractMWEntity entity, final int propPersistenceIndex);
 
 	public Object setEntityValue(final AbstractMWEntity entity, final Object value, final ITabSpeig tabSpeig,
 			final OfdbPropMapper propMapper);
 
-	public List<AnsichtDef> loadViewsForRegistration(final String applicationContextPath);
+	public List<AnsichtDef> loadViewsForRegistration(final String nameBenutzerBereich);
 
 	public List<Object> getEnumValues(final Class<? extends AbstractMWEntity> entityClassType,
 			final String propertyName);

@@ -37,6 +37,7 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public T insert(final T entity) {
 		LOGGER.debug("insert [" + entity + "]");
 		this.getHibernateTemplate().save(entity);
@@ -60,6 +61,7 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void delete(final T entity) {
 		LOGGER.debug("delete [" + entity + "]");
 		this.getHibernateTemplate().delete(entity);
