@@ -1,6 +1,6 @@
 -- #########################################################################
 -- 1. create table MWIV_ORT here
-CREATE TABLE "KD_RRE_PROD"."MWIV_ORT"
+CREATE TABLE "MWIV_ORT"
   (
     "ORTID"            		NUMBER(11,0) NOT NULL ENABLE,
     "ORTNAME"               VARCHAR2(255 BYTE) NOT NULL ENABLE,
@@ -21,11 +21,11 @@ insert into SYSSEQUENZ(sequenzid, name, letztebelegtenr, inkrement,
   blockgroesse, systemds, angelegtam, transaktionsid, angelegtvon)
   values((select nvl(max(s.sequenzid),0) + 1 from SYSSEQUENZ s), 'MWIV_ORT:ORTID', 0, 1, 90, -1, '19.03.2018', 0, 1);
 
-CREATE UNIQUE INDEX "KD_RRE_PROD"."UQ_ORT_PLZORT" ON "KD_RRE_PROD"."MWIV_ORT" ("ORTNAME", "PLZ") TABLESPACE "MW";
+CREATE UNIQUE INDEX "UQ_ORT_PLZORT" ON "MWIV_ORT" ("ORTNAME", "PLZ") TABLESPACE "MW";
   
 -- #########################################################################
 -- 2. create table MWIV_KATEGORIE here
-CREATE TABLE "KD_RRE_PROD"."MWIV_KATEGORIE"
+CREATE TABLE "MWIV_KATEGORIE"
   (
     "KATEGORIEID"           NUMBER(11,0) NOT NULL ENABLE,
     "KATEGORIENAME"         VARCHAR2(255 BYTE) NOT NULL ENABLE,
@@ -45,11 +45,11 @@ insert into SYSSEQUENZ(sequenzid, name, letztebelegtenr, inkrement,
   blockgroesse, systemds, angelegtam, transaktionsid, angelegtvon)
   values((select nvl(max(s.sequenzid),0) + 1 from SYSSEQUENZ s), 'MWIV_KATEGORIE:KATEGORIEID', 0, 1, 90, -1, '19.03.2018', 0, 1);
 
-CREATE UNIQUE INDEX "KD_RRE_PROD"."UQ_KATEGORIE_KNAME" ON "KD_RRE_PROD"."MWIV_KATEGORIE" ("KATEGORIENAME") TABLESPACE "MW";
+CREATE UNIQUE INDEX "UQ_KATEGORIE_KNAME" ON "MWIV_KATEGORIE" ("KATEGORIENAME") TABLESPACE "MW";
   
 -- #########################################################################  
 -- 3. create table MWIV_GRUPPE here
-  CREATE TABLE "KD_RRE_PROD"."MWIV_GRUPPE" 
+  CREATE TABLE "MWIV_GRUPPE" 
    (
     "GRUPPEID" 				NUMBER(11,0) NOT NULL ENABLE, 
     "GRUPPENAME" 			VARCHAR2(255 BYTE) NOT NULL ENABLE, 
@@ -72,16 +72,16 @@ insert into SYSSEQUENZ(sequenzid, name, letztebelegtenr, inkrement,
   blockgroesse, systemds, angelegtam, transaktionsid, angelegtvon)
   values((select nvl(max(s.sequenzid),0) + 1 from SYSSEQUENZ s), 'MWIV_GRUPPE:GRUPPEID', 0, 1, 90, -1, '19.03.2018', 0, 1);
   
-CREATE UNIQUE INDEX "KD_RRE_PROD"."UQ_GRUPPE_KALENDARID" ON "KD_RRE_PROD"."MWIV_GRUPPE" ("KALENDARID") TABLESPACE "MW";  
+CREATE UNIQUE INDEX "UQ_GRUPPE_KALENDARID" ON "MWIV_GRUPPE" ("KALENDARID") TABLESPACE "MW";  
 
-CREATE UNIQUE INDEX "KD_RRE_PROD"."UQ_GRUPPE_GNAME_ORT" ON "KD_RRE_PROD"."MWIV_GRUPPE" ("GRUPPENAME", "ORTID") TABLESPACE "MW"; 
+CREATE UNIQUE INDEX "UQ_GRUPPE_GNAME_ORT" ON "MWIV_GRUPPE" ("GRUPPENAME", "ORTID") TABLESPACE "MW"; 
   
 -- add foreign keys  
   alter table MWIV_GRUPPE
-  add	 CONSTRAINT "FK_GRUPPE_ORTID" FOREIGN KEY ("ORTID")	REFERENCES "KD_RRE_PROD"."MWIV_ORT" ("ORTID") ENABLE;   
+  add	 CONSTRAINT "FK_GRUPPE_ORTID" FOREIGN KEY ("ORTID")	REFERENCES "MWIV_ORT" ("ORTID") ENABLE;   
   
   alter table MWIV_GRUPPE
-  add CONSTRAINT "FK_GRUPPE_KATEGORIEID" FOREIGN KEY ("KATEGORIEID")	REFERENCES "KD_RRE_PROD"."MWIV_KATEGORIE" ("KATEGORIEID") ENABLE;  
+  add CONSTRAINT "FK_GRUPPE_KATEGORIEID" FOREIGN KEY ("KATEGORIEID")	REFERENCES "MWIV_KATEGORIE" ("KATEGORIEID") ENABLE;  
   
 --insert into TEST_PERSON(PersonId, Name, spaltestringmitdefault, spaltebooleanmitdefault, spalteintmitdefault, angelegtvon, angelegtam)
 --values( (select nvl(max(p.personid), 0) + 1 from TEST_PERSON p), 'Mustermann', 'defaultString', -1, 42, 1, '20.05.2012');
