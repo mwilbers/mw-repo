@@ -50,7 +50,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T insert(final T entity) {
 
-		// FIXME: all check-methods have to be called in insert-context. implement !
+		// TODO: all check-methods have to be called in insert-context. implement !
 
 		try {
 			// FIXME: if needed: if ( this.applicationFactory.getState().equals(
@@ -79,7 +79,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T update(final T entity) {
 
-		// FIXME: all check-methods have to be called in update-context. implement !
+		// TODO: all check-methods have to be called in update-context. implement !
 
 		try {
 
@@ -109,7 +109,7 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void delete(final T entity) {
 
-		// FIXME: all check-methods have to be called in delete-context. implement !
+		// TODO: all check-methods have to be called in delete-context. implement !
 
 		// doActionsBeforeCheck( entity );
 		// this.crudInterceptorChain.doChainActionsBeforeCheck( (AbstractMWEntity)

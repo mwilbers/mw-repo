@@ -1,19 +1,12 @@
 package de.mw.mwdata.rest.ofdb.control;
 
-import java.net.MalformedURLException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
@@ -26,9 +19,7 @@ import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.rest.control.AbstractRestCrudController;
-import de.mw.mwdata.rest.navigation.NavigationState;
 import de.mw.mwdata.rest.uimodel.UiEntityList;
-import de.mw.mwdata.rest.url.InvalidRestUrlException;
 import de.mw.mwdata.rest.url.RestUrl;
 import de.mw.mwdata.rest.utils.SessionUtils;
 
@@ -53,38 +44,19 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		this.crudService = crudService;
 	}
 
-	public ResponseEntity<UiEntityList<E>> listAllTabDefs() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-
-		// initialize navigation state
-		HttpSession session = request.getSession();
-		NavigationState state = SessionUtils.getNavigationState(session);
+	public ResponseEntity<UiEntityList<E>> listAllEntities() {
 
 		// initialize ofPropList
-		RestUrl url = null;
-		try {
-			url = this.getUrlService().parseRestUrl(request.getRequestURL().toString());
-		} catch (MalformedURLException e) {
-			String message = MessageFormat.format("URL '{0}' does not apply to url format of REST API.",
-					request.getRequestURL().toString());
-			throw new InvalidRestUrlException(message, e);
-		}
+		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
+		SessionUtils.setLastUrlPath(url.getEntityName());
+
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(url.getEntityName());
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		PaginatedList<IEntity[]> entityResult = null;
-		// int pageIndex = state.getPageIndex();
-		// if (!state.isFiltered()) {
-		List<SortKey> sortKeys = new ArrayList<>();
-		entityResult = this.entityService.loadViewPaginated(viewDef.getName(), 1, sortKeys);
-		// } else {
-		// // ... what to do here if filtering
-		// entityResult = this.entityService.findByCriteriaPaginated(viewDef.getName(),
-		// state.getFilterSet(),
-		// pageIndex, state.getSorting());
-		// }
-
+		// PaginatedList<IEntity[]> entityResult = null;
+		// List<SortKey> sortKeys = new ArrayList<>();
+		PaginatedList<IEntity[]> entityResult = this.entityService.loadViewPaginated(viewDef.getName(), 1,
+				new ArrayList<SortKey>());
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);

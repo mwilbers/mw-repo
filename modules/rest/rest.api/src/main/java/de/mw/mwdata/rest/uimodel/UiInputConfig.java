@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.mw.mwdata.core.domain.DBTYPE;
+import de.mw.mwdata.core.to.OfdbField;
+
 /**
  * Ui specific object for describing configured behaviour of an output item in
  * UI. This output item can be a table column item, a simple textbox, an option
@@ -12,22 +15,31 @@ import java.util.Map;
  * @author WilbersM
  *
  */
-public class UiItemConfig {
+public class UiInputConfig {
 
 	public final int DEFAULT_CURRENCY = 2;
 
 	private StringBuffer diagnoseBuf;
 	private Map<String, String> diagnoseMap = new HashMap<String, String>();
 
-	private boolean tabSpeigBearbErlaubt;
 	private boolean tabSpeigSytemWert;
+
+	private boolean tabSpeigBearbErlaubt;
 	private boolean ansichtSpalteBearbZugelassen;
+
+	private boolean ansichtSpalteBearbHinzufuegenZugelassen;
+
 	private String columnTitle;
 
 	/**
 	 * the maxlength of the field-content
 	 */
-	private int maxlength;
+	private String maxlength;
+
+	/**
+	 * the minlength of the field-content
+	 */
+	private String minlength;
 
 	/**
 	 * the currency
@@ -44,17 +56,12 @@ public class UiItemConfig {
 	 */
 	private String propOfdbName = null;
 
-	private UiDataType datatype;
+	private DBTYPE dbtype;
 
 	/**
 	 * the reihenfolge-value of the ofdb-TabSpeig-item
 	 */
 	private long reihenfolge;
-
-	/**
-	 * the value of the ofdb-Property
-	 */
-	private Object propValue;
 
 	/* data needed for list of values */
 	private List<Object> listOfValues;
@@ -73,6 +80,31 @@ public class UiItemConfig {
 	 */
 	private String itemKey;
 
+	public UiInputConfig(final OfdbField ofdbField) {
+		this.tabSpeigSytemWert = ofdbField.getTabSpeigSystemWert();
+		this.tabSpeigBearbErlaubt = ofdbField.getTabSpeigBearbErlaubt();
+		this.ansichtSpalteBearbZugelassen = ofdbField.getAnsichtSpalteBearbZugelassen();
+		this.ansichtSpalteBearbHinzufuegenZugelassen = ofdbField.getAnsichtSpalteBearbHinzufuegenZugelassen();
+		this.columnTitle = ofdbField.getColumnTitle();
+		this.maxlength = ofdbField.getMaxlength();
+		this.minlength = ofdbField.getMinlength();
+		this.currency = ofdbField.getCurrency();
+		this.propName = ofdbField.getPropName();
+		this.propOfdbName = ofdbField.getPropOfdbName();
+		this.dbtype = ofdbField.getDbtype();
+		this.reihenfolge = ofdbField.getReihenfolge();
+		this.listOfValues = ofdbField.getListOfValues();
+
+		this.itemValue = ofdbField.getItemValue();
+		this.itemLabel = ofdbField.getItemLabel();
+		this.itemKey = ofdbField.getItemKey();
+		this.resultIndex = ofdbField.getResultIndex();
+
+		this.nullable = ofdbField.isNullable();
+		this.visible = ofdbField.isVisible();
+		this.filterable = ofdbField.isFilterable();
+	}
+
 	private void addDiagnose(final String name, final String value) {
 		this.diagnoseMap.put(name, value);
 	}
@@ -88,12 +120,20 @@ public class UiItemConfig {
 		return this.diagnoseBuf.toString();
 	}
 
-	public void setMaxlength(final int maxlength) {
+	public void setMaxlength(final String maxlength) {
 		this.maxlength = maxlength;
 	}
 
-	public int getMaxlength() {
+	public String getMaxlength() {
 		return this.maxlength;
+	}
+
+	public void setMinlength(final String minlength) {
+		this.minlength = minlength;
+	}
+
+	public String getMinlength() {
+		return this.minlength;
 	}
 
 	public void setPropName(final String propName) {
@@ -127,14 +167,6 @@ public class UiItemConfig {
 		return (null != this.propName);
 	}
 
-	public void setPropValue(final Object propValue) {
-		this.propValue = propValue;
-	}
-
-	public Object getPropValue() {
-		return this.propValue;
-	}
-
 	public void setListOfValues(final List<Object> listOfValues) {
 		this.listOfValues = listOfValues;
 	}
@@ -157,8 +189,8 @@ public class UiItemConfig {
 		StringBuilder b = new StringBuilder();
 		b.append("OfdbField [ propName = '");
 		b.append(this.propName);
-		b.append("', propValue = '");
-		b.append(this.propValue);
+		// b.append("', propValue = '");
+		// b.append(this.propValue);
 		b.append("', propOfdbName = '");
 		b.append(this.propOfdbName);
 		b.append("' ]");
@@ -166,41 +198,32 @@ public class UiItemConfig {
 	}
 
 	public boolean isEnum() {
-		return this.datatype.equals(datatype.ENUM);
+		return this.dbtype.equals(DBTYPE.ENUM);
 	}
 
-	// FIXME: if crud = insert in ui there should be
-	// this.ansichtSpalte.getBearbHinzufZugelassen() evaluated
 	public boolean isEditable() {
-
 		if (this.tabSpeigSytemWert || !this.tabSpeigBearbErlaubt) {
 			return false;
 		} else {
-
-			// switch (crud) {
-			// case INSERT: {
-			// if (this.ansichtSpalte.getBearbHinzufZugelassen()) {
-			// this.setEditable(true);
-			// } else {
-			// this.setEditable(false);
-			// }
-			// break;
-			// }
-			// case UPDATE: {
 			if (this.ansichtSpalteBearbZugelassen) {
 				return true;
 			} else {
 				return false;
 			}
-			// break;
-			// }
-			// default: {
-			// this.setEditable(true);
-			// }
-			// }
-
 		}
 
+	}
+
+	public boolean isInsertable() {
+		if (this.tabSpeigSytemWert || !this.tabSpeigBearbErlaubt) {
+			return false;
+		} else {
+			if (this.ansichtSpalteBearbZugelassen) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	public void setVisible(final boolean visible) {
@@ -227,13 +250,13 @@ public class UiItemConfig {
 		return this.currency;
 	}
 
-	public void setDatatype(final UiDataType dbtype) {
-		this.datatype = dbtype;
+	public void setDbtype(final DBTYPE dbtype) {
+		this.dbtype = dbtype;
 
 	}
 
-	public UiDataType getDatatype() {
-		return this.datatype;
+	public DBTYPE getDbtype() {
+		return this.dbtype;
 	}
 
 	public void setItemValue(final String itemValue) {
@@ -278,38 +301,6 @@ public class UiItemConfig {
 		this.columnTitle = columnTitle;
 	}
 
-	// public void refreshEditMode(final CRUD crud) {
-	//
-	// if (this.tabSpeig.getSystemWert() || !this.tabSpeig.getBearbErlaubt()) {
-	// this.setEditable(false);
-	// } else {
-	//
-	// switch (crud) {
-	// case INSERT: {
-	// if (this.ansichtSpalte.getBearbHinzufZugelassen()) {
-	// this.setEditable(true);
-	// } else {
-	// this.setEditable(false);
-	// }
-	// break;
-	// }
-	// case UPDATE: {
-	// if (this.ansichtSpalte.getBearbZugelassen()) {
-	// this.setEditable(true);
-	// } else {
-	// this.setEditable(false);
-	// }
-	// break;
-	// }
-	// default: {
-	// this.setEditable(true);
-	// }
-	// }
-	//
-	// }
-	//
-	// }
-
 	public boolean isVerdeckenDurchSpalte() {
 		return (this.getResultIndex() > 0);
 	}
@@ -344,4 +335,19 @@ public class UiItemConfig {
 		return DEFAULT_CURRENCY;
 	}
 
+	public void setTabSpeigBearbErlaubt(boolean tabSpeigBearbErlaubt) {
+		this.tabSpeigBearbErlaubt = tabSpeigBearbErlaubt;
+	}
+
+	public void setTabSpeigSytemWert(boolean tabSpeigSytemWert) {
+		this.tabSpeigSytemWert = tabSpeigSytemWert;
+	}
+
+	public void setAnsichtSpalteBearbZugelassen(boolean ansichtSpalteBearbZugelassen) {
+		this.ansichtSpalteBearbZugelassen = ansichtSpalteBearbZugelassen;
+	}
+
+	public void setAnsichtSpalteBearbHinzufuegenZugelassen(boolean ansichtSpalteBearbHinzufuegenZugelassen) {
+		this.ansichtSpalteBearbHinzufuegenZugelassen = ansichtSpalteBearbHinzufuegenZugelassen;
+	}
 }

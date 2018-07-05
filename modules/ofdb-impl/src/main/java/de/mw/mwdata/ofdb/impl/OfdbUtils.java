@@ -89,8 +89,9 @@ public class OfdbUtils {
 		OfdbField ofdbField = new OfdbField();
 
 		ofdbField.setTabSpeigBearbErlaubt(tabSpeig.getBearbErlaubt());
-		ofdbField.setTabSpeigSytemWert(tabSpeig.getSystemWert());
+		ofdbField.setTabSpeigSystemWert(tabSpeig.getSystemWert());
 		ofdbField.setAnsichtSpalteBearbZugelassen(ansichtSpalte.getBearbZugelassen());
+		ofdbField.setAnsichtSpalteBearbHinzufuegenZugelassen(ansichtSpalte.getBearbHinzufZugelassen());
 
 		Integer nachkommastellen = ansichtSpalte.getAnzahlNachkommastellen();
 		if (nachkommastellen == null) {

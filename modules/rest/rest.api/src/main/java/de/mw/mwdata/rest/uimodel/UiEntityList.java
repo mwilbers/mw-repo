@@ -15,11 +15,18 @@ public class UiEntityList<E extends AbstractMWEntity> {
 	 */
 	private static final long serialVersionUID = -955049299999002273L;
 
-	private List<OfdbField> ofdbFields;
+	// private List<OfdbField> ofdbFields;
+	private List<UiInputConfig> uiConfigItems;
 	private List<EntityTO<E>> entityTOs = new ArrayList<EntityTO<E>>();
 
 	public UiEntityList(final List<IEntity[]> entities, final List<OfdbField> ofdbFieldList) {
-		this.ofdbFields = new ArrayList<>(ofdbFieldList);
+		// this.ofdbFields = new ArrayList<>(ofdbFieldList);
+		this.uiConfigItems = new ArrayList<>();
+
+		for (OfdbField field : ofdbFieldList) {
+			UiInputConfig item = new UiInputConfig(field);
+			this.uiConfigItems.add(item);
+		}
 
 		for (Object[] entity : entities) {
 
@@ -32,30 +39,18 @@ public class UiEntityList<E extends AbstractMWEntity> {
 			// (json-conv)
 			// vgl: OfdbField.itemKey, Value, Label felder und deren Verwendung
 
-			// FIXME: add suchwert to EntityTO here
 			addEntityTO(new EntityTO((AbstractMWEntity) entity[0]));
 		}
 
-		// } else {
-		//
-		// List<IEntity> singleEntites = entities;
-		// for ( IEntity[] entity : entities ) {
-		//
-		// // FIXME: add suchwert to EntityTO here
-		// addEntityTO( new EntityTO( (AbstractMWEntity) entity[0] ) );
-		// }
-		//
-		// }
-
 	}
 
-	public List<OfdbField> getOfdbFields() {
-		return this.ofdbFields;
+	public List<UiInputConfig> getUiInputConfigs() {
+		return this.uiConfigItems;
 	}
 
-	public void setOfdbFields(final List<OfdbField> fields) {
-		this.ofdbFields = new ArrayList<>(fields);
-	}
+	// public void setOfdbFields(final List<UiItemConfig> fields) {
+	// this.uiConfigItems = new ArrayList<>(fields);
+	// }
 
 	public void addEntityTO(final EntityTO<E> entityTO) {
 		this.entityTOs.add(entityTO);

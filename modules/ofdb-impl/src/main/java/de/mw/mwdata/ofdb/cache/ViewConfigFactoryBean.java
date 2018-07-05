@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -141,14 +140,15 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				Class<? extends AbstractMWEntity> entityClassType = checkFullClassName(ansichtTab.getTabDef());
 				entityMapping = this.ofdbService.initializeMapping(entityClassType, tableName, tabSpeigs);
 
-				checkMappingTabSpeig2Property(tabSpeigs, entityMapping);
-				// builder.setEntityMapping(entityMapping);
+				partSet = checkMappingTabSpeig2Property(tabSpeigs, entityMapping);
+				set.merge(partSet);
+				if (set.hasErrors()) {
+					this.handleValidationErrors(set);
+				}
 				if (builder.buildHandle().getMainAnsichtTab().getTabDef().equals(tabDef)) {
 					mainEntityMapping = entityMapping;
 				}
 
-			} else {
-				// builder.setEntityMapping(entityMapping);
 			}
 
 			builder.addTableConfig(tabDef, tabSpeigs, entityMapping);
@@ -168,20 +168,20 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		}
 
 		// initialize AnsichtSpalten
-		Map<String, IAnsichtSpalte> ansichtSpalten = this.ofdbService.findAnsichtSpaltenMapByAnsichtId(ansicht.getId());
-		for (Map.Entry<String, IAnsichtSpalte> entry : ansichtSpalten.entrySet()) {
-
+		List<IAnsichtSpalte> ansichtSpalten = this.ofdbService.findAnsichtSpaltenByAnsichtId(ansicht.getId());
+		List<IAnsichtSpalte> resultSpalten = new ArrayList<>();
+		for (IAnsichtSpalte ansichtSpalte : ansichtSpalten) {
 			// ... TestQueryBuilder: get the relevant tabSpeig of the ansichtSpalte
-			IAnsichtSpalte ansichtSpalte = entry.getValue();
-
 			partSet = this.ofdbService.isAnsichtSpalteValid(ansichtSpalte, builder.buildHandle());
 			set.merge(partSet);
+
+			resultSpalten.add(ansichtSpalte);
 		}
 
 		if (set.hasErrors()) {
 			handleValidationErrors(set);
 		}
-		builder.setViewColumns(ansichtSpalten);
+		builder.setViewColumns(resultSpalten);
 
 		// ... FIXME: no mainAnsichtTab for ADAnsichtenDef
 		initQueryModel(viewName, builder);
@@ -192,13 +192,17 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		return builder.buildHandle();
 	}
 
-	private void checkMappingTabSpeig2Property(final List<ITabSpeig> tabSpeigs, final OfdbEntityMapping entityMapping) {
+	private ViewConfigValidationResultSet checkMappingTabSpeig2Property(final List<ITabSpeig> tabSpeigs,
+			final OfdbEntityMapping entityMapping) {
+
+		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
 
 		for (ITabSpeig tabProp : tabSpeigs) {
 
-			// OfdbPropMapper ofdbPropMapper = entityMapping.getMapper(tabProp); //
-			// .get(tabProp.getSpalte().toUpperCase());
-			if (!entityMapping.hasMapping(tabProp)) {
+			if (tabProp.isEindeutig() && !entityMapping.hasMapping(tabProp)) {
+				set.addValidationResult("invalidOfdbConfig.FX_TabSpeig.uniquePropertyNotMapped", tabProp.getName(),
+						tabProp.getTabDef().getName());
+			} else if (!entityMapping.hasMapping(tabProp)) {
 				String msg = MessageFormat.format("Table property {0} of table {1} could not be mapped to property.",
 						tabProp.getSpalte(), tabProp.getTabDef().getName());
 				LOGGER.info(msg);
@@ -206,6 +210,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 		}
 
+		return set;
 	}
 
 	private Class<? extends AbstractMWEntity> checkFullClassName(final ITabDef tabDef)
@@ -243,7 +248,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 	}
 
-	private int calculateMaxLength(final ITabSpeig tabSpeig) {
+	private String calculateMaxLength(final ITabSpeig tabSpeig) {
 
 		if (null == tabSpeig.getMaximum()) {
 
@@ -265,9 +270,38 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			}
 			}
 
-			return result;
+			return String.valueOf(result);
 		} else {
-			return Integer.valueOf((String) tabSpeig.getMaximum());
+			return tabSpeig.getMaximum();
+		}
+
+	}
+
+	private String calculateMinLength(final ITabSpeig tabSpeig) {
+
+		if (null == tabSpeig.getMinimum()) {
+
+			int result = 0;
+			switch (tabSpeig.getDbDatentyp()) {
+			case BOOLEAN:
+				result = 1;
+			case DATE:
+				result = 10;
+			case DATETIME:
+				result = 10;
+			case LONGINTEGER:
+				result = 1;
+			case STRING:
+				result = 1;
+			default: {
+				LOGGER.error("No minlength defined for DBType: " + tabSpeig.getDbDatentyp().getDescription()
+						+ ", tabSpeig: " + tabSpeig.getSpalte());
+			}
+			}
+
+			return String.valueOf(result);
+		} else {
+			return tabSpeig.getMinimum();
 		}
 
 	}
@@ -277,14 +311,11 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			final OfdbEntityMapping mainEntityMapping) {
 		List<OfdbField> ofFields = new ArrayList<OfdbField>();
 
-		Map<String, IAnsichtSpalte> ansichtSpalten = viewHandle.getViewColumns();
+		List<IAnsichtSpalte> ansichtSpalten = viewHandle.getViewColumns();
 		int resultIndex = 0;
-
 		OfdbQueryModel queryModel = viewHandle.getQueryModel();
 
-		for (Map.Entry<String, IAnsichtSpalte> entry : ansichtSpalten.entrySet()) {
-
-			IAnsichtSpalte ansichtSpalte = entry.getValue();
+		for (IAnsichtSpalte ansichtSpalte : ansichtSpalten) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(ansichtSpalte.getTabAKey(),
 					ansichtSpalte.getSpalteAKey());
 
@@ -298,8 +329,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				throw new OfdbInvalidConfigurationException(msg);
 			}
 
-			OfdbField ofField = OfdbUtils.createOfdbField(tabSpeig, entry.getValue());
-
+			OfdbField ofField = OfdbUtils.createOfdbField(tabSpeig, ansichtSpalte);
 			OfdbPropMapper propMapper = mainEntityMapping.getMapper(tabSpeig); // .get(tabSpeig.getSpalte().toUpperCase());
 
 			String propName = StringUtils.EMPTY;
@@ -307,8 +337,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				propName = propMapper.getPropertyName();
 				ofField.setPropName(propName);
 			}
-
 			ofField.setMaxlength(calculateMaxLength(tabSpeig));
+			ofField.setMinlength(calculateMinLength(tabSpeig));
 
 			if (!StringUtils.isEmpty(ansichtSpalte.getAnsichtSuchen())) {
 

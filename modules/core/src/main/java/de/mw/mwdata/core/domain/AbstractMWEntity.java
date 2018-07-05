@@ -62,9 +62,6 @@ public abstract class AbstractMWEntity implements Serializable, IEntity {
 	@Column(name = Constants.SYS_COL_ANGELEGT_VON, updatable = false, nullable = false)
 	private String angelegtVon;
 
-	@Column(name = Constants.SYS_COL_OFDB, updatable = false, nullable = false)
-	private String ofdb;
-
 	@Column(name = Constants.SYS_COL_SYSTEM, columnDefinition = "NUMBER(1) default -1", updatable = false, nullable = false)
 	@org.hibernate.annotations.Type(type = "fxboolean")
 	private Boolean system;
@@ -116,14 +113,6 @@ public abstract class AbstractMWEntity implements Serializable, IEntity {
 
 	public final String getAngelegtVon() {
 		return this.angelegtVon;
-	}
-
-	public void setOfdb(final String ofdb) {
-		this.ofdb = ofdb;
-	}
-
-	public String getOfdb() {
-		return this.ofdb;
 	}
 
 	public void setSystem(final Boolean system) {

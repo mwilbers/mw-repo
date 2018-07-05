@@ -229,9 +229,10 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		ITabSpeig tabSpeigMock = DomainMockFactory.createTabSpeigMock((TabDef) viewTab.getTabDef(), "ALIAS", 1,
 				DBTYPE.STRING);
-		TabSpeig tabSpeigId = DomainMockFactory.createTabSpeigMock((TabDef) viewTab.getTabDef(), "DSID", 2,
+		ITabSpeig tabSpeigId = DomainMockFactory.createTabSpeigMock((TabDef) viewTab.getTabDef(), "DSID", 2,
 				DBTYPE.LONGINTEGER);
-		tabSpeigId.setPrimSchluessel(Boolean.TRUE);
+		TabSpeig tabSpeigIdImpl = (TabSpeig) tabSpeigId;
+		tabSpeigIdImpl.setPrimSchluessel(Boolean.TRUE);
 
 		// start test ...
 		ViewConfigHandle viewHandle = this.ofdbCacheManager

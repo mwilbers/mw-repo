@@ -19,7 +19,7 @@
 			<class name="de.mw.mwdata.ofdb.service.test.OfdbValidationTest" />
 			<class name="de.mw.mwdata.ofdb.service.test.TabSpeigDefaultsTest" />
 
-			<class name="de.mw.mwdata.ofdb.test.OfdbFieldTest" />
+<!-- 			<class name="de.mw.mwdata.ofdb.test.OfdbFieldTest" /> -->
 
 		</classes>
 

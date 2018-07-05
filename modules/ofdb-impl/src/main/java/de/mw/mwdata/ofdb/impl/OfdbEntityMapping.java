@@ -70,6 +70,12 @@ public class OfdbEntityMapping {
 		return this.mapping.values();
 	}
 
+	/**
+	 * 
+	 * @param tableProp
+	 * @return the {@link OfdbPropMapper } for the given {@link ITabSpeig }. Null if
+	 *         property is not mapped
+	 */
 	public OfdbPropMapper findPropertyMapperByTabProp(final ITabSpeig tableProp) {
 		for (OfdbPropMapper mapper : this.getMappings()) {
 			if (mapper.getColumnName().toUpperCase().equals(tableProp.getSpalte().toUpperCase())) {

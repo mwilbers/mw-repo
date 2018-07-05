@@ -12,20 +12,29 @@ function mwGrid() {
 	
 	/* private functions */
 	
-	function initializeColumns( ofdbFields, appConfig ) {
+	function initializeColumns( uiInputConfigs, appConfig ) {
 		
 		var columnCounter = 0;
 		columns = [];	// FIXME: why to clear local columns array here ?
-		for(var i = 0; i < ofdbFields.length; i++) {
-			var ofdbField = ofdbFields[i];
-			
+		
+		if(uiInputConfigs.length > 0) {
+			columns[columnCounter] = {};
+			columns[columnCounter]["id"] = "btnDelete";
+			columns[columnCounter]["name"] = "Delete";
+			columns[columnCounter]["field"] = "btnDelete";
+			columns[columnCounter]["width"] = 50;
+			columns[columnCounter]["formatter"] = Slick.Formatters.DeleteButton;
+			columnCounter++;
+		}
+		
+		for(var i = 0; i < uiInputConfigs.length; i++) {
+			var ofdbField = uiInputConfigs[i];
+	
 			if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 				columns[columnCounter] = {};
-				
 				columns[columnCounter]["id"] = ofdbField.propOfdbName;
 				columns[columnCounter]["name"] = ofdbField.columnTitle;
 				columns[columnCounter]["field"] = ofdbField.propName;
-				
 				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
 					var result = buildListOfValuesString( ofdbField.listOfValues );
 					columns[columnCounter]["options"] = result;
@@ -36,13 +45,17 @@ function mwGrid() {
 			} 
 		}
 		
-		columns[columnCounter] = {};
-		columns[columnCounter]["id"] = "type";
-		columns[columnCounter]["name"] = "type";
-		columns[columnCounter]["field"] = "type";
-		columnCounter++;
+		if(uiInputConfigs.length > 0) {
+			columns[columnCounter] = {};
+			columns[columnCounter]["id"] = "type";
+			columns[columnCounter]["name"] = "type";
+			columns[columnCounter]["field"] = "type";
+			columnCounter++;
+		}
 		
 	}
+	
+	
 	
 	function buildListOfValuesString( listOfValuesArray ) {
 		var result = "";
@@ -110,11 +123,12 @@ function mwGrid() {
 		return true;
 	};
 	
-	this.load = function( rows, ofdbFields, appConfig ) {
+	this.load = function( rows, uiInputConfigs, appConfig ) {
 		console.log("mwGrid load");
 		
-		initializeColumns( ofdbFields, appConfig );
+		initializeColumns( uiInputConfigs, appConfig );
 		
+		this.data = [];
 		// NOTE: because mwGrid.data references memory of rows we must not reinitialize data objects by '{}' every time
 		if(rows.length > 0 && undefined == this.data[0]) {
 			for (var i = 0; i < rows.length; i++) {
@@ -123,16 +137,18 @@ function mwGrid() {
 		}
 		
 		for (var i = 0; i < rows.length; i++) {
-			
-			for(var j=0; j < ofdbFields.length; j++) {
-				var ofdbField = ofdbFields[j];
+			for(var j=0; j < uiInputConfigs.length; j++) {
+				var ofdbField = uiInputConfigs[j];
 				if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 					this.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
 				}
 				
 			}
-			this.data[i]["type"] = rows[i]["type"];
 			
+			if(uiInputConfigs.length > 0) {
+				this.data[i]["type"] = rows[i]["type"];
+				this.data[i]["btnDelete"] = "";
+			}
 		}
 		
 		this.dataView = new Slick.Data.DataView();
@@ -146,6 +162,12 @@ function mwGrid() {
 			if( globalEntityController.hasRowChanged() && globalEntityController.isRowDirty() ) {
 				globalEntityController.submit();
 				globalEntityController.reset();
+			} else if (args.grid.getColumns()[args.cell].field == 'btnDelete') {
+			   // FIXME: perform real delete
+			   alert('delete not yet implemented');
+			   // assume delete function uses data field id; simply pass args.row if row number is accepted for delete
+			   mwGrid.dataView.deleteItem(args.grid.getDataItem(args.row).id);
+			   args.grid.invalidate();
 			}
 			
 			mwGrid.getControllerScope().$apply();

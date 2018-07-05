@@ -4,7 +4,6 @@
 package de.mw.mwdata.ofdb.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -31,13 +30,12 @@ public interface IOfdbDao {
 	public List<ITabSpeig> findTabSpeigByTable(final String table);
 
 	/**
-	 * Loads all view-based columns in a map with key = viewname and value = column
-	 * given by the viewname
+	 * Loads all view-based columns in a list
 	 *
 	 * @param ansichtName
 	 * @return
 	 */
-	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsicht(final long ansichtId);
+	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsicht(final long ansichtId);
 
 	/**
 	 * Loads all AnsichtOrderBy-Domain-Objects for the given ansichtId

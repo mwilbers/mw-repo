@@ -153,9 +153,18 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Assert.assertEquals(entities.size(), 2);
 		Assert.assertEquals(entities.get(0)[0], aTabBenutzerBereich.getTabDef());
 
-		Map<String, IAnsichtSpalte> viewPropMap = this.ofdbService
-				.findAnsichtSpaltenMapByAnsichtId(aTabTabDef.getAnsichtDef().getId());
-		AnsichtSpalten ansichtSpalteMock = (AnsichtSpalten) viewPropMap.get("BEREICHSID");
+		List<IAnsichtSpalte> viewPropList = this.ofdbService
+				.findAnsichtSpaltenByAnsichtId(aTabTabDef.getAnsichtDef().getId());
+
+		IAnsichtSpalte aSpalteBereichsId = null;
+		for (IAnsichtSpalte aSpalte : viewPropList) {
+			if (aSpalte.getName().equals("BEREICHSID")) {
+				aSpalteBereichsId = aSpalte;
+				break;
+			}
+		}
+		AnsichtSpalten ansichtSpalteMock = (AnsichtSpalten) aSpalteBereichsId; // (AnsichtSpalten)
+																				// viewPropMap.get("BEREICHSID");
 
 		this.applicationFactory.configure();
 

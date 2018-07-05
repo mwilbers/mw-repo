@@ -127,7 +127,7 @@ public class ViewConfigHandle {
 		return this.viewConfig.getViewOrders();
 	}
 
-	public Map<String, IAnsichtSpalte> getViewColumns() {
+	public List<IAnsichtSpalte> getViewColumns() {
 		return this.viewConfig.getViewColumns();
 	}
 
@@ -234,6 +234,11 @@ public class ViewConfigHandle {
 		// uniqueMap.getTabSpeigsByUniqueIdentifier(uniqueIdent);
 
 		return uniqueMap.getUniqueTableProps(uniqueIdent);
+	}
+
+	@Override
+	public String toString() {
+		return this.viewConfig.toString();
 	}
 
 }

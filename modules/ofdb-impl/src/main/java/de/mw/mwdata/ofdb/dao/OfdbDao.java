@@ -5,9 +5,7 @@ package de.mw.mwdata.ofdb.dao;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +101,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	// @Override
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsicht(final long ansichtId) {
+	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsicht(final long ansichtId) {
 
 		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
 		String sql = b.selectTable(ConfigOfdb.T_VIEWPROPS, "aSpalten").fromTable(ConfigOfdb.T_VIEWPROPS, "aSpalten")
@@ -112,13 +110,14 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 				.orderBy("aSpalten", "indexGrid", "asc").buildSQL();
 		List<IEntity[]> results = this.crudDao.executeSql(sql);
 
-		Map<String, IAnsichtSpalte> map = new HashMap<String, IAnsichtSpalte>(results.size());
+		List<IAnsichtSpalte> list = new ArrayList<IAnsichtSpalte>(results.size());
 		for (int i = 0; i < results.size(); i++) {
 			IEntity[] entityArray = results.get(i);
 			IAnsichtSpalte aSpalte = (IAnsichtSpalte) entityArray[0]; // ansichtSpalten.get( i );
-			map.put(aSpalte.getSpalteAKey().toUpperCase(), aSpalte);
+			list.add(aSpalte);
+			// map.put(aSpalte.getSpalteAKey().toUpperCase(), aSpalte);
 		}
-		return map;
+		return list;
 
 	}
 

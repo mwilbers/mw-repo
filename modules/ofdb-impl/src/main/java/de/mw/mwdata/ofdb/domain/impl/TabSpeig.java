@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -39,14 +40,10 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 		@TypeDef(name = "fxDatentyp", typeClass = de.mw.mwdata.ofdb.domain.enums.TypeDATENTYP.class) })
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
-@Table(name = "FX_TabSpEig_K" /* , schema = Constants.DB_SCHEMA */)
+@Table(name = "FX_TabSpEig_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "TABDEFID", "SPALTE" }),
+		@UniqueConstraint(columnNames = { "TABDEFID", "REIHENFOLGE" }) })
 public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getId()
-	 */
 
 	/**
 	 *
@@ -61,17 +58,6 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 	@Column(name = "DSID")
 	private Long id;
 
-	// @Transient
-	// @Column(name = "TABELLE", insertable = true, updatable = true, nullable =
-	// false, unique = true)
-	// private String name;
-
-	// @Column(name = "TABELLE", insertable = false, updatable = false, nullable =
-	// false, unique = true)
-	// @Column(name = "TABELLE", insertable = true, updatable = true, nullable =
-	// false, unique = true)
-	// private String tabelle;
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "TABDEFID", referencedColumnName = "DSID", nullable = false, updatable = false, insertable = false)
 	private TabDef tabDef;
@@ -85,12 +71,6 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 	@Column(name = "SPALTE", updatable = false, nullable = false, unique = false)
 	private String spalte;
 
-	// @OneToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "TABELLE", referencedColumnName = "ANSICHT", nullable =
-	// false, insertable = false, updatable =
-	// false)
-	// private AnsichtSpalten ansichtSpalten;
-
 	@Column(name = "DBDATENTYP", updatable = false, nullable = false)
 	@Enumerated(EnumType.STRING)
 	@Type(type = "fxDatentyp")
@@ -98,7 +78,6 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 
 	@Column(name = "PS", columnDefinition = "NUMBER(1) default 0")
 	@Type(type = "fxboolean")
-	// @Column(name = "PS", columnDefinition="NUMBER(11) default 0")
 	private Boolean primSchluessel;
 
 	@Column(name = "EINDEUTIG")
@@ -106,17 +85,14 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 
 	@Column(name = "EINGABENOTWENDIG", updatable = true, columnDefinition = "NUMBER(1) default 0")
 	@Type(type = "fxboolean")
-	// @Column(name = "EINGABENOTWENDIG", columnDefinition="NUMBER(1) default 0")
 	private Boolean eingabeNotwendig;
 
 	@Column(name = "BEARBERLAUBT", columnDefinition = "NUMBER(1) default -1")
 	@Type(type = "fxboolean")
-	// @Column(name = "BEARBERLAUBT", columnDefinition="NUMBER(1) default -1")
 	private Boolean bearbErlaubt;
 
 	@Column(name = "SYSTEMWERT", columnDefinition = "NUMBER(1) default 0")
 	@Type(type = "fxboolean")
-	// @Column(name = "SYSTEMWERT", columnDefinition="NUMBER(1) default 0")
 	private Boolean systemWert;
 
 	@Column(name = "DEFAULTWERT", updatable = false)
@@ -139,92 +115,39 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 		return this.id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getSequenceKey()
-	 */
 	@Override
 	public String getSequenceKey() {
 		return SEQUENCE_KEY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#setId(java.lang.Long)
-	 */
 	@Override
 	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getName()
-	 */
 	@Override
 	public String getName() {
 		return this.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(final String name) {
 		// this.name = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mw.mwdata.core.ofdb.domain.ITabSpeig#setTabDef(de.mw.mwdata.core.ofdb.
-	 * domain.TabDef)
-	 */
 	public void setTabDef(final ITabDef tabDef) {
 		this.tabDef = (TabDef) tabDef;
 		this.setTabDefId(tabDef.getId());
-		// this.setName( tabDef.getName() );
-		// this.tabelle = tabDef.getName();
-		// this.name = tabDef.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#getTabDef()
-	 */
 	public ITabDef getTabDef() {
 		return this.tabDef;
 	}
 
-	// public String getTabelle() {
-	// return this.tabelle;
-	// }
-	//
-	// public void setTabelle( final String tabelle ) {
-	// this.tabelle = tabelle;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#getSpalte()
-	 */
 	public String getSpalte() {
 		return this.spalte;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#setSpalte(java.lang.String)
-	 */
 	public void setSpalte(final String spalte) {
 		this.spalte = spalte;
 	}
@@ -237,20 +160,10 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 		this.primSchluessel = primSchluessel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#getEindeutig()
-	 */
 	public Long getEindeutig() {
 		return this.eindeutig;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#setEindeutig(java.lang.Long)
-	 */
 	public void setEindeutig(final Long eindeutig) {
 		this.eindeutig = eindeutig;
 	}
@@ -311,22 +224,10 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 		this.spaltenTyp = spaltenTyp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mw.mwdata.core.ofdb.domain.ITabSpeig#setDbDatentyp(de.mw.mwdata.core.ofdb.
-	 * domain.TabSpeig.DBTYPE)
-	 */
 	public void setDbDatentyp(final DBTYPE dbDatentyp) {
 		this.dbDatentyp = dbDatentyp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#getDbDatentyp()
-	 */
 	public DBTYPE getDbDatentyp() {
 		return this.dbDatentyp;
 	}
@@ -343,11 +244,6 @@ public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 		return this.getDbDatentyp().equals(DBTYPE.ENUM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.ITabSpeig#isEindeutig()
-	 */
 	public boolean isEindeutig() {
 		return (this.getEindeutig() != null);
 	}

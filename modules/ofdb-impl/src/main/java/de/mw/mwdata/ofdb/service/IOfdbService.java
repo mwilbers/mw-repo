@@ -1,7 +1,6 @@
 package de.mw.mwdata.ofdb.service;
 
 import java.util.List;
-import java.util.Map;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
@@ -103,13 +102,12 @@ public interface IOfdbService {
 	public List<AnsichtOrderBy> findAnsichtOrderByAnsichtId(final long ansichtId);
 
 	/**
-	 * Loads all view-based columns in a map with key = viewname and value = column
-	 * given by the viewname
+	 * Loads all view-based columns in a list given by view id
 	 *
 	 * @param ansichtName
 	 * @return
 	 */
-	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsichtId(final long ansichtId);
+	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsichtId(final long ansichtId);
 
 	public List<Object> getListOfValues(final OfdbField ofField, final ITabSpeig tabSpeig,
 			final List<IAnsichtOrderBy> ansichtOrderList, final Class<IEntity> type);

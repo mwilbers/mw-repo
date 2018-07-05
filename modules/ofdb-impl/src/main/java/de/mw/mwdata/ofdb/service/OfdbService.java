@@ -84,13 +84,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	private ICrudService<IEntity> crudService;
 
-	// public void init() {
-	// if (this.crudService instanceof ICrudInterceptable) {
-	// ICrudInterceptable interceptor = (ICrudInterceptable) this.crudService;
-	// interceptor.registerCrudInterceptor(this);
-	// }
-	// }
-
 	protected IOfdbDao getOfdbDao() {
 		return this.ofdbDao;
 	}
@@ -183,16 +176,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	}
 
 	private String buildSQLInternal(final OfdbQueryModel queryModel, final String viewName, final boolean setCount) {
-
-		// 1. FIXME
-		// ... hier refactoring, dass man QueryModel als argument übergeben kann,
-		// alternativ methode buildDefaultSql oder buildCachedSql, das den
-		// ofdbCacheManger
-		// mit querymodel verwendet
-		//
-		// 2. in FXOfdbInterceptor: eine methode convertDatatypeToHsql in ofdbService
-		// extrahieren
-		// und dort verwenden
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
 		OfdbQueryBuilder queryBuilder = new DefaultOfdbQueryBuilder();
@@ -322,10 +305,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		queryModel.resetWhereRestrictions();
 
 		// --- neu
-		Map<String, IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
-		for (Map.Entry<String, IAnsichtSpalte> entry : viewColumns.entrySet()) {
-
-			IAnsichtSpalte ansichtSpalte = entry.getValue();
+		List<IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
+		for (IAnsichtSpalte ansichtSpalte : viewColumns) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte(ansichtSpalte);
 
 			if (!StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchTabAKey())
@@ -340,11 +321,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				boolean toFilter = (!StringUtils.isBlank(whereMapValue));
 
 				if (toFilter) {
-
-					// IAnsichtSpalte ansichtSpalte = ofField.getAnsichtSpalte();
 					queryModel.addWhereRestriction(suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Eq,
 							whereMapValue);
-
 				}
 
 			} else {
@@ -400,10 +378,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
 		queryModel.resetOrderSet();
 
-		Map<String, IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
-		for (Map.Entry<String, IAnsichtSpalte> entry : viewColumns.entrySet()) {
-
-			IAnsichtSpalte ansichtSpalte = entry.getValue();
+		List<IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
+		for (IAnsichtSpalte ansichtSpalte : viewColumns) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte(ansichtSpalte);
 
 			OfdbEntityMapping entityMapping = ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName()); // viewHandle.getEntityMapping();
@@ -447,7 +423,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName());
 		return entityMapping.getMapper(tabSpeig).getPropertyName();
 
-		// ... NPE auf getMapper(für tabDef.ERGTABFUERABRECHNUNG):
+		// FIXME: NPE auf getMapper(für tabDef.ERGTABFUERABRECHNUNG):
 		// fix: Methode mapTabSpeig2Property sollte OfdbPropMapper zurückgeben, an allen
 		// aufrufstellen dann abfragen:
 		// mapper == null oder besser isMapped()
@@ -689,8 +665,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	}
 
 	@Override
-	public Map<String, IAnsichtSpalte> findAnsichtSpaltenMapByAnsichtId(final long ansichtId) {
-		return this.getOfdbDao().findAnsichtSpaltenMapByAnsicht(ansichtId);
+	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsichtId(final long ansichtId) {
+		return this.getOfdbDao().findAnsichtSpaltenByAnsicht(ansichtId);
 	}
 
 	@Override
@@ -980,6 +956,25 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	public ViewConfigValidationResultSet isTableValid(final ITabDef tabDef, final List<ITabSpeig> tableProps) {
 
 		ViewConfigValidationResultSet set = new ViewConfigValidationResultSet();
+
+		// check fullClassName
+		checkFullClassNameWellDefined(tabDef, set);
+
+		// check Primary key definitions
+		checkOnePrimaryKeyProperty(tabDef, tableProps, set);
+
+		// checkUniquePropertiesAreMapped(tabDef, tableProps, set);
+
+		return set;
+	}
+
+	/**
+	 * Method checks that table property 'fullClassName' is well defined
+	 * 
+	 * @param tabDef
+	 * @param set
+	 */
+	private void checkFullClassNameWellDefined(final ITabDef tabDef, ViewConfigValidationResultSet set) {
 		if (StringUtils.isEmpty(tabDef.getFullClassName())) {
 			set.addValidationResult("illegalOfdbNullValue", tabDef.getName(), "fullClassName");
 
@@ -992,8 +987,19 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 						tabDef.getFullClassName());
 			}
 		}
+	}
 
-		// validate tabSpeigs
+	/**
+	 * Method checks that there is only one table property that defines the primary
+	 * key column
+	 * 
+	 * @param tabDef
+	 * @param tableProps
+	 * @param set
+	 */
+	private void checkOnePrimaryKeyProperty(final ITabDef tabDef, final List<ITabSpeig> tableProps,
+			ViewConfigValidationResultSet set) {
+
 		List<ITabSpeig> tempPrimKeys = new ArrayList<ITabSpeig>();
 		for (ITabSpeig tabSpeig : tableProps) {
 			if (tabSpeig.getPrimSchluessel()) {
@@ -1004,8 +1010,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		if (tempPrimKeys.size() > 1) {
 			set.addValidationResult("invalidOfdbConfig.FX_TabSpeig.combinedPrimKeyColumns", tabDef.getName());
 		}
-
-		return set;
 	}
 
 	public ViewConfigValidationResultSet isAnsichtSpalteValid(final IAnsichtSpalte spalte,

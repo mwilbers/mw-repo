@@ -8,7 +8,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 
 public class DefaultCrudInterceptor extends AbstractCrudChain {
 
-	// @Override
 	public void presetDefaultValues(AbstractMWEntity entity) {
 
 		if (null == entity.getAngelegtAm()) {
@@ -16,7 +15,7 @@ public class DefaultCrudInterceptor extends AbstractCrudChain {
 		}
 		if (null == entity.getAngelegtVon()) {
 			entity.setAngelegtVon(Constants.SYS_USER_DEFAULT);
-			// FIXME: add user specific informations
+			// TODO: add user specific informations
 		}
 
 	}

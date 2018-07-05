@@ -9,9 +9,6 @@ public interface OfdbCacheManager {
 
 	// FIXME: method isCacheBuild() should be added
 	// FIXME: OfdbCacheManager can only be used when isCacheBuild() == true
-	// FIXME: move all methods here that return objects under ViewConfigHandle to
-	// class ViewConfigHandle. In Future OfdbCacheManager is only for searching
-	// ViewConfigHandle - objects
 
 	/**
 	 * Loads view information to cache given by the {@link ViewConfigHandle}

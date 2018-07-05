@@ -89,21 +89,7 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 			// register all ofdb-relevant data of the given view to cache
 			ViewConfigHandle viewHandle = this.viewConfigFactory.createViewConfiguration(ansichtDef.getName());
-			// } catch ( OfdbInvalidConfigurationException e ) {
-			// LOGGER.error( e.getLocalizedMessage() );
-			// }
-
-			// ValidationResultSet viewValidationResultSet =
-			// this.ofdbValidator.validateViewConfiguration( viewHandle );
-			//
-			// if ( viewValidationResultSet.hasErrors() ) {
-			// String msg = LocalizedMessages.getString( Constants.BUNDLE_NAME,
-			// "invalidConfiguration" );
-			// throw new OfdbInvalidConfigurationException( msg );
-			// // continue;
-			// } else {
 			this.ofdbCacheManager.registerView(viewHandle);
-			// }
 
 		}
 

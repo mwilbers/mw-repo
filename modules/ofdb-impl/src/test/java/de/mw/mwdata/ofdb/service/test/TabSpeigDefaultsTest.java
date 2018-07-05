@@ -23,6 +23,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.ofdb.domain.ITabDef.ZEITTYP;
+import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
@@ -128,15 +129,20 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 
 		// create TabSpeig and AnsichtSpalte "PS"
 		tabSpeig = (TabSpeig) viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(tabDef.getName(), "PS");
-		// tabSpeig = DomainMockFactory.createTabSpeigMock( tabDef, "PS", 2,
-		// DBTYPE.BOOLEAN );
 		tabSpeig.setDefaultWert("true");
 		saveForTest(tabSpeig);
 
 		IAnsichtTab ansichtTab_ansichtSpalteMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_ANSICHTSPALTEN,
 				AnsichtSpalten.class.getName(), "ansichtSpalten", AnsichtSpalten.class);
 
-		IAnsichtSpalte aSpaltePS = viewHandle.getViewColumns().get("PS");
+		IAnsichtSpalte aSpaltePS = null;
+		for (IAnsichtSpalte aSpalte : viewHandle.getViewColumns()) {
+			if (aSpalte.getName().equals("PS")) {
+				aSpaltePS = aSpalte;
+				break;
+			}
+		}
+		// IAnsichtSpalte aSpaltePS = viewHandle.getViewColumns().get("PS");
 		saveForTest(aSpaltePS);
 
 		// load configuration and register table
@@ -144,9 +150,10 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 
 		// start test
 		String expected = "TestColumn";
-		TabSpeig ts = DomainMockFactory.createTabSpeigMock((TabDef) tabDef, expected, 3, DBTYPE.LONGINTEGER);
-		ts.setReihenfolge(null);
-		ts.setPrimSchluessel(null);
+		ITabSpeig ts = DomainMockFactory.createTabSpeigMock((TabDef) tabDef, expected, 3, DBTYPE.LONGINTEGER);
+		TabSpeig tsImpl = (TabSpeig) ts;
+		tsImpl.setReihenfolge(null);
+		tsImpl.setPrimSchluessel(null);
 		saveForTest(ts);
 
 		IAnsichtSpalte aSpalteTestColumn = DomainMockFactory

@@ -15,10 +15,7 @@ public class CoreMockFactory {
 		sequence.setName(sequenceName); // FX_TabDef_K:DSID
 		sequence.setInkrement(inkrement);
 		sequence.setLetzteBelegteNr(letzteBelegteNr);
-		sequence.setOfdb("X");
 		sequence.setSystem(Boolean.TRUE);
-
-		// setDefaultCreationProperties(sequence);
 		sequence.setAngelegtAm(new Date());
 		sequence.setAngelegtVon(Constants.SYS_USER_DEFAULT);
 
@@ -29,12 +26,7 @@ public class CoreMockFactory {
 	public static BenutzerBereich createBenutzerBereichMock(final String bereichName) {
 		BenutzerBereich bereichMock = new BenutzerBereich();
 		bereichMock.setName(bereichName);
-		bereichMock.setOfdb("X");
 		bereichMock.setSystem(Boolean.TRUE);
-
-		// setDefaultCreationProperties( bereichMock );
-		// bereichMock.setAngelegtAm(new Date());
-		// bereichMock.setAngelegtVon(Constants.SYS_USER_DEFAULT);
 
 		return bereichMock;
 	}

@@ -199,7 +199,6 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result += prime * result + ((this.getOfdb() == null) ? 0 : this.getOfdb().hashCode());
 		return result;
 	}
 
@@ -219,40 +218,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 			return false;
 		}
 
-		if (this.getOfdb() == null) {
-			if (other.getOfdb() != null)
-				return false;
-		} else if (!this.getOfdb().equals(other.getOfdb())) {
-			return false;
-		}
-
 		return true;
 	}
-
-	// @Override
-	// public boolean equals(final Object arg0) {
-	//
-	// // compare names
-	//
-	// if (null == arg0) {
-	// return false;
-	// }
-	// AnsichtDef orgAnsicht = (AnsichtDef) arg0;
-	//
-	// if (null == this.getName() && null != orgAnsicht.getName()) {
-	// return false;
-	// }
-	//
-	// return this.getName().equals(orgAnsicht.getName());
-	// }
-	//
-	// @Override
-	// public int hashCode() {
-	// final int prime = 31;
-	// int result = 1;
-	// result = (prime * result) + ((this.getName() == null) ? 0 :
-	// this.getName().hashCode());
-	// return result;
-	// }
 
 }

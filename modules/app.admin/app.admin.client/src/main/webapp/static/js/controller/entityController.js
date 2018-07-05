@@ -2,9 +2,9 @@
 
 function OfdbFieldEvaluator() {
 	
-	this.isShowColumn = function( ofdbField, appConfig ) {
+	this.isShowColumn = function( uiInputConfig, appConfig ) {
 		
-		if(ofdbField.mapped) {
+		if(uiInputConfig.mapped) {
 			return true;
 		} else {
 			if(appConfig.showNotMappedColumns) {
@@ -19,14 +19,14 @@ function OfdbFieldEvaluator() {
 }
 
 /**
- * Definition for routeProvider: Before loading EntityController and showing grid load all user 
+ * Definition for routeProvider: Before loading EntityGridController and showing grid load all user 
  * specific server based properties for configuring client based constants
  *
  */
 App.config(function($routeProvider){
   $routeProvider
     .when('/',{
-		controller:'EntityController',
+		controller:'EntityGridController',
 		templateUrl:'../static/includes/mwgrid_include.html',
 		resolve:{
 			'MyServiceData':function(AppConfigService){
@@ -38,12 +38,12 @@ App.config(function($routeProvider){
 App.service('AppConfigService', function($http) {
     var appConfig = null;
 
-	var promise = $http.get('userConfig/').success(function (data) {
+	var promiseConfig = $http.get('userConfig/').success(function (data) {
 		appConfig = data;
     });
 
     return {
-      promise:promise,
+      promise:promiseConfig,
       setData: function (data) {
     	  appConfig = data;
       },
@@ -53,8 +53,8 @@ App.service('AppConfigService', function($http) {
     };
 });
 
-App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
-    console.log("entityController");
+App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
+    console.log("EntityGridController");
 	
 	var self = this;
 	globalEntityController = self;
@@ -109,7 +109,6 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 	}
 	
 	function setCurrentUrl( newUrl ) {
-//		currentUrl = newUrl;
 		$scope.appConfig.currentUrl = newUrl;
 	}
 	
@@ -117,15 +116,15 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 		return $scope.appConfig.currentUrl;		
 	}
 	
-    function loadGridRows( entityTOs, ofdbFields ){
+    function loadGridRows( entityTOs, uiInputConfigs ){
     	
     	for(var i = 0; i < entityTOs.length; i++){            
     		var entityTO = entityTOs[i].item;
 			
 			var row = {};
-			for(var j = 0; j < ofdbFields.length; j++) {
-				if(ofdbFields[j].mapped) {
-					row[ofdbFields[j].propName] = entityTO[ofdbFields[j].propName];
+			for(var j = 0; j < uiInputConfigs.length; j++) {
+				if(uiInputConfigs[j].mapped) {
+					row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].propName];
 				} else {
 					row[j] = "-";
 				}
@@ -145,9 +144,13 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
                 console.log("ctrl.fetchAllEntities for " + getCurrentUrl());
 				$scope.state.rows = [];
 				
+				if(d.uiInputConfigs.length == 0) {
+					console.error('Could not load Ofdb informations.');
+				}
+				
 				mwGrid.initialize();
-				loadGridRows( d.entityTOs, d.ofdbFields );
-				mwGrid.load( $scope.state.rows, d.ofdbFields, $scope.appConfig );
+				loadGridRows( d.entityTOs, d.uiInputConfigs );
+				mwGrid.load( $scope.state.rows, d.uiInputConfigs, $scope.appConfig );
 				
             },
             function(errResponse){
@@ -157,8 +160,8 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
     }
 	
 	function initialize( entityId, entity ){
-    	self.entity.id = entityId;
 		self.entity = entity;
+		self.entity.id = entityId;
     }
 	
 	function setRowDirty() {
@@ -193,16 +196,6 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 		}
 	
 	}
-	
-	function createEntity( entity ){
-    	entityService.createEntity(entity, getCurrentUrl())
-            .then(
-            fetchAllEntities,
-            function(errResponse){
-                console.error('Error while creating Entity');
-            }
-        );
-    }
 
 	function updateEntity( entity, id){
     	entityService.updateEntity( entity, id, getCurrentUrl())
@@ -228,8 +221,8 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 		console.log("ctrl.submit");
 		
         if(self.entity.id===null){
-            console.log('Saving New Entity', self.entity);
-            createEntity( self.entity );
+            console.log('Error state: entity.id should not be null', self.entity);
+            // createEntity( self.entity );
         }else{
             updateEntity(self.entity, self.entity.id);
             console.log('Entity updated with id ', self.entity.id);
@@ -258,9 +251,44 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
 
     function reset(){
 		self.entity = {};
-        $scope.myForm.$setPristine(); //reset Form
+        // $scope.myForm.$setPristine(); //reset Form
 		rowDirty = false;
 		rowChanged = false;
+    }
+
+}]);
+
+App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
+    console.log("EntityInsertController");
+	
+	var self = this;
+	if(null === appConfigService.getApplicationConfig()) {
+			return;
+	}
+	
+	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
+	self.entity = {};
+	
+	$scope.entity = {};
+	
+	$scope.appConfig = {
+		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl,
+		uiInputConfigs: appConfigService.getApplicationConfig().uiInputConfigs
+	};
+
+    function submit() {
+		console.log("ctrl.submit");
+	    createEntity( $scope.entity );
+    }
+
+	function createEntity( entity ){
+    	entityService.createEntity(entity, '')
+            .then(
+            fetchAllEntities,
+            function(errResponse){
+                console.error('Error while creating Entity');
+            }
+        );
     }
 
 }]);
@@ -269,8 +297,6 @@ App.controller('EntityController', ['$scope', 'EntityService', 'AppConfigService
  * globalEntityController is necessary for getting access to controller later in mwgrid
  */
 var globalEntityController = null;
-
-
 
 var mwGrid = new mwGrid();
 var evaluator = new OfdbFieldEvaluator(  );

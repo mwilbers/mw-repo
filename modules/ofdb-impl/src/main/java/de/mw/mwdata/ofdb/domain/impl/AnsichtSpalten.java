@@ -24,7 +24,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 
 /**
- * Class for managing entries in the table FX_TabDef_K
+ * Class for managing entries in the table FX_AnsichtSpalten_K
  *
  * @author Wilbers, Markus
  * @version 1.0

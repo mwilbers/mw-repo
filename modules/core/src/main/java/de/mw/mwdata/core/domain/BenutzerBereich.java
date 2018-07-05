@@ -17,8 +17,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import de.mw.mwdata.core.Constants;
-
 /**
  * @author Wilbers, Markus
  * @version 1.0
@@ -68,9 +66,6 @@ public class BenutzerBereich extends AbstractMWEntity {
 
 	@Column(name = "BESCHREIBUNG", updatable = true, nullable = true)
 	private String beschreibung;
-
-	@Column(name = Constants.SYS_COL_IMPORT_ID, updatable = true, nullable = true)
-	private Long importId;
 
 	@Override
 	public String getSequenceKey() {
@@ -156,14 +151,6 @@ public class BenutzerBereich extends AbstractMWEntity {
 
 		return (this.getId() == oBereich.getId());
 
-	}
-
-	public void setImportId(final Long importId) {
-		this.importId = importId;
-	}
-
-	public Long getImportId() {
-		return this.importId;
 	}
 
 }

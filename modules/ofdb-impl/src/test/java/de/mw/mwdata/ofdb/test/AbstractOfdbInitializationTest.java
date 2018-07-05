@@ -159,7 +159,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			saveForTest(tabDef);
 
 			// create and save all Tabprops
-			saveOrUpdateAllTabProps(entityMapping, tabDef, true);
+			saveOrUpdateAllTabProps(entityMapping, tabDef);
 
 		} else {
 			tabDef.setFullClassName(fullClassName);
@@ -169,28 +169,28 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		return tabDef;
 	}
 
-	protected void saveOrUpdateAllTabProps(final OfdbEntityMapping entityMapping, final TabDef tabDef,
-			final boolean setDefaultCredentials) {
+	protected void saveOrUpdateAllTabProps(final OfdbEntityMapping entityMapping, final TabDef tabDef) {
 
 		int reihenfolge = 0;
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
 			// OfdbPropMapper propMapper = propEntry.getValue();
 			reihenfolge++;
 
-			TabSpeig tabSpeig = DomainMockFactory.createTabSpeigMock(tabDef, mapper.getColumnName(), reihenfolge,
+			ITabSpeig tabSpeig = DomainMockFactory.createTabSpeigMock(tabDef, mapper.getColumnName(), reihenfolge,
 					mapper.getDbType());
+			TabSpeig tabSpeigImpl = (TabSpeig) tabSpeig;
 
 			if ("ANGELEGTAM".equals(mapper.getColumnName().toUpperCase())) {
-				tabSpeig.setDefaultWert(Constants.MWDATADEFAULT.NOW.getName());
+				tabSpeigImpl.setDefaultWert(Constants.MWDATADEFAULT.NOW.getName());
 			}
 			if ("ANGELEGTVON".equals(mapper.getColumnName().toUpperCase())) {
-				tabSpeig.setDefaultWert(Constants.MWDATADEFAULT.USERID.getName());
+				tabSpeigImpl.setDefaultWert(Constants.MWDATADEFAULT.USERID.getName());
 			}
 
-			if (setDefaultCredentials) {
-				tabSpeig.setAngelegtAm(new Date());
-				tabSpeig.setAngelegtVon(Constants.SYS_USER_DEFAULT);
-			}
+			// if (setDefaultCredentials) {
+			// tabSpeig.setAngelegtAm(new Date());
+			// tabSpeig.setAngelegtVon(Constants.SYS_USER_DEFAULT);
+			// }
 
 			saveForTest(tabSpeig);
 		}
@@ -216,7 +216,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			saveForTest(tabDef);
 
 			// create and save all Tabprops
-			saveOrUpdateAllTabProps(entityMapping, tabDef, true);
+			saveOrUpdateAllTabProps(entityMapping, tabDef);
 
 		} else {
 			tabDef.setFullClassName(fullClassName);

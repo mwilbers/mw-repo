@@ -11,6 +11,7 @@ import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.Sequence;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabDef.DATENBANK;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
@@ -39,7 +40,7 @@ public class DomainMockFactory {
 	 * @param reihenfolge
 	 * @return
 	 */
-	public static TabSpeig createTabSpeigMock(final TabDef tabDef, final String spalteName, final long reihenfolge,
+	public static ITabSpeig createTabSpeigMock(final ITabDef tabDef, final String spalteName, final long reihenfolge,
 			final DBTYPE dbType) {
 
 		TabSpeig tabSpeig = new TabSpeig();
@@ -54,11 +55,10 @@ public class DomainMockFactory {
 		tabSpeig.setEingabeNotwendig(false);
 		tabSpeig.setBearbErlaubt(true);
 		tabSpeig.setSystemWert(false);
-
-		tabSpeig.setOfdb("X");
 		tabSpeig.setSystem(Boolean.FALSE);
 
-		// setDefaultCreationProperties( tabSpeig );
+		tabSpeig.setAngelegtAm(new Date());
+		tabSpeig.setAngelegtVon(Constants.SYS_USER_DEFAULT);
 
 		return tabSpeig;
 
@@ -70,7 +70,6 @@ public class DomainMockFactory {
 		AnsichtSpalten aSpalte = new AnsichtSpalten();
 		aSpalte.setAnsichtDef(viewDef);
 
-		// aSpalte.setAnsicht( viewDef.getName() );
 		aSpalte.setIndexGrid(1);
 		aSpalte.setTabAKey(viewDef.getName());
 		aSpalte.setEingabeNotwendig(false);
@@ -83,14 +82,11 @@ public class DomainMockFactory {
 		aSpalte.setInGridLaden(true);
 		aSpalte.setInGridAnzeigen(true);
 		aSpalte.setFilter(true);
-		aSpalte.setOfdb("X");
 
 		aSpalte.setBearbHinzufZugelassen(true);
 		aSpalte.setBearbZugelassen(true);
 
 		aSpalte.setViewTab(viewTab);
-
-		// setDefaultCreationProperties( aSpalte );
 
 		return aSpalte;
 
@@ -107,7 +103,6 @@ public class DomainMockFactory {
 		ansichtDefMock.setLesen(Boolean.TRUE);
 
 		ansichtDefMock.setBereich(bereich);
-		ansichtDefMock.setOfdb("X");
 		ansichtDefMock.setSystem(Boolean.FALSE);
 
 		if (setDefaultCredentials) {
@@ -121,7 +116,7 @@ public class DomainMockFactory {
 
 	}
 
-	public static AnsichtTab createAnsichtTabMock(final AnsichtDef viewDef, final TabDef tabDef, final int reihenfolge,
+	public static AnsichtTab createAnsichtTabMock(final AnsichtDef viewDef, final ITabDef tabDef, final int reihenfolge,
 			final String joinTyp, final String join1SpalteAKey, final String join2SpalteAKey, final String join2TabAKey,
 			final boolean setDefaultCredentials) {
 
@@ -142,7 +137,6 @@ public class DomainMockFactory {
 			viewTab.setJoin2TabAKey(join2TabAKey);
 		}
 		viewTab.setReihenfolge(reihenfolge);
-		viewTab.setOfdb("X");
 		viewTab.setSystem(Boolean.FALSE);
 		viewTab.setTabDef(tabDef);
 
@@ -159,7 +153,6 @@ public class DomainMockFactory {
 	public static BenutzerBereich createBenutzerBereichMock(final String bereichName) {
 		BenutzerBereich bereichMock = new BenutzerBereich();
 		bereichMock.setName(bereichName);
-		bereichMock.setOfdb("X");
 		bereichMock.setSystem(Boolean.TRUE);
 
 		setDefaultCreationProperties(bereichMock);
@@ -174,7 +167,6 @@ public class DomainMockFactory {
 		sequence.setName(sequenceName); // FX_TabDef_K:DSID
 		sequence.setInkrement(inkrement);
 		sequence.setLetzteBelegteNr(letzteBelegteNr);
-		sequence.setOfdb("X");
 		sequence.setSystem(Boolean.TRUE);
 
 		setDefaultCreationProperties(sequence);
@@ -201,7 +193,6 @@ public class DomainMockFactory {
 
 		TabDef tabDef = new TabDef();
 		tabDef.setName(tableName);
-		tabDef.setOfdb("X");
 		tabDef.setSystem(Boolean.FALSE);
 		tabDef.setAlias(tableName);
 		tabDef.setBereichsId(bereich.getId());

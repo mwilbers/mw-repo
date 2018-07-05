@@ -1,6 +1,7 @@
 package de.mw.mwdata.core.domain;
 
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -31,40 +33,31 @@ public class Benutzer extends AbstractMWEntity {
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= -3289426633012773081L;
+	private static final long serialVersionUID = -3289426633012773081L;
 
-	private static final String	SEQUENCE_KEY		= "Benutzerdef:DSID";
+	private static final String SEQUENCE_KEY = "Benutzerdef:DSID";
 
 	@Id
 	@GeneratedValue(generator = "SEQ_GEN")
 	@GenericGenerator(name = "SEQ_GEN", strategy = "de.mw.mwdata.core.db.FxSequenceGenerator")
 	@Column(name = "DSID", insertable = false, updatable = false, nullable = false)
-	private Long				id;
+	private Long id;
 
 	@Column(name = "BENUTZERNAME", unique = true, updatable = true, nullable = false)
-	private String				name;
+	private String name;
 
 	@Column(name = "PASSWORT", unique = false, updatable = true, nullable = false)
-	private String				passwort;
+	private String passwort;
 
 	@Column(name = "DEAKTIVIERT", columnDefinition = "NUMBER(1) default 0", updatable = false, nullable = false)
 	@Type(type = "fxboolean")
-	private boolean				deaktiviert;
+	private boolean deaktiviert;
 
 	@Column(name = "OBJEKTROLLENID", updatable = true, nullable = true)
-	private Integer				objektRollenId;
-
-	// @ManyToOne(targetEntity = BenutzerRecht.class, fetch = FetchType.LAZY)
-	// @JoinColumn(name = "DSID", referencedColumnName = "BENUTZERID", insertable = false, updatable = false)
-	// private BenutzerRecht benutzerRecht;
+	private Integer objektRollenId;
 
 	@OneToMany(mappedBy = "benutzer")
-	private List<BenutzerRecht>	benutzerRechte;
-
-	// @Column(name = "NAMEGB", updatable = true, nullable = false)
-	// private String nameGb;
-
-	// Member <--> ManyToOne <--> MemberRole <--> OneToMany <--> Role
+	private List<BenutzerRecht> benutzerRechte;
 
 	@Override
 	public String getSequenceKey() {
@@ -77,7 +70,7 @@ public class Benutzer extends AbstractMWEntity {
 	}
 
 	@Override
-	public void setId( final Long id ) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -87,11 +80,11 @@ public class Benutzer extends AbstractMWEntity {
 	}
 
 	@Override
-	public void setName( final String name ) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setPasswort( final String passwort ) {
+	public void setPasswort(final String passwort) {
 		this.passwort = passwort;
 	}
 
@@ -99,7 +92,7 @@ public class Benutzer extends AbstractMWEntity {
 		return this.passwort;
 	}
 
-	public void setDeaktiviert( final boolean deaktiviert ) {
+	public void setDeaktiviert(final boolean deaktiviert) {
 		this.deaktiviert = deaktiviert;
 	}
 
@@ -107,7 +100,7 @@ public class Benutzer extends AbstractMWEntity {
 		return this.deaktiviert;
 	}
 
-	public void setObjektRollenId( final int objektRollenId ) {
+	public void setObjektRollenId(final int objektRollenId) {
 		this.objektRollenId = objektRollenId;
 	}
 
@@ -115,15 +108,7 @@ public class Benutzer extends AbstractMWEntity {
 		return this.objektRollenId;
 	}
 
-	// public void setBenutzerRecht( final BenutzerRecht benutzerRecht ) {
-	// this.benutzerRecht = benutzerRecht;
-	// }
-	//
-	// public BenutzerRecht getBenutzerRecht() {
-	// return this.benutzerRecht;
-	// }
-
-	public void setBenutzerRechte( final List<BenutzerRecht> benutzerRechte ) {
+	public void setBenutzerRechte(final List<BenutzerRecht> benutzerRechte) {
 		this.benutzerRechte = benutzerRechte;
 	}
 

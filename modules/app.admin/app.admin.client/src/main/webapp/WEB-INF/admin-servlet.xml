@@ -53,6 +53,7 @@
 	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" >
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
+		<property name="ofdbService" ref="ofdbService"></property>
 	</bean>
 	
 	<bean id="app.admin.menuController" class="de.mw.mwdata.app.admin.client.controller.MenuController">

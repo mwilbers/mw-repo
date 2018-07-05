@@ -16,7 +16,8 @@
         "PercentComplete": PercentCompleteFormatter,
         "PercentCompleteBar": PercentCompleteBarFormatter,
         "YesNo": YesNoFormatter,
-        "Checkmark": CheckmarkFormatter
+        "Checkmark": CheckmarkFormatter,
+		"DeleteButton": DeleteButtonFormatter
       }
     }
   });
@@ -30,6 +31,11 @@
       return "<span style='color:green'>" + value + "%</span>";
     }
   }
+  
+  function DeleteButtonFormatter(row,cell,value,columnDef,dataContext){  
+		var button = "<input style='width: 40px; padding: 2px; font-size: 10px;' class='btn btn-danger' value='Delete' type='button' id='"+ dataContext.id +"' />";
+		return button;
+	}
 
   function PercentCompleteBarFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value === "") {

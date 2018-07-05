@@ -35,7 +35,7 @@ public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
 	}
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
-	public abstract ResponseEntity<UiEntityList<E>> listAllTabDefs();
+	public abstract ResponseEntity<UiEntityList<E>> listAllEntities();
 
 	@RequestMapping(value = "**/tabDef/{id}", method = RequestMethod.PUT)
 	public abstract ResponseEntity<EntityTO<E>> updateEntity(@PathVariable("id") long id, @RequestBody E entity);

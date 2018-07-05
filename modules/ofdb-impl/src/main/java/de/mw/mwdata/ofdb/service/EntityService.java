@@ -105,8 +105,6 @@ public class EntityService implements IEntityService<IEntity> {
 		String sql = this.getOfdbService().buildFilteredSQL(viewName, entityTO, cols);
 
 		int pageSize = loadPageSize();
-		// FIXME sqlCount not the same as sql string ... entityTO is not evaluated for
-		// count ...
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
 		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex, pageSize);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);

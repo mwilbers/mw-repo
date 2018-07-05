@@ -90,14 +90,6 @@ public class Sequence extends AbstractMWEntity {
 		this.inkrement = inkrement;
 	}
 
-	// public Long getBlockGroesse() {
-	// return this.blockGroesse;
-	// }
-	//
-	// public void setBlockGroesse( final Long blockGroesse ) {
-	// this.blockGroesse = blockGroesse;
-	// }
-
 	public Long getGesperrtVonLoginId() {
 		return this.gesperrtVonLoginId;
 	}

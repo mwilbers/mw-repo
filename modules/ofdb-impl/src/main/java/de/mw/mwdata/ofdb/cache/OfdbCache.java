@@ -38,7 +38,6 @@ public class OfdbCache implements Iterable<String> {
 		this.viewConfigs.put(viewName, viewConfig);
 	}
 
-	// FIXME: move method to OfdbCacheManager, class OfdbCache should be stupid ...
 	public void removeViewData(final String viewName) {
 		this.viewConfigs.remove(viewName);
 	}

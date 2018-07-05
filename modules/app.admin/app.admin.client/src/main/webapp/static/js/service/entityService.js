@@ -8,7 +8,7 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
         updateEntity:updateEntity,
         deleteUser:deleteUser
     };
-
+		
     return factory;
 
     function fetchAllEntities( restUrl ) {
@@ -24,6 +24,7 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
                 deferred.reject(errResponse);
             }
         );
+		// ofdbFields = deferred.promise.ofdbFields;
         return deferred.promise;
     }
     

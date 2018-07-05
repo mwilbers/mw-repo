@@ -119,10 +119,10 @@ public final class Constants {
 		}
 	}
 
-	/**
-	 * global constant for sys-column OFDB
-	 */
-	public static final String SYS_COL_OFDB = "ofdb";
+	// /**
+	// * global constant for sys-column OFDB
+	// */
+	// public static final String SYS_COL_OFDB = "ofdb";
 
 	/**
 	 * global constant for sys-column SYSTEM

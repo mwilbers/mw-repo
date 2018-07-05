@@ -23,7 +23,6 @@ import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -37,7 +36,7 @@ import de.mw.mwdata.ofdb.domain.IMenue;
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_Menues_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "MENUEID", Constants.SYS_COL_OFDB }) })
+		@UniqueConstraint(columnNames = { "MENUEID" }) })
 public class Menue extends AbstractMWEntity implements IMenue {
 
 	/**

@@ -20,7 +20,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.ofdb.domain.ITabDef;
@@ -38,7 +37,7 @@ import de.mw.mwdata.ofdb.domain.ITabDef;
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_TabDef_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "TABELLE", Constants.SYS_COL_OFDB }) })
+		@UniqueConstraint(columnNames = { "TABELLE" }), @UniqueConstraint(columnNames = { "ALIAS" }) })
 public class TabDef extends AbstractMWEntity implements ITabDef {
 
 	/**
@@ -59,11 +58,6 @@ public class TabDef extends AbstractMWEntity implements ITabDef {
 
 	@Column(name = "TABELLE", updatable = false, nullable = false, unique = true)
 	private String name;
-
-	// @OneToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "TABELLE", referencedColumnName = "ANSICHT", nullable
-	// = false, insertable = false, updatable = false)
-	// private AnsichtDef ansichtDef;
 
 	@Column(name = "ALIAS", updatable = true, nullable = false, unique = true)
 	private String alias;

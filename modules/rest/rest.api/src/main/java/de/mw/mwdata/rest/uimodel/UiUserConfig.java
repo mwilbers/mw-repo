@@ -1,5 +1,7 @@
 package de.mw.mwdata.rest.uimodel;
 
+import java.util.List;
+
 /**
  * Class for transporting all systemwide and user specific properties from
  * backend to ui.<br>
@@ -14,12 +16,9 @@ package de.mw.mwdata.rest.uimodel;
  */
 public class UiUserConfig implements UiJsonConvertable {
 
-	// FIXME: dynamice url
-	// private static final String DEFAULT_REST_URL =
-	// "http://localhost:8080/app.admin.client/admin/tabDef/";
-
 	private String defaultRestUrl;
 	private boolean showNotMappedColumnsInGrid;
+	private List<UiInputConfig> uiInputConfigs;
 
 	public String getDefaultRestUrl() {
 		return this.defaultRestUrl;
@@ -35,6 +34,14 @@ public class UiUserConfig implements UiJsonConvertable {
 
 	public void setShowNotMappedColumnsInGrid(boolean showNotMappedColumnsInGrid) {
 		this.showNotMappedColumnsInGrid = showNotMappedColumnsInGrid;
+	}
+
+	public List<UiInputConfig> getUiInputConfigs() {
+		return this.uiInputConfigs;
+	}
+
+	public void setUiInputConfigs(List<UiInputConfig> uiInputConfigs) {
+		this.uiInputConfigs = uiInputConfigs;
 	}
 
 }

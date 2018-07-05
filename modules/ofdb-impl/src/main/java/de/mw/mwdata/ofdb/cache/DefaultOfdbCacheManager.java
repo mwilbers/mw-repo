@@ -117,11 +117,6 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 			if (null != tableDef) {
 				return tableDef;
 			}
-			// for (IAnsichtTab viewTab : viewHandle.getViewTabs()) {
-			// if (viewTab.getTabDef().getName().equals(tableName)) {
-			// return viewTab.getTabDef();
-			// }
-			// }
 
 		}
 
