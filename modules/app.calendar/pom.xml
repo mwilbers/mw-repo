@@ -17,5 +17,6 @@
     <modules>
 		<module>app.calendar.server</module>
 		<module>app.calendar.client</module>
+		<module>app.calendar.admin</module>
     </modules>
 </project>

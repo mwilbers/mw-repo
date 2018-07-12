@@ -2283,7 +2283,7 @@ update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name
 Insert into FX_MENUES_K (MENUEID,MENUE,ANZEIGENAME,TYP,EBENE,UNTERMENUEVON,LIZENZ,GRUPPE,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,URLPATH,BEREICHSID,AKTIV,ANSICHTDEFID,HAUPTMENUEID) 
 values ('10','Admin','Administration','KNOTEN','0',null,null,'Administration','MW',to_date('04.07.18','DD.MM.RR'),'-1',
 (select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_Menues_K:DSID'),
-null,null,'-1',null,null);
+null,(select b.BereichsID from BENUTZERBEREICHEDEF b where b.name = 'Administrator'),'-1',null,null);
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_Menues_K:DSID';
 
@@ -2291,7 +2291,7 @@ update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name
 Insert into FX_MENUES_K (MENUEID,MENUE,ANZEIGENAME,TYP,EBENE,UNTERMENUEVON,LIZENZ,GRUPPE,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,URLPATH,BEREICHSID,AKTIV,ANSICHTDEFID,HAUPTMENUEID) 
 values ('1001','AdminOberflaeche','Oberfläche','KNOTEN','1','Admin',null,null,'MW',to_date('04.07.18','DD.MM.RR'),'-1',
 (select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_Menues_K:DSID'),
-null,null,'-1',null,
+null,(select b.BereichsID from BENUTZERBEREICHEDEF b where b.name = 'Administrator'),'-1',null,
 (select dsid from FX_Menues_K where anzeigename = 'Administration'));
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_Menues_K:DSID';
@@ -2501,5 +2501,15 @@ values ('24','FX_Menues_K','urlPath','-1','-1','-1',null,null,null,null,null,nul
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_AnsichtSpalten_K:DSID';
 
+-- fix bereich of menues of "Administrator"
+update FX_Menues_K 
+set Bereich = 'Administrator',
+Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
+where menue = 'AdminOberflaeche';
+
+update FX_Menues_K 
+set Bereich = 'Administrator',
+Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
+where menue = 'Admin';
 
 commit;

@@ -33,13 +33,15 @@ public class OfdbMenuService implements IMenuService {
 	}
 
 	@Override
-	public List<EntityTO> findMainMenus() {
+	public List<EntityTO> findMainMenus(final String userAreaName) {
 
 		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
 		int layer = 0;
 		String sql = builder.selectTable(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromTable(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
+				.joinEntity("bereich", "bBereich")
 				.andWhereRestriction("aMenu", "ebene", OperatorEnum.Eq, String.valueOf(layer), ValueType.NUMBER)
+				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, userAreaName, ValueType.STRING)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
 		List<IEntity[]> entities = this.crudService.executeSql(sql);
@@ -74,13 +76,15 @@ public class OfdbMenuService implements IMenuService {
 	}
 
 	@Override
-	public List<EntityTO> findChildMenus(final int parentMenuId) {
+	public List<EntityTO> findChildMenus(final int parentMenuId, final String userAreaName) {
 
 		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
 		String sql = builder.selectTable(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromTable(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
+				.joinEntity("bereich", "bBereich")
 				.andWhereRestriction("aMenu", "hauptMenueId", OperatorEnum.Eq, String.valueOf(parentMenuId),
 						ValueType.NUMBER)
+				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, userAreaName, ValueType.STRING)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
 		List<IEntity[]> entities = this.crudService.executeSql(sql);

@@ -61,6 +61,14 @@ public class EntityTO<E extends AbstractMWEntity> {
 		this.map = new HashMap<>();
 	}
 
+	private EntityTO() {
+		this.map = new HashMap<>();
+	}
+
+	public static EntityTO<AbstractMWEntity> createEmptyEntityTO() {
+		return new EntityTO<>();
+	}
+
 	public boolean isEmpty() {
 		return null == this.entity;
 	}

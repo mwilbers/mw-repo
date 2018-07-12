@@ -24,10 +24,10 @@
 		<property name="order" value="2" />
 	</bean>
 	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
-	 	<constructor-arg index="0"  value="${app.rights.benutzerBereiche}" /> <!--  FIXME: remove admin here -->
-	 	<property name="ofdbService" ref="ofdbService"></property>
-	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
+	 	<property name="ofdbService" ref="ofdbService" />
+	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
+	 	<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 	
 	

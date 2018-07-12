@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<bean id="userFilter" class="de.mw.mwdata.app.admin.client.filter.UserFilter" />
+
+<!-- 	<bean id="app.admin.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init"> -->
+	 	
+<!-- 	 	<constructor-arg index="0"  value="${app.rights.benutzerBereiche}" /> -->
+<!-- 	 	<property name="ofdbService" ref="ofdbService"></property> -->
+<!-- 	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property> -->
+<!-- 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property> -->
+<!-- 	</bean> -->
+
+</beans>

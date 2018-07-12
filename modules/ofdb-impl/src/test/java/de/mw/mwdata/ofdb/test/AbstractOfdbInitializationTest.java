@@ -27,6 +27,7 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.Sequence;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
@@ -138,7 +139,8 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		this.sequenceCache.add(sequence);
 
 		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
-		this.testBereich = DomainMockFactory.createBenutzerBereichMock(appFactory.getNameBenutzerBereich());
+		this.testBereich = DomainMockFactory.createBenutzerBereichMock(
+				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
 		this.benutzerBereichDao.insert(this.testBereich);
 
 	}

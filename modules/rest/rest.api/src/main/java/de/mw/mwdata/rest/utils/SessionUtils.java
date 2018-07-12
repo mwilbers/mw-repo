@@ -17,7 +17,7 @@ public class SessionUtils {
 
 	protected static Logger log = LoggerFactory.getLogger(SessionUtils.class);
 
-	private static final String MW_SESSION_URLPATH = "urlPath";
+	public static final String MW_SESSION_URLPATH = "urlPath";
 
 	public static void logSession(final HttpSession session) {
 
@@ -63,16 +63,6 @@ public class SessionUtils {
 		HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest();
 		return curRequest;
-	}
-
-	public static String getLastUrlPath() {
-		HttpSession httpSession = getHttpServletRequest().getSession();
-		return (String) SessionUtils.getAttribute(httpSession, SessionUtils.MW_SESSION_URLPATH);
-	}
-
-	public static void setLastUrlPath(final String urlPath) {
-		HttpSession httpSession = getHttpServletRequest().getSession();
-		setAttribute(httpSession, MW_SESSION_URLPATH, urlPath);
 	}
 
 }

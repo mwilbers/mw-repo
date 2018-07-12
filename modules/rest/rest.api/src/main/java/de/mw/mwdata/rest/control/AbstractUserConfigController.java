@@ -39,8 +39,10 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 	public ResponseEntity<UiUserConfig> loadSystemProperties() {
 
 		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
+		String identifierUrlPath = this.configService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
+		String lastUrlPath = (String) SessionUtils.getAttribute(SessionUtils.getHttpServletRequest().getSession(),
+				identifierUrlPath);
 
-		String lastUrlPath = (String) SessionUtils.getLastUrlPath();
 		if (StringUtils.isEmpty(lastUrlPath)) {
 			String defaultEntity = this.configService.getPropertyValue("app.defaultEntity");
 			lastUrlPath = defaultEntity;

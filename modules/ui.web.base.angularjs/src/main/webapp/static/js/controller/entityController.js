@@ -34,6 +34,7 @@ App.config(function($routeProvider){
 			}
 		}})
   });
+  
 
 App.service('AppConfigService', function($http) {
     var appConfig = null;
@@ -41,7 +42,7 @@ App.service('AppConfigService', function($http) {
 	var promiseConfig = $http.get('userConfig/').success(function (data) {
 		appConfig = data;
     });
-
+	
     return {
       promise:promiseConfig,
       setData: function (data) {
@@ -137,7 +138,8 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     	
     }
     
-    function fetchAllEntities(){
+    function fetchAllEntities(otherController){
+		
     	entityService.fetchAllEntities( getCurrentUrl() )
             .then(
             function(d) {
@@ -145,7 +147,11 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				$scope.state.rows = [];
 				
 				if(d.uiInputConfigs.length == 0) {
-					console.error('Could not load Ofdb informations.');
+					console.warn('Could not load Ofdb informations.');
+				}
+				
+				if(undefined !== otherController) {
+					otherController.initializeConfig( d.uiInputConfigs );
 				}
 				
 				mwGrid.initialize();
@@ -157,6 +163,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
                 console.error('Error while fetching Entities');
             }
         );
+		
     }
 	
 	function initialize( entityId, entity ){
@@ -262,12 +269,15 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
     console.log("EntityInsertController");
 	
 	var self = this;
+	globalEntityInsertController = self;
+	
 	if(null === appConfigService.getApplicationConfig()) {
 			return;
 	}
 	
 	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
 	self.entity = {};
+	self.initializeConfig = initializeConfig;
 	
 	$scope.entity = {};
 	
@@ -280,6 +290,11 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
 		console.log("ctrl.submit");
 	    createEntity( $scope.entity );
     }
+	
+	function initializeConfig( uiInputConfigs ) {
+		// $scope.appConfig.currentUrl = appConfigService.getApplicationConfig().defaultRestUrl;
+		$scope.appConfig.uiInputConfigs = uiInputConfigs;
+	}
 
 	function createEntity( entity ){
     	entityService.createEntity(entity, '')
@@ -297,6 +312,7 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
  * globalEntityController is necessary for getting access to controller later in mwgrid
  */
 var globalEntityController = null;
+var globalEntityInsertController = null;
 
 var mwGrid = new mwGrid();
 var evaluator = new OfdbFieldEvaluator(  );

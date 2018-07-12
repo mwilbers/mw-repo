@@ -17,8 +17,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import de.mw.mwdata.core.Constants;
-
 /**
  * @author Wilbers, Markus
  * @version 1.0
@@ -37,8 +35,6 @@ public class Sequence extends AbstractMWEntity {
 	private static final long serialVersionUID = 1L;
 
 	public final static String SEQUENCE_KEY = "SysSequenz:SequenzID";
-
-	private final static String SEQUENCENAME = Constants.DB_SCHEMA + ".SysSequenz";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_SEQUENCE")

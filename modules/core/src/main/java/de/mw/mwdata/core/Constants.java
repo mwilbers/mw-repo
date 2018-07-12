@@ -15,10 +15,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class Constants {
 
-	public static final String DB_SCHEMA = "KD_RRE_PROD"; // KD_RRE_PROD // Config.getString(
-	// Config.CONFIG_BUNDLE,
-	// "db.schemaname" );
-
 	/**
 	 * constant for core-Spring-Application-Context
 	 */

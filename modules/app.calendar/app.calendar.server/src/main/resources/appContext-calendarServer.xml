@@ -12,5 +12,19 @@
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+<!-- FIXME: id should be fixed in abstract base spring bean -->
+	<bean id="app.applicationConfigService" class="de.mw.mwdata.app.calendar.server.config.CalAdminAppConfigService" >
+    	<constructor-arg index="0" value="de.mw.mwdata.app.calendar.config" />    	
+    </bean>
+    
+    <bean id="app.calendar.admin.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+            <list>
+                <value>classpath:/de/mw/mwdata/app/calendar/config.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="order" value="1" />
+	</bean>
 
 </beans>

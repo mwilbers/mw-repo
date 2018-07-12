@@ -3,38 +3,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
   module.exports = 'angWebApp';
 }
 
-function UiEntityResult( uiEntityList ) {
-	
-	var entities = [];
-	entities = uiEntityList.entityTOs;
-	
-	this.size = function() {
-		return entities.length;		
-	};
-	
-	this.getEntities = function() {
-		return entities;
-	};
-	
-	this.getEntity = function( index ) {
-		return new UiEntity( entities[index] );
-	};
-	
-}
-
-function UiEntity( entityTO ) {
-	var entityTO = entityTO;
-	
-	this.getProp = function( propName ) {
-		return entityTO.item[propName];
-	};
-	
-	this.getId = function() { // static: from AbstractMWEntity
-		return entityTO.item.id; 
-	};
-	
-}
-
 App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', function ($http, $timeout, appConfigService) {
   var ctrl = this;
 
@@ -88,7 +56,7 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
         console.log('GET ' + node.url);
         $http.get(node.url).success(function(data) {
             console.log('GET ' + node.url + ' ... ok! ');
-			// var wEntities = new UiEntityResult( data );
+			
 			node.children = loadTreeModel( data );
           });
       } else {
@@ -109,15 +77,13 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
   ctrl.callNode = function callNode(node, selected) {
 	if(undefined !== node.restUrl) {
 		globalEntityController.setCurrentUrl( node.restUrl );
-		globalEntityController.fetchAllEntities();	
-	
+		globalEntityController.fetchAllEntities( globalEntityInsertController );	
 	}
   };
 
   $http.get('nav/')
     .success(function(data) {
-	  ctrl.treeModel = [];
-	  // var wEntities = new UiEntityResult( data );
+	  ctrl.treeModel = [];	  
 	  ctrl.treeModel = loadTreeModel( data );
     });
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.to.OfdbField;
@@ -27,10 +28,9 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		extends AbstractRestCrudController<E> {
 
 	private IEntityService<IEntity> entityService;
-
 	private IOfdbService ofdbService;
-
 	private ICrudService crudService;
+	private ApplicationConfigService configService;
 
 	public void setEntityService(IEntityService entityService) {
 		this.entityService = entityService;
@@ -48,13 +48,18 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 		// initialize ofPropList
 		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
-		SessionUtils.setLastUrlPath(url.getEntityName());
+		String identifierUrlPath = this.configService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
+		SessionUtils.setAttribute(SessionUtils.getHttpServletRequest().getSession(), identifierUrlPath,
+				url.getEntityName());
 
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(url.getEntityName());
+		if (null == viewDef) {
+			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList();
+			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
+		}
+
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		// PaginatedList<IEntity[]> entityResult = null;
-		// List<SortKey> sortKeys = new ArrayList<>();
 		PaginatedList<IEntity[]> entityResult = this.entityService.loadViewPaginated(viewDef.getName(), 1,
 				new ArrayList<SortKey>());
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
@@ -66,11 +71,7 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 	public ResponseEntity<EntityTO<E>> updateEntity(@PathVariable("id") long id, @RequestBody E entity) {
 		System.out.println("Updating Entity " + id);
 
-		// ...
-		// generic type von UIEntityList auf AbstractMWEntity geändert, überall
-		// angepasst,
-		// jetzt neu bauen und testen
-		// ansonsten @see
+		// @see
 		// http://www.davismol.net/2015/03/05/jackson-json-deserialize-a-list-of-objects-of-subclasses-of-an-abstract-class/
 
 		Object foundEntity = this.crudService.findById(entity.getClass(), id);
@@ -84,6 +85,14 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		EntityTO<E> entityTO = new EntityTO(entity);
 		// FIXME: mapValues not set in entityTO
 		return new ResponseEntity<EntityTO<E>>(entityTO, HttpStatus.OK);
+	}
+
+	protected ApplicationConfigService getApplicationConfigService() {
+		return configService;
+	}
+
+	public void setApplicationConfigService(ApplicationConfigService configService) {
+		this.configService = configService;
 	}
 
 	// // @RequestMapping(value = "/tabDef/{id}", method = RequestMethod.PUT)

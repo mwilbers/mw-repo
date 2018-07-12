@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.ApplicationState;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -34,13 +35,23 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 	private ApplicationState state;
 
-	protected String nameBenutzerBereich;
+	// protected String nameBenutzerBereich;
+
+	private ApplicationConfigService applicationConfigService;
 
 	public void setViewConfigFactory(final ViewConfigFactory viewConfigFactory) {
 		this.viewConfigFactory = viewConfigFactory;
 	}
 
-	public DefaultApplicationFactory(final String nameBenutzerBereich) {
+	public ApplicationConfigService getApplicationConfigService() {
+		return applicationConfigService;
+	}
+
+	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
+		this.applicationConfigService = applicationConfigService;
+	}
+
+	public DefaultApplicationFactory() {
 
 		// weiteres vorgehen:
 		// admin-app erweiteren: alle konfig-datensätze der Tabellen MWIV_ORT,
@@ -52,7 +63,7 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 		// 2. insert-statements generieren und ins sql-changelog der app INTERVEREIN
 		// einfügen
 
-		this.nameBenutzerBereich = nameBenutzerBereich;
+		// this.nameBenutzerBereich = nameBenutzerBereich;
 	}
 
 	public void setOfdbService(final IOfdbService ofdbService) {
@@ -71,19 +82,21 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 		// FIXME: here add feature toggle for loading or not loading viewConfigs to
 		// cache ...
 
-		// ... hier prüfen, ob statt AnsichtDef.appcontextpath auch das Feld bereich =
-		// 'Administrator' verwendet werden könnte
-		// dann wäre appcontextpath vielleicht überflüssig
-		List<AnsichtDef> viewList = this.ofdbService.loadViewsForRegistration(this.nameBenutzerBereich);
+		// FIXME:
+		// 1. hier die AnsichtDefs mit dem datenfilter BenutzerBereich laden
+		// 2. in app.admin im MenuController die views AnsichtDef, TableDef etc.
+		// anzeigen lassen
+		// 3. in app.calendar.admin im MenuController die views Group, location,
+		// category anzeigen lassen
+		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
+		List<AnsichtDef> viewList = this.ofdbService.loadViewsForRegistration(userAreaName);
 
 		if (null == viewList) {
 			return;
 		}
 
 		for (AnsichtDef ansichtDef : viewList) {
-
 			if (this.ofdbCacheManager.isViewRegistered(ansichtDef.getName())) {
-				// return;
 				continue;
 			}
 

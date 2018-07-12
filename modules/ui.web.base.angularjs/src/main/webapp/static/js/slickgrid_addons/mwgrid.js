@@ -207,14 +207,17 @@ function mwGrid() {
 				   .appendTo(args.node);
 			}
 		});
-		this.grid.init();
-		this.dataView.beginUpdate();
-		this.dataView.setItems(this.data);
-		this.dataView.setFilter(this.filter);
-		this.dataView.endUpdate();
 		
-		this.grid.render();
-		console.log(this.grid);
+		if(columns.length > 0) {
+			this.grid.init();
+			this.dataView.beginUpdate();
+			this.dataView.setItems(this.data);
+			this.dataView.setFilter(this.filter);
+			this.dataView.endUpdate();
+			
+			this.grid.render();
+			console.log(this.grid);
+		}
 			
 	};
 	

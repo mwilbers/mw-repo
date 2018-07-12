@@ -15,6 +15,7 @@ import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.IEntityService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.core.utils.PaginatedList;
@@ -198,10 +199,12 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Assert.assertTrue(resArray[0] instanceof TabDef);
 
 		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
-		Assert.assertTrue(resArray[1].equals(appFactory.getNameBenutzerBereich()));
+		Assert.assertTrue(resArray[1].equals(
+				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA)));
 
 		EntityTO<TabDef> entityTO = new EntityTO<TabDef>(new TabDef());
-		entityTO.addJoinedValue("BenutzerBereich.name", appFactory.getNameBenutzerBereich());
+		entityTO.addJoinedValue("BenutzerBereich.name",
+				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
 
 		PaginatedList<IEntity[]> items = this.entityService.findByCriteriaPaginated(TestConstants.TABLENAME_TABDEF,
 				entityTO, 0, null);

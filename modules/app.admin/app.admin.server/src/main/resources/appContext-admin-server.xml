@@ -16,10 +16,10 @@
     	<constructor-arg index="0" value="de.mw.mwdata.app.admin.config" />    	
     </bean>
     
-    <bean id="app.admin.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="app.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
             <list>
-                <value>classpath:/hibernate.properties</value>
+<!--                 <value>classpath:/hibernate.properties</value> -->
                 <value>classpath:/de/mw/mwdata/app/admin/config.properties</value>
             </list>
         </property>

@@ -82,9 +82,9 @@ public class ClassNameUtils {
 	 * @param className
 	 * @return
 	 */
-	public static String convertClassNameToUrlPath(final String className) {
+	public static String convertClassNameToUrlPath(final AbstractMWEntity entity) {
 
-		String simpleClassName = getSimpleClassName(className);
+		String simpleClassName = getSimpleClassName(entity.getClass().getName());
 		if (null == simpleClassName) {
 			return null;
 		}

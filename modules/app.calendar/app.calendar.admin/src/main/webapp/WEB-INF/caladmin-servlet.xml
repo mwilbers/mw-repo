@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
+
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix">
+				<value>/WEB-INF/views/</value>
+			</property>
+			<property name="suffix">
+				<value>.jsp</value>
+			</property>
+		</bean>
+		
+		<!-- resources exclusions from servlet mapping -->
+    	<mvc:resources mapping="/static/**" location="/static/"/>
+    	  
+    	  
+    	<mvc:annotation-driven>
+		   <mvc:message-converters>
+           		<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+           		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+		   </mvc:message-converters>
+		</mvc:annotation-driven>
+    	
+		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
+		 	<property name="ofdbService" ref="ofdbService"></property>
+		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
+		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
+		 	<property name="applicationConfigService" ref="app.applicationConfigService" />
+		</bean>
+
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+  	<bean id="requestMappingHandlerMapping" 
+  		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+  	
+  	<!-- FIXME: standardize following four controllers for every web admin application by abstract spring base beans or better by @Controller annotation -->
+  	<bean id="app.calendar.admin.indexController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminIndexController" >
+	</bean>	
+	<bean id="app.calendar.admin.userConfigController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
+		<property name="ofdbService" ref="ofdbService"></property>
+	</bean>	
+	<bean id="app.calendar.admin.menuController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminMenuController">
+		<property name="menuService" ref="ofdbMenuService" />
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
+	</bean>	
+	<bean id="app.calendar.admin.crudController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminCrudController">
+		<property name="ofdbService" ref="ofdbService" />
+		<property name="navigationManager" ref="navigationManager" />
+		<property name="entityService" ref="entityService" />
+		<property name="crudService" ref="crudService" />
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
+	</bean>
+
+	<context:annotation-config />
+   	<context:component-scan base-package="de.mw.mwdata.app.calendar.admin.controller" >
+	</context:component-scan>
+		
+</beans>

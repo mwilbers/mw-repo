@@ -19,6 +19,8 @@ public abstract class AbstractApplicationConfigService implements ApplicationCon
 	private static final String CONFIG_NO_BUNDLE_SET = "%No bundlename provided%"; //$NON-NLS-1$
 	private static final String CONFIG_NO_KEY_SET = "%No key provided for bundle%"; //$NON-NLS-1$
 
+	private final String IDENTIFIER_DELIMITER = "-";
+
 	private String bundleName;
 
 	protected abstract ResourceBundle getResourceBundle();
@@ -55,6 +57,10 @@ public abstract class AbstractApplicationConfigService implements ApplicationCon
 		} catch (final MissingResourceException e) {
 			return '%' + key + '%';
 		}
+	}
+
+	protected String getIdentDelimiter() {
+		return IDENTIFIER_DELIMITER;
 	}
 
 }

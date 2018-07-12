@@ -63,6 +63,9 @@ public class CrudNavigationManager implements NavigationManager, Serializable {
 		// FIXME: there should be no more dependency to ofdb-impl from rest-api
 
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
+		if (null == viewDef) {
+			return EntityTO.createEmptyEntityTO();
+		}
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewDef.getName());
 		IAnsichtTab viewTab = viewHandle.getMainAnsichtTab();
 		Class clazz = ClassNameUtils.loadClass(viewTab.getTabDef().getFullClassName());

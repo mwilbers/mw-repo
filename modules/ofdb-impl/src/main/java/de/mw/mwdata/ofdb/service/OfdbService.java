@@ -127,8 +127,11 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		List<IEntity[]> result = this.crudService.executeSql(sql);
 
 		if (CollectionUtils.isEmpty(result)) {
-			String message = MessageFormat.format("ViewDef by urlpath {0} is not found. ", urlPath);
-			throw new OfdbMissingObjectException(message);
+			String message = MessageFormat.format("No View configurations registered in ofdb cache for urlPath {0}",
+					urlPath);
+			LOGGER.warn(message);
+			return null;
+			// throw new OfdbMissingObjectException(message);
 		}
 
 		Object[] o = result.get(0);
@@ -520,8 +523,12 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	@Override
 	public void presetDefaultValues(final AbstractMWEntity entity) {
 
-		String urlPath = ClassNameUtils.convertClassNameToUrlPath(entity.getClass().getName());
+		String urlPath = ClassNameUtils.convertClassNameToUrlPath(entity);
 		IAnsichtDef viewDef = this.findAnsichtByUrlPath(urlPath);
+		if (null == viewDef) {
+			return;
+		}
+
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewDef.getName());
 		IAnsichtTab viewToTable = viewHandle.getMainAnsichtTab();
 

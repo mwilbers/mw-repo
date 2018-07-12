@@ -11,7 +11,7 @@
     	</appender>
 
       	<appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    		<File>I:/appserver/apache-tomcat-7.0.42/logs/MWDataLogSLF4J.log</File>
+    		<File>I:\appserver\apache-tomcat-7.0.78/logs/MWDataLogSLF4J.log</File>
     		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
     		    <!-- daily rollover -->
     			<FileNamePattern>MWDataLogSLF4J.%d{yyyy-MM-dd}.log</FileNamePattern>

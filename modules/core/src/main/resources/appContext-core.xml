@@ -7,14 +7,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	
-
 	<!-- === Data Source === -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="${hibernate.connection.driver_class}"></property>
-		<property name="url" value="${hibernate.connection.url}"></property>
-		<property name="username" value="${hibernate.connection.username}"></property>
-		<property name="password" value="${hibernate.connection.password}"></property>
+		<property name="driverClassName" value="${app.hibernate.connection.driver_class}" />
+		<property name="url" value="${app.hibernate.connection.url}" />
+		<property name="username" value="${app.hibernate.connection.username}" />
+		<property name="password" value="${app.hibernate.connection.password}" />
 	</bean>
 
 	<!-- === Hibernate Session Factory === -->
@@ -23,9 +21,9 @@
 		<property name="packagesToScan" value="${app.hibernate.packagesToScan}" /> <!-- property set by registered dependant app -->
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
-				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.dialect">${app.hibernate.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${app.hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.format_sql">${app.hibernate.format_sql}</prop>
 			</props>
 		</property>
 	</bean>

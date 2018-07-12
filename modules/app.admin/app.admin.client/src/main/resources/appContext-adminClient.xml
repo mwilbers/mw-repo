@@ -9,11 +9,10 @@
 	<bean id="userFilter" class="de.mw.mwdata.app.admin.client.filter.UserFilter" />
 
 	<bean id="app.admin.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-	 	
-	 	<constructor-arg index="0"  value="${app.rights.benutzerBereiche}" />
 	 	<property name="ofdbService" ref="ofdbService"></property>
 	 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
+	 	<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 
 </beans>

@@ -15,12 +15,10 @@ public class UiEntityList<E extends AbstractMWEntity> {
 	 */
 	private static final long serialVersionUID = -955049299999002273L;
 
-	// private List<OfdbField> ofdbFields;
 	private List<UiInputConfig> uiConfigItems;
 	private List<EntityTO<E>> entityTOs = new ArrayList<EntityTO<E>>();
 
 	public UiEntityList(final List<IEntity[]> entities, final List<OfdbField> ofdbFieldList) {
-		// this.ofdbFields = new ArrayList<>(ofdbFieldList);
 		this.uiConfigItems = new ArrayList<>();
 
 		for (OfdbField field : ofdbFieldList) {
@@ -42,6 +40,14 @@ public class UiEntityList<E extends AbstractMWEntity> {
 			addEntityTO(new EntityTO((AbstractMWEntity) entity[0]));
 		}
 
+	}
+
+	private UiEntityList() {
+		this.uiConfigItems = new ArrayList<>();
+	}
+
+	public static UiEntityList createEmptyUiEntityList() {
+		return new UiEntityList<AbstractMWEntity>();
 	}
 
 	public List<UiInputConfig> getUiInputConfigs() {
