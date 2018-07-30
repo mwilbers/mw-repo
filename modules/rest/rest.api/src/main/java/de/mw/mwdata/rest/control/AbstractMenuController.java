@@ -38,8 +38,20 @@ public abstract class AbstractMenuController {
 		this.urlService = urlService;
 	}
 
+	protected RestUrlService getUrlService() {
+		return this.urlService;
+	}
+
 	public void setMenuService(IMenuService menuService) {
 		this.menuService = menuService;
+	}
+
+	public ApplicationConfigService getApplicationConfigService() {
+		return applicationConfigService;
+	}
+
+	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
+		this.applicationConfigService = applicationConfigService;
 	}
 
 	protected abstract UiMenuNode convertToUiMenu(final EntityTO menuEntity);
@@ -67,7 +79,7 @@ public abstract class AbstractMenuController {
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
 	}
 
-	private String getServletName() {
+	protected String getServletName() {
 
 		String servletPath = SessionUtils.getHttpServletRequest().getServletPath();
 		if (servletPath.startsWith("/")) {
@@ -97,14 +109,6 @@ public abstract class AbstractMenuController {
 		}
 
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
-	}
-
-	public ApplicationConfigService getApplicationConfigService() {
-		return applicationConfigService;
-	}
-
-	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
-		this.applicationConfigService = applicationConfigService;
 	}
 
 }

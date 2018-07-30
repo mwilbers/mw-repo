@@ -12,13 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.rest.RestUrlService;
-import de.mw.mwdata.rest.navigation.NavigationManager;
 import de.mw.mwdata.rest.uimodel.UiEntityList;
 
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
-
-	private NavigationManager navigationManager;
 
 	private RestUrlService urlService;
 
@@ -28,10 +25,6 @@ public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
 
 	protected RestUrlService getUrlService() {
 		return this.urlService;
-	}
-
-	public void setNavigationManager(NavigationManager navigationManager) {
-		this.navigationManager = navigationManager;
 	}
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)

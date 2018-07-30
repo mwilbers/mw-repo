@@ -3,7 +3,7 @@ package de.mw.mwdata.app.admin.client.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.ofdb.domain.impl.Menue;
+import de.mw.mwdata.ofdb.domain.IMenue;
 import de.mw.mwdata.rest.control.AbstractMenuController;
 import de.mw.mwdata.rest.uimodel.UiMenuNode;
 
@@ -12,7 +12,7 @@ public class MenuController extends AbstractMenuController {
 
 	protected UiMenuNode convertToUiMenu(final EntityTO menuEntity) {
 
-		Menue menu = (Menue) menuEntity.getItem();
+		IMenue menu = (IMenue) menuEntity.getItem();
 
 		UiMenuNode node = new UiMenuNode();
 		node.setId(menu.getId());
@@ -20,8 +20,8 @@ public class MenuController extends AbstractMenuController {
 		node.setDisplayName(menu.getAnzeigeName() + " ( " + menu.getTyp().name() + " ) ");
 
 		if (node.hasChildren()) {
-			// FIXME: build url in rest-api
-			node.setUrl("nav/menu/" + menu.getId());
+			String menuUrl = this.getUrlService().createUrlForMenuItem(getServletName(), menu.getId());
+			node.setUrl(menuUrl);
 		}
 
 		return node;

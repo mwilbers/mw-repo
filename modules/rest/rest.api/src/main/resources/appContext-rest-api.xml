@@ -15,6 +15,11 @@
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 	
+	<bean abstract="true" id="rest.api.abstractUserConfigController" >
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
+	</bean>
+	
 	<context:annotation-config />
    		<context:component-scan base-package="de.mw.mwdata.rest.control" >
 	</context:component-scan>

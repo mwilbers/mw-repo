@@ -121,6 +121,7 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	@Type(type = "fxboolean")
 	private Boolean aktiv;
 
+	@Override
 	public String getAnzeigeName() {
 		return this.anzeigeName;
 	}
@@ -129,6 +130,7 @@ public class Menue extends AbstractMWEntity implements IMenue {
 		this.anzeigeName = anzeigeName;
 	}
 
+	@Override
 	public MENUETYP getTyp() {
 		return this.typ;
 	}

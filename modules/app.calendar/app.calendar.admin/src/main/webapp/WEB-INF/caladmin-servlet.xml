@@ -49,12 +49,13 @@
   		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
   	
   	<!-- FIXME: standardize following four controllers for every web admin application by abstract spring base beans or better by @Controller annotation -->
-  	<bean id="app.calendar.admin.indexController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminIndexController" >
-	</bean>	
-	<bean id="app.calendar.admin.userConfigController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
-		<property name="urlService" ref="rest.UrlService" />
-		<property name="applicationConfigService" ref="app.applicationConfigService" />
-		<property name="ofdbService" ref="ofdbService"></property>
+  	<bean id="app.calendar.admin.indexController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminIndexController" />
+
+	<bean parent="rest.api.abstractUserConfigController" id="app.calendar.admin.userConfigController" 
+		class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
+<!-- 		<property name="urlService" ref="rest.UrlService" /> -->
+<!-- 		<property name="applicationConfigService" ref="app.applicationConfigService" /> -->
+		<property name="ofdbService" ref="ofdbService" />
 	</bean>	
 	<bean id="app.calendar.admin.menuController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminMenuController">
 		<property name="menuService" ref="ofdbMenuService" />
@@ -63,7 +64,6 @@
 	</bean>	
 	<bean id="app.calendar.admin.crudController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminCrudController">
 		<property name="ofdbService" ref="ofdbService" />
-		<property name="navigationManager" ref="navigationManager" />
 		<property name="entityService" ref="entityService" />
 		<property name="crudService" ref="crudService" />
 		<property name="urlService" ref="rest.UrlService" />

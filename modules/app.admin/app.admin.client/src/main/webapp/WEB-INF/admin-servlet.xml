@@ -53,7 +53,7 @@
 	<bean id="userConfigController" class="de.mw.mwdata.app.admin.client.controller.UserConfigController" >
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
-		<property name="ofdbService" ref="ofdbService"></property>
+		<property name="ofdbService" ref="ofdbService" />
 	</bean>
 	
 	<bean id="app.admin.menuController" class="de.mw.mwdata.app.admin.client.controller.MenuController">
@@ -63,10 +63,9 @@
 	</bean>
 	
 	<bean id="rest.ofdb.crudController" class="de.mw.mwdata.app.admin.client.controller.AdminCrudController">
-		<property name="ofdbService" ref="ofdbService"></property>
-		<property name="navigationManager" ref="navigationManager"></property>
-		<property name="entityService" ref="entityService"></property>
-		<property name="crudService" ref="crudService"></property>
+		<property name="ofdbService" ref="ofdbService" />
+		<property name="entityService" ref="entityService" />
+		<property name="crudService" ref="crudService" />
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>

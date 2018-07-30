@@ -38,4 +38,13 @@ public class CrudRestUrlService implements RestUrlService {
 		return new RestUrl(restUrl);
 	}
 
+	@Override
+	public String createUrlForMenuItem(String servletName, long menuId) {
+		String applicationUrl = this.configService.getPropertyValue(ApplicationConfigService.KEY_APPLICATION_URL);
+		applicationUrl = addSafeUrlToken(applicationUrl, servletName);
+		applicationUrl = addSafeUrlToken(applicationUrl, "nav");
+		applicationUrl = addSafeUrlToken(applicationUrl, "menu");
+		return addSafeUrlToken(applicationUrl, String.valueOf(menuId));
+	}
+
 }

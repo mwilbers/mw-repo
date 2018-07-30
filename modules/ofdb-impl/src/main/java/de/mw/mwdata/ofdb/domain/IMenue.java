@@ -10,13 +10,13 @@ public interface IMenue extends IEntity {
 	public enum MENUETYP implements IFxEnum {
 		KNOTEN("Knoten"), AKTION("Aktion"), ANSICHT("Ansicht"), LADEN("Laden");
 
-		private String	description;
+		private String description;
 
 		private MENUETYP(final String description) {
 			this.description = description;
 		}
 
-		public void setDescription( final String description ) {
+		public void setDescription(final String description) {
 			this.description = description;
 		}
 
@@ -31,7 +31,7 @@ public interface IMenue extends IEntity {
 		// }
 
 		public boolean isEmpty() {
-			return StringUtils.isEmpty( getDescription() );
+			return StringUtils.isEmpty(getDescription());
 		}
 
 		@Override
@@ -44,5 +44,11 @@ public interface IMenue extends IEntity {
 		}
 
 	}
-	
+
+	public Long getId();
+
+	public MENUETYP getTyp();
+
+	public String getAnzeigeName();
+
 }

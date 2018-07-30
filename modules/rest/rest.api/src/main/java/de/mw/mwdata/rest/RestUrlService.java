@@ -17,4 +17,6 @@ public interface RestUrlService {
 
 	public RestUrl parseRestUrl(final String restUrl) throws MalformedURLException;
 
+	public String createUrlForMenuItem(final String servletName, final long menuId);
+
 }
