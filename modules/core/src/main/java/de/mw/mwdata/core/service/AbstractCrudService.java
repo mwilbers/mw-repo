@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.daos.ICrudDao;
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.intercept.CrudChain;
@@ -238,8 +239,8 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
-	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex, final int pageSize) {
-		return this.crudDao.executeSqlPaginated(sql, pageIndex, pageSize);
+	public List<IEntity[]> executeSqlPaginated(String sql, PagingModel pagingModel) {
+		return this.crudDao.executeSqlPaginated(sql, pagingModel);
 	}
 
 	@Override

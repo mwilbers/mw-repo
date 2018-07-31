@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.utils.PaginatedList;
 
 public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 
@@ -147,18 +146,14 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex, final int pageSize) {
+	public List<IEntity[]> executeSqlPaginated(final String sql, final PagingModel pagingModel) {
 
 		Query query = this.getCurrentSession().createQuery(sql);
 
-		int currentPageSize = pageSize;
-		if (pageSize < 1) {
-			currentPageSize = PaginatedList.DEFAULT_STEPSIZE;
-		}
-
-		int start = (pageIndex - 1) * currentPageSize;
-		query.setFirstResult(start);
-		query.setMaxResults(currentPageSize);
+		// int start = pagingModel.getStartIndex(); // (pagingModel.getPageIndex() - 1)
+		// * currentPageSize;
+		query.setFirstResult(pagingModel.getStartIndex());
+		query.setMaxResults(pagingModel.getPageSize());
 
 		return query.list();
 	}

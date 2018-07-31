@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
@@ -28,8 +29,10 @@ public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
 	}
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
-	public abstract ResponseEntity<UiEntityList<E>> listAllEntities();
+	public abstract ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
+			@RequestParam("pageSize") int pageSize);
 
+	// FIXME: replace tabDef here with common variable
 	@RequestMapping(value = "**/tabDef/{id}", method = RequestMethod.PUT)
 	public abstract ResponseEntity<EntityTO<E>> updateEntity(@PathVariable("id") long id, @RequestBody E entity);
 

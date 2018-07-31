@@ -88,18 +88,27 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	
     $scope.state = {};
     $scope.state.rows = [];
+	$scope.state.pagingModel = {};
 	
 	$scope.appConfig = {
 		showNotMappedColumns: appConfigService.getApplicationConfig().showNotMappedColumnsInGrid,
-		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl
+		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl,
+		uiInputConfigs: appConfigService.getApplicationConfig().uiInputConfigs
 	};
 	
 	$scope.reloadGrid = function() {
+		// alert('reload');
         mwGrid.clear();
-		fetchAllEntities(); 
+		fetchAllEntities( undefined, $scope.state.pagingModel.pageIndex, $scope.state.pagingModel.pageSize ); 
     };
+	
+	$scope.updatePagingModel = function( newPageIndex, newPageSize ) {
+		$scope.state.pagingModel.pageIndex = newPageIndex;
+		$scope.state.pagingModel.pageSize = newPageSize;
+		$scope.reloadGrid( $scope.state.pagingModel.pageIndex );
+	};
 
-    fetchAllEntities();
+    fetchAllEntities( undefined, 1, 0 );
 	
 	
 	function setRows( newRows ) {
@@ -138,9 +147,9 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     	
     }
     
-    function fetchAllEntities(otherController){
+    function fetchAllEntities(otherController, newPageIndex, newPageSize){
 		
-    	entityService.fetchAllEntities( getCurrentUrl() )
+    	entityService.fetchAllEntities( getCurrentUrl(), newPageIndex, newPageSize )
             .then(
             function(d) {
                 console.log("ctrl.fetchAllEntities for " + getCurrentUrl());
@@ -157,7 +166,8 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.uiInputConfigs );
 				mwGrid.load( $scope.state.rows, d.uiInputConfigs, $scope.appConfig );
-				
+				console.log(d.pagingModel.count);
+				$scope.state.pagingModel = d.pagingModel;
             },
             function(errResponse){
                 console.error('Error while fetching Entities');

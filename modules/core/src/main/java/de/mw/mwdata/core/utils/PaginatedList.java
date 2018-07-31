@@ -5,15 +5,19 @@ package de.mw.mwdata.core.utils;
 
 import java.util.List;
 
+import de.mw.mwdata.core.daos.PagingModel;
+
 /**
- * List with additional Paging-informations vor viewing a big list of objects.<br>
+ * List with additional Paging-informations vor viewing a big list of
+ * objects.<br>
  * Example:<br>
  *
  * <pre>
  * 1 &lt; 7 8 <i>9</i> 10 11 &gt; 365
  * </pre>
  *
- * in custom steps. Variables in example: numSteps = 5, count = 365, indexCurrentStep = 9
+ * in custom steps. Variables in example: numSteps = 5, count = 365,
+ * indexCurrentStep = 9
  *
  * @author Wilbers, Markus
  * @version 1.0
@@ -25,17 +29,17 @@ public class PaginatedList<T> {
 	/**
 	 * the list dependant of the step-size
 	 */
-	private List<T>			items;
+	private List<T> items;
 
 	/**
 	 * the number of all items in database
 	 */
-	private long			count;
+	private long count;
 
 	/**
 	 * number of pages for all datasets in database
 	 */
-	private long			numPages;
+	private long numPages;
 
 	// /**
 	// * the size of one step
@@ -45,50 +49,55 @@ public class PaginatedList<T> {
 	/**
 	 * the number of the current shown steps, not all steps
 	 */
-	private long			numSteps;
+	private int numSteps;
 
 	/**
 	 * the index of the current step in the whole itemlist of the database. 1-based.
 	 */
-	private long			indexCurrentStep;
+	private long indexCurrentStep;
 
-	public static final int	DEFAULT_STEPSIZE	= 30;
-	public static final int	DEFAULT_NUMSTEPS	= 10;
+	/**
+	 * the number of items per page
+	 */
+	private int pageSize;
+
+	public static final int DEFAULT_STEPSIZE = 30;
+	public static final int DEFAULT_NUMSTEPS = 10;
 
 	public PaginatedList(final List<T> items) {
-		init( items, items.size() );
-		setIndexCurrentStep( 1 );
+		init(items, items.size());
+		setIndexCurrentStep(1);
 	}
 
-	public PaginatedList(final List<T> items, final int indexCurrentStep) {
-		init( items, items.size() );
-		setIndexCurrentStep( indexCurrentStep );
+	// public PaginatedList(final List<T> items, final int indexCurrentStep) {
+	// init(items, items.size());
+	// setIndexCurrentStep(indexCurrentStep);
+	// }
+
+	public PaginatedList(final List<T> items, final long count, final PagingModel pagingModel) {
+		init(items, count);
+		setIndexCurrentStep(pagingModel.getPageIndex());
+		this.pageSize = pagingModel.getPageSize();
 	}
 
-	public PaginatedList(final List<T> items, final long count, final int indexCurrentStep) {
-		init( items, count );
-		setIndexCurrentStep( indexCurrentStep );
-
-	}
-
-	private void init( final List<T> items, final long count ) {
+	private void init(final List<T> items, final long count) {
 
 		this.items = items;
 		this.count = count;
 		this.numPages = (count / DEFAULT_STEPSIZE);
 		long rest = (count % DEFAULT_STEPSIZE);
-		if ( rest != 0 /* && isPaging() */) {
+		if (rest != 0 /* && isPaging() */) {
 			this.numPages += 1;
 		}
 
-		if ( count > DEFAULT_NUMSTEPS * DEFAULT_STEPSIZE ) {
+		if (count > DEFAULT_NUMSTEPS * DEFAULT_STEPSIZE) {
 			this.numSteps = DEFAULT_NUMSTEPS;
-		} else if ( count < DEFAULT_STEPSIZE ) {
+		} else if (count < DEFAULT_STEPSIZE) {
 			this.numSteps = 0;
 		} else {
-			this.numSteps = (count / DEFAULT_STEPSIZE);
+			this.numSteps = (int) (count / DEFAULT_STEPSIZE);
 
-			if ( rest != 0 ) {
+			if (rest != 0) {
 				this.numSteps += 1;
 			}
 			this.numSteps = this.numSteps - 2;// link 1 and link 'count' are always shown
@@ -96,8 +105,8 @@ public class PaginatedList<T> {
 
 	}
 
-	public void setIndexCurrentStep( final int indexCurrentStep ) {
-		if ( indexCurrentStep > this.numPages ) {
+	public void setIndexCurrentStep(final int indexCurrentStep) {
+		if (indexCurrentStep > this.numPages) {
 			this.indexCurrentStep = this.numPages;
 		} else {
 			this.indexCurrentStep = indexCurrentStep;
@@ -129,18 +138,18 @@ public class PaginatedList<T> {
 	// }
 
 	public long getStepsSmaller() {
-		if ( this.indexCurrentStep <= 2 ) {
+		if (this.indexCurrentStep <= 2) {
 			return 0; // step 1 is always shown
 		}
 
 		long steps = 0;
-		if ( this.numSteps < this.DEFAULT_NUMSTEPS ) {
+		if (this.numSteps < this.DEFAULT_NUMSTEPS) {
 			steps = this.indexCurrentStep - 1;
 		} else {
 			steps = this.numSteps / 2;
 		}
 
-		if ( this.indexCurrentStep - steps <= 1 ) {
+		if (this.indexCurrentStep - steps <= 1) {
 			steps = this.indexCurrentStep - 2; // -1: step 1 always shown
 		}
 		return steps;
@@ -148,18 +157,18 @@ public class PaginatedList<T> {
 
 	public long getStepsGreater() {
 
-		if ( this.indexCurrentStep >= this.numPages - 1 ) {
+		if (this.indexCurrentStep >= this.numPages - 1) {
 			return 0;
 		}
 
 		long steps = 0;
-		if ( this.numSteps < this.DEFAULT_NUMSTEPS ) {
+		if (this.numSteps < this.DEFAULT_NUMSTEPS) {
 			steps = (this.numPages - this.indexCurrentStep - 1);
 		} else {
 			steps = this.numSteps / 2;
 		}
 
-		if ( this.indexCurrentStep + steps >= this.numPages ) {
+		if (this.indexCurrentStep + steps >= this.numPages) {
 			steps = this.numPages - this.indexCurrentStep - 1; // -1: step 1 always shown
 		}
 		return steps;
@@ -167,7 +176,7 @@ public class PaginatedList<T> {
 
 	public boolean isArrowSmaller() {
 		long steps = this.numSteps / 2;
-		if ( this.indexCurrentStep - steps > 2 && this.numPages > DEFAULT_NUMSTEPS ) {
+		if (this.indexCurrentStep - steps > 2 && this.numPages > DEFAULT_NUMSTEPS) {
 			return true;
 		} else {
 			return false;
@@ -177,7 +186,7 @@ public class PaginatedList<T> {
 
 	public boolean isArrowGreater() {
 		long steps = this.numSteps / 2;
-		if ( this.indexCurrentStep + steps < this.numPages - 1 && this.numPages > DEFAULT_NUMSTEPS ) {
+		if (this.indexCurrentStep + steps < this.numPages - 1 && this.numPages > DEFAULT_NUMSTEPS) {
 			return true;
 		} else {
 			return false;
@@ -203,40 +212,48 @@ public class PaginatedList<T> {
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		if ( !isPaging() ) {
+		if (!isPaging()) {
 			return buf.toString();
 		}
 
-		buf.append( "1 " );
-		if ( isArrowSmaller() ) {
-			buf.append( "< " );
+		buf.append("1 ");
+		if (isArrowSmaller()) {
+			buf.append("< ");
 		}
 		long steps = getStepsSmaller();
-		if ( steps > 0 ) {
-			for ( long i = steps; i > 0; i-- ) {
-				buf.append( this.indexCurrentStep - i + " " );
+		if (steps > 0) {
+			for (long i = steps; i > 0; i--) {
+				buf.append(this.indexCurrentStep - i + " ");
 			}
 		}
 
-		if ( this.indexCurrentStep > 1 && this.indexCurrentStep < this.numPages ) {
-			buf.append( this.indexCurrentStep + " " );
+		if (this.indexCurrentStep > 1 && this.indexCurrentStep < this.numPages) {
+			buf.append(this.indexCurrentStep + " ");
 		}
 
 		steps = getStepsGreater();
-		if ( steps > 0 ) {
-			for ( long i = this.indexCurrentStep + 1; i <= this.indexCurrentStep + steps; i++ ) {
-				buf.append( i + " " );
+		if (steps > 0) {
+			for (long i = this.indexCurrentStep + 1; i <= this.indexCurrentStep + steps; i++) {
+				buf.append(i + " ");
 			}
 		}
-		if ( isArrowGreater() ) {
-			buf.append( "> " );
+		if (isArrowGreater()) {
+			buf.append("> ");
 		}
 
-		if ( this.numPages > 1 ) {
-			buf.append( this.numPages + " " );
+		if (this.numPages > 1) {
+			buf.append(this.numPages + " ");
 		}
 
 		return buf.toString();
+	}
+
+	public int getPageSize() {
+		return this.pageSize;
+	}
+
+	public int getNumSteps() {
+		return this.numSteps;
 	}
 
 }

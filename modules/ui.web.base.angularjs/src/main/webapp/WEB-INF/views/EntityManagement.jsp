@@ -16,10 +16,19 @@
 		  .markRequired {
 			  color: red;
 		  }
+		  .mw-pagination {
+			  margin-top: 10px;	
+			  margin-right: 0px;
+			  margin-bottom: 10px;
+			  margin-left: 0px;			  
+		  }
+		  .pagination > li {
+			  background: none;				  
+		  }
 
 		</style>
 		<!-- simple angularjs readonly table -->
-		<link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./../static/css/bootstrap.css">
 		<link rel="stylesheet" href="./../static/css/app.css"></link>
 		 
 		<!-- slickgrid grid -->
@@ -34,6 +43,7 @@
 		<script src="./../static/jQuery/jquery.event.drag-2.2.js"></script>
 		<script src="./../static/jQuery/jquery-ui-1.8.16.custom.min.js"></script>
 		<script src="./../static/js/bootstrap/bootstrap.js"></script>
+		<script src="./../static/js/bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
 		  
 		<script src="./../static/slickgrid/slick.core.js"></script>
 		<script src="./../static/slickgrid/slick.grid.js"></script>
@@ -64,8 +74,8 @@
   
 		<div class="generic-container" style="width:300px;display:inline-block;vertical-align:top;height:1000px;" >		
 			<div class='container' style="width:100%;" ng-controller="MenuController as menuCtrl">
-			  Fake Loading Time: <input type=number ng-model='menuCtrl.loadingTime'> ms
-			  <br>
+			  <div class="panel-heading"><span class="lead">Menu</span></div>
+				
 			  <br>
 			  <treecontrol class="tree-classic" on-selection="menuCtrl.callNode(node, selected)"
 				tree-model="menuCtrl.treeModel" on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"

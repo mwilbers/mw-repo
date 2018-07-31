@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.daos.ICrudDao;
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
@@ -140,9 +141,13 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.init();
 
+		PagingModel pagingModel = new PagingModel();
+		pagingModel.setPageIndex(1);
+		pagingModel.setPageSize(100);
+
 		@SuppressWarnings("unchecked")
 		PaginatedList<IEntity[]> paginatedResult = this.entityService.loadViewPaginated(TestConstants.TABLENAME_TABDEF,
-				1);
+				pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
 		Assert.assertEquals(paginatedResult.getItems().size(), 2);
@@ -189,7 +194,11 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		// register new
 		this.applicationFactory.init();
 
-		paginatedResult = this.entityService.loadViewPaginated(aTabTabDef.getTabDef().getName(), 1);
+		pagingModel = new PagingModel();
+		pagingModel.setPageIndex(1);
+		pagingModel.setPageSize(100);
+
+		paginatedResult = this.entityService.loadViewPaginated(aTabTabDef.getTabDef().getName(), pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
 		Assert.assertEquals(paginatedResult.getItems().size(), 2);
@@ -206,8 +215,12 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		entityTO.addJoinedValue("BenutzerBereich.name",
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
 
+		pagingModel = new PagingModel();
+		pagingModel.setPageIndex(0);
+		pagingModel.setPageSize(100);
+
 		PaginatedList<IEntity[]> items = this.entityService.findByCriteriaPaginated(TestConstants.TABLENAME_TABDEF,
-				entityTO, 0, null);
+				entityTO, pagingModel, null);
 
 		Assert.assertEquals(items.getItems().size(), 2);
 

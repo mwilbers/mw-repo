@@ -64,14 +64,32 @@
 							</div>
 						</form>
 				
-						<div ng-if="appConfig.uiInputConfigs.length > 0">
-						  config properties<br>
-						  <input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
-						  Show not mapped columns<br>
-						</div>
-						<br/>
-
 						<div id="innerGrid" style="width:100%;height:300px;" >
-								Loading ...
-								  
+								Loading ...								  
 						</div> 
+						
+						<div class="mw-pagination">
+							<pagination boundary-links="true" 
+								max-size="3" 
+								items-per-page="state.pagingModel.pageSize"
+								total-items="state.pagingModel.count" 
+								ng-model="state.pagingModel.pageIndex" 
+								ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )"></pagination>
+								
+						</div>
+							
+						<div>Paging configuration:<br>
+							Total number of datasets in database: {{state.pagingModel.count}}<br> 
+							Current page size: {{state.pagingModel.pageSize}}<br>
+							<br>
+							
+							<div ng-if="appConfig.uiInputConfigs.length > 0">
+								Configure Grid:<br>
+								<input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
+								Show not mapped columns<br>
+							</div>
+							<br/>
+							
+							Change page size: <input type=number ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )" ng-model='state.pagingModel.pageSize'>
+		  				
+						</div>

@@ -3,6 +3,7 @@ package de.mw.mwdata.rest.uimodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
@@ -17,9 +18,12 @@ public class UiEntityList<E extends AbstractMWEntity> {
 
 	private List<UiInputConfig> uiConfigItems;
 	private List<EntityTO<E>> entityTOs = new ArrayList<EntityTO<E>>();
+	private PagingModel pagingModel;
 
-	public UiEntityList(final List<IEntity[]> entities, final List<OfdbField> ofdbFieldList) {
+	public UiEntityList(final List<IEntity[]> entities, final List<OfdbField> ofdbFieldList,
+			final PagingModel pagingModel) {
 		this.uiConfigItems = new ArrayList<>();
+		this.pagingModel = pagingModel;
 
 		for (OfdbField field : ofdbFieldList) {
 			UiInputConfig item = new UiInputConfig(field);
@@ -54,16 +58,16 @@ public class UiEntityList<E extends AbstractMWEntity> {
 		return this.uiConfigItems;
 	}
 
-	// public void setOfdbFields(final List<UiItemConfig> fields) {
-	// this.uiConfigItems = new ArrayList<>(fields);
-	// }
-
 	public void addEntityTO(final EntityTO<E> entityTO) {
 		this.entityTOs.add(entityTO);
 	}
 
 	public List<EntityTO<E>> getEntityTOs() {
 		return this.entityTOs;
+	}
+
+	public PagingModel getPagingModel() {
+		return this.pagingModel;
 	}
 
 }

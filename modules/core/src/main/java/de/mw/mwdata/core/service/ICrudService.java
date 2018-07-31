@@ -3,6 +3,7 @@ package de.mw.mwdata.core.service;
 import java.util.List;
 import java.util.Map;
 
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.IEntity;
 
 public interface ICrudService<T> {
@@ -55,7 +56,7 @@ public interface ICrudService<T> {
 
 	public List<IEntity[]> executeSql(String sql);
 
-	public List<IEntity[]> executeSqlPaginated(final String sql, final int pageIndex, final int pageSize);
+	public List<IEntity[]> executeSqlPaginated(final String sql, final PagingModel pagingModel);
 
 	public long executeCountSql(final String sqlCount);
 

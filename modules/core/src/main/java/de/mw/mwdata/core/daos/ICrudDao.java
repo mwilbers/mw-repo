@@ -70,7 +70,7 @@ public interface ICrudDao<T> {
 	 * @param pageSize
 	 * @return
 	 */
-	public List<IEntity[]> executeSqlPaginated(String sql, int pageIndex, final int pageSize);
+	public List<IEntity[]> executeSqlPaginated(final String sql, final PagingModel pagingModel);
 
 	/**
 	 * Executes the given sql and returns a long parameter for interpreting the

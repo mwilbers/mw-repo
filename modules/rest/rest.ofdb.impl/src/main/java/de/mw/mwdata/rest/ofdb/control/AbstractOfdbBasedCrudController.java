@@ -3,11 +3,15 @@ package de.mw.mwdata.rest.ofdb.control;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
@@ -27,6 +31,8 @@ import de.mw.mwdata.rest.utils.SessionUtils;
 public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity>
 		extends AbstractRestCrudController<E> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOfdbBasedCrudController.class);
+
 	private IEntityService<IEntity> entityService;
 	private IOfdbService ofdbService;
 	private ICrudService crudService;
@@ -44,7 +50,8 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		this.crudService = crudService;
 	}
 
-	public ResponseEntity<UiEntityList<E>> listAllEntities() {
+	public ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
+			@RequestParam("pageSize") int pageSize) {
 
 		// initialize ofPropList
 		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
@@ -60,11 +67,36 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		PaginatedList<IEntity[]> entityResult = this.entityService.loadViewPaginated(viewDef.getName(), 1,
+		PagingModel pagingModel = new PagingModel();
+		pagingModel.setPageIndex(pageIndex);
+		if (pageSize == 0) {
+			pagingModel.setPageSize(this.loadPageSize());
+		} else {
+			pagingModel.setPageSize(pageSize);
+		}
+
+		PaginatedList<IEntity[]> entityResult = this.entityService.loadViewPaginated(viewDef.getName(), pagingModel,
 				new ArrayList<SortKey>());
-		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList);
+		pagingModel.setCount(entityResult.getCount());
+
+		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList, pagingModel);
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
+	}
+
+	private int loadPageSize() {
+
+		String pageSizeString = this.configService.getPropertyValue("app.hibernate.pageSizeForLoad");
+
+		int pageSize = 0;
+		try {
+			pageSize = Integer.parseInt(pageSizeString);
+		} catch (NumberFormatException e) {
+			LOGGER.warn(
+					"Configuration of application property 'app.hibernate.pageSizeForLoad' is not valid integer. Will use default page size.");
+		}
+
+		return pageSize;
 	}
 
 	@Override

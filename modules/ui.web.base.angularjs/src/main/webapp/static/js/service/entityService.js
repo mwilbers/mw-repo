@@ -11,10 +11,10 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 		
     return factory;
 
-    function fetchAllEntities( restUrl ) {
+    function fetchAllEntities( restUrl, newPageIndex, newPageSize ) {
         var deferred = $q.defer();
 
-        $http.get(restUrl)
+        $http.get(restUrl + "?pageIndex=" + newPageIndex + "&pageSize=" + newPageSize)
             .then(
             function (response) {
                 deferred.resolve(response.data);

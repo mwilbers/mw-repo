@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
@@ -99,41 +100,26 @@ public class EntityService implements IEntityService<IEntity> {
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public PaginatedList<IEntity[]> findByCriteriaPaginated(final String viewName,
-			final EntityTO<? extends AbstractMWEntity> entityTO, final int pageIndex, final List<SortKey>... sortKeys) {
+			final EntityTO<? extends AbstractMWEntity> entityTO, final PagingModel pagingModel,
+			final List<SortKey>... sortKeys) {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
 		String sql = this.getOfdbService().buildFilteredSQL(viewName, entityTO, cols);
 
-		int pageSize = loadPageSize();
 		String sqlCount = getOfdbService().buildSQLCount(viewName);
-		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex, pageSize);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pagingModel);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
 		long count = this.getCrudService().executeCountSql(sqlCount);
 
-		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pageIndex);
+		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pagingModel);
 
 		return pagingList;
 
 	}
 
-	private int loadPageSize() {
-
-		String pageSizeString = this.applicationConfigService.getPropertyValue("app.hibernate.pageSizeForLoad");
-
-		int pageSize = 0;
-		try {
-			pageSize = Integer.parseInt(pageSizeString);
-		} catch (NumberFormatException e) {
-			LOGGER.warn(
-					"Configuration of application property 'app.hibernate.pageSizeForLoad' is not valid integer. Will use default page size.");
-		}
-
-		return pageSize;
-	}
-
 	@Override
-	public PaginatedList<IEntity[]> loadViewPaginated(final String viewName, final int pageIndex,
+	public PaginatedList<IEntity[]> loadViewPaginated(final String viewName, final PagingModel pagingModel,
 			final List<SortKey>... sortKeys) {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
@@ -143,12 +129,12 @@ public class EntityService implements IEntityService<IEntity> {
 
 		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
 
-		int pageSize = loadPageSize();
+		// int pageSize = loadPageSize();
 		String sql = getOfdbService().buildSQL(viewName, cols);
-		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pageIndex, pageSize);
+		List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql, pagingModel);
 		List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
 
-		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pageIndex);
+		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray, count, pagingModel);
 
 		return pagingList;
 
