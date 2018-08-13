@@ -6,15 +6,18 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
         fetchAllEntities: fetchAllEntities,
         createEntity: createEntity,
         updateEntity:updateEntity,
+		filterEntities:filterEntities,
         deleteUser:deleteUser
     };
 		
     return factory;
 
-    function fetchAllEntities( restUrl, newPageIndex, newPageSize ) {
+	
+	
+    function fetchAllEntities( restUrl ) {
         var deferred = $q.defer();
 
-        $http.get(restUrl + "?pageIndex=" + newPageIndex + "&pageSize=" + newPageSize)
+        $http.get(restUrl)
             .then(
             function (response) {
                 deferred.resolve(response.data);
@@ -45,16 +48,32 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
     }
 
 
-    function updateEntity( entity, id, restUrl) {
+    function updateEntity( entity, restUrl) {
         var deferred = $q.defer();
 		
-        $http.put(restUrl+ '/' + id, entity)
+        $http.put(restUrl, entity)
             .then(
             function (response) {
                 deferred.resolve(response.data);
             },
             function(errResponse){
                 console.error('Error while updating Entity');
+                deferred.reject(errResponse);
+            }
+        );
+        return deferred.promise;
+    }
+	
+	function filterEntities( entity, restUrl) {
+        var deferred = $q.defer();
+		
+        $http.put(restUrl, entity)
+            .then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function(errResponse){
+                console.error('Error while filtering Entities');
                 deferred.reject(errResponse);
             }
         );

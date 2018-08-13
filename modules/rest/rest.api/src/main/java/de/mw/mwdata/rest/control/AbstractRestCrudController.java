@@ -32,9 +32,12 @@ public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
 	public abstract ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
 			@RequestParam("pageSize") int pageSize);
 
-	// FIXME: replace tabDef here with common variable
-	@RequestMapping(value = "**/tabDef/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "**/**/{id}", method = RequestMethod.PUT)
 	public abstract ResponseEntity<EntityTO<E>> updateEntity(@PathVariable("id") long id, @RequestBody E entity);
+
+	@RequestMapping(value = "**/", method = RequestMethod.PUT)
+	public abstract ResponseEntity<UiEntityList<E>> filterEntities(@RequestParam("filter") String filter,
+			@RequestBody E entity);
 
 	/**
 	 * Populates the empty filterObject for spring-web-binding. Spring does set the

@@ -1,5 +1,8 @@
 package de.mw.mwdata.rest.uimodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UiMenuNode implements UiJsonConvertable {
 
 	private String displayName;
@@ -7,6 +10,8 @@ public class UiMenuNode implements UiJsonConvertable {
 	private String restUrl; // url for requesting REST-API for loading entities
 	private String nodeType;
 	private long id;
+
+	private List<UiMenuNode> children = new ArrayList<>();
 
 	public boolean hasChildren() {
 		return (this.nodeType != "ANSICHT" && this.nodeType != "AKTION" ? true : false);
@@ -50,6 +55,14 @@ public class UiMenuNode implements UiJsonConvertable {
 
 	public void setRestUrl(String restUrl) {
 		this.restUrl = restUrl;
+	}
+
+	public void addAllChildren(final List<UiMenuNode> children) {
+		this.children.addAll(children);
+	}
+
+	public List<UiMenuNode> getChildren() {
+		return this.children;
 	}
 
 }

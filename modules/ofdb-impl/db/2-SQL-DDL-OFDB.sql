@@ -2512,4 +2512,8 @@ set Bereich = 'Administrator',
 Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
 where menue = 'Admin';
 
+-- drop menues column urlPath
+alter table FX_Menues_K drop column urlpath;
+
+
 commit;

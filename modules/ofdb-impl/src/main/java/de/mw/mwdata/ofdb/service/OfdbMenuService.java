@@ -16,15 +16,16 @@ import de.mw.mwdata.core.ofdb.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IMenuService;
 import de.mw.mwdata.ofdb.dao.IOfdbDao;
+import de.mw.mwdata.ofdb.domain.impl.Menue;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 
 public class OfdbMenuService implements IMenuService {
 
 	private IOfdbDao ofdbDao;
 
-	private ICrudService<IEntity> crudService;
+	private ICrudService<Menue> crudService;
 
-	public void setCrudService(ICrudService<IEntity> crudService) {
+	public void setCrudService(ICrudService<Menue> crudService) {
 		this.crudService = crudService;
 	}
 
@@ -58,16 +59,7 @@ public class OfdbMenuService implements IMenuService {
 			if (ObjectUtils.isEmpty(item[0])) {
 				throw new IllegalStateException("Entity must not be empty in ofdb based result array IEntity[].");
 			}
-			EntityTO entityTO = new EntityTO<AbstractMWEntity>((AbstractMWEntity) item[0]);
-
-			if (!ArrayUtils.isEmpty(joinedKeys)) {
-				if (joinedKeys.length != item.length - 1) {
-					throw new IllegalStateException("Number of joined keys does not match number of retrieved values.");
-				}
-				for (int i = 0; i < joinedKeys.length; i++) {
-					entityTO.addJoinedValue(joinedKeys[i], (String) item[i + 1]);
-				}
-			}
+			EntityTO entityTO = convertToEntityTO(item, joinedKeys);
 
 			entityTOs.add(entityTO);
 		}
@@ -75,8 +67,22 @@ public class OfdbMenuService implements IMenuService {
 		return entityTOs;
 	}
 
+	private EntityTO convertToEntityTO(Object[] item, final String... joinedKeys) {
+		EntityTO entityTO = new EntityTO<AbstractMWEntity>((AbstractMWEntity) item[0]);
+
+		if (!ArrayUtils.isEmpty(joinedKeys)) {
+			if (joinedKeys.length != item.length - 1) {
+				throw new IllegalStateException("Number of joined keys does not match number of retrieved values.");
+			}
+			for (int i = 0; i < joinedKeys.length; i++) {
+				entityTO.addJoinedValue(joinedKeys[i], (String) item[i + 1]);
+			}
+		}
+		return entityTO;
+	}
+
 	@Override
-	public List<EntityTO> findChildMenus(final int parentMenuId, final String userAreaName) {
+	public List<EntityTO> findChildMenus(final long parentMenuId, final String userAreaName) {
 
 		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
 		String sql = builder.selectTable(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
@@ -91,6 +97,25 @@ public class OfdbMenuService implements IMenuService {
 		List<EntityTO> entityTOs = convertToEntityTO(entities, new String("urlPath"));
 
 		return entityTOs;
+	}
+
+	@Override
+	public EntityTO<?> findMenuByUrlPath(String urlPath) {
+
+		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
+		String sql = builder.selectTable(ConfigOfdb.T_MENU, "aMenu").fromTable(ConfigOfdb.T_MENU, "aMenu")
+				.leftJoinTable("aMenu", "ansichtDef", "aView")
+				.andWhereRestriction("aView", "urlPath", OperatorEnum.Eq, urlPath, ValueType.STRING).buildSQL();
+
+		List<IEntity[]> entities = this.crudService.executeSql(sql);
+
+		return convertToEntityTO(entities.get(0));
+	}
+
+	@Override
+	public EntityTO<?> findParentMenu(long mainMenuId) {
+		Menue menu = this.crudService.findById(Menue.class, mainMenuId);
+		return convertToEntityTO(new Object[] { menu });
 	}
 
 }

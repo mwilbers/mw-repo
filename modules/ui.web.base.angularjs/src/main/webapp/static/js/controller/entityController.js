@@ -80,8 +80,10 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	self.setRows = setRows;
 	self.fetchAllEntities = fetchAllEntities;
 	self.setCurrentUrl = setCurrentUrl;
+	self.applyFilteredEntity = applyFilteredEntity;
 
     self.entity = {};
+	self.filteredEntity = null;
     var rowDirty = false;
 	var currentRowIndex = 0;
 	var rowChanged = false;
@@ -105,11 +107,21 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	$scope.updatePagingModel = function( newPageIndex, newPageSize ) {
 		$scope.state.pagingModel.pageIndex = newPageIndex;
 		$scope.state.pagingModel.pageSize = newPageSize;
-		$scope.reloadGrid( $scope.state.pagingModel.pageIndex );
+		$scope.reloadGrid();
 	};
 
-    fetchAllEntities( undefined, 1, 0 );
+	$scope.submitFilter = function() {
+		console.log('filterEntities');
+		if(null !== self.filteredEntity ) {
+			filterEntities( self.filteredEntity );
+		}
+	};
 	
+    fetchAllEntities();
+	
+	function applyFilteredEntity( entity ) {
+			self.filteredEntity = entity;
+	}
 	
 	function setRows( newRows ) {
 		if(undefined === $scope.state) {
@@ -149,10 +161,17 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     
     function fetchAllEntities(otherController, newPageIndex, newPageSize){
 		
-    	entityService.fetchAllEntities( getCurrentUrl(), newPageIndex, newPageSize )
+		var pIndex = ( newPageIndex === undefined ? '1' : newPageIndex);
+		var pSize = ( newPageSize === undefined ? '0' : newPageSize);
+		
+		var newUrl = replaceUrlParameter( getCurrentUrl(), "pageIndex", pIndex );
+		newUrl = replaceUrlParameter( newUrl, "pageSize", pSize );
+		
+		console.log("fetchAllEntities for " + newUrl);
+    	entityService.fetchAllEntities( newUrl )
             .then(
             function(d) {
-                console.log("ctrl.fetchAllEntities for " + getCurrentUrl());
+                
 				$scope.state.rows = [];
 				
 				if(d.uiInputConfigs.length == 0) {
@@ -175,6 +194,47 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
         );
 		
     }
+	
+	function addServletPath( restUrl, path ) {
+		return restUrl + '/' + path;
+	}
+	
+	function replaceUrlParameter( url, paramName, paramValue ) {
+		
+		var newUrl = "";
+		
+		var pos = url.lastIndexOf("?");
+		if(-1 === pos) {
+			if(url.endsWith("/")) {
+				newUrl = url.substring(0, url.length-2); // cut slash (/)
+			} else {
+				newUrl = url;
+			}
+			return newUrl + "?" + paramName + "=" + paramValue;  
+		}
+
+		var queryPart = url.substring(pos +1, url.length);
+		var tokens = queryPart.split("&");
+		var newQueryPart = "";
+		var tokenFound = false;
+		for(var i = 0; i<tokens.length; i++) {
+			if(tokens[i].startsWith(paramName)) {
+				pos = tokens[i].lastIndexOf("=");
+				tokens[i] = tokens[i].substring(0, pos+1) + paramValue;
+				tokenFound = true;
+			}
+		  
+			newQueryPart = newQueryPart + tokens[i] + ( i === tokens.length-1 ? "" : "&");
+		}
+		if(!tokenFound) {
+			newQueryPart = newQueryPart + "&"+ paramName + "=" + paramValue;
+		}
+		
+		pos = url.lastIndexOf("?");
+		newUrl = url.substring(0, pos+1) + newQueryPart;
+
+		return newUrl;
+	}
 	
 	function initialize( entityId, entity ){
 		self.entity = entity;
@@ -215,13 +275,45 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	}
 
 	function updateEntity( entity, id){
-    	entityService.updateEntity( entity, id, getCurrentUrl())
+		
+		var restUrl = addServletPath( getCurrentUrl(), id );
+		restUrl = replaceUrlParameter( restUrl, "pageIndex", $scope.state.pagingModel.pageIndex );
+		restUrl = replaceUrlParameter( restUrl, "pageSize", $scope.state.pagingModel.pageSize );
+		
+    	entityService.updateEntity( entity, restUrl)
             .then(
             fetchAllEntities,
             function(errResponse){
                 console.error('Error while updating Entity');
             }
         );
+    }
+	
+	function filterEntities( filteredEntity ){
+		
+		var newUrl = replaceUrlParameter( getCurrentUrl(), "filter", "" );
+		
+    	entityService.filterEntities( self.filteredEntity, newUrl )
+            .then(
+            function(d) {
+                console.log("ctrl.filterEntities for " + newUrl);
+				$scope.state.rows = [];
+				
+				if(d.uiInputConfigs.length == 0) {
+					console.warn('Could not load Ofdb informations.');
+				}
+				
+				mwGrid.initialize();
+				loadGridRows( d.entityTOs, d.uiInputConfigs );
+				mwGrid.load( $scope.state.rows, d.uiInputConfigs, $scope.appConfig );
+				console.log(d.pagingModel.count);
+				$scope.state.pagingModel = d.pagingModel;
+            },
+            function(errResponse){
+                console.error('Error while filtering Entities');
+            }
+        );
+		
     }
 
     function deleteUser(id){

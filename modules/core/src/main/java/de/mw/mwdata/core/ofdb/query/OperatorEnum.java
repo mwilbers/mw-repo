@@ -4,6 +4,7 @@ public enum OperatorEnum {
 
 	Eq, // equals
 	IsNotNull, // is not null
-	NotEq; // not equals
+	NotEq, // not equals
+	Like; // like
 
 }

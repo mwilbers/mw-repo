@@ -7,7 +7,7 @@ import de.mw.mwdata.ofdb.domain.IMenue;
 import de.mw.mwdata.rest.control.AbstractMenuController;
 import de.mw.mwdata.rest.uimodel.UiMenuNode;
 
-@RequestMapping("/admin/nav/**")
+@RequestMapping("/admin/nav/")
 public class MenuController extends AbstractMenuController {
 
 	protected UiMenuNode convertToUiMenu(final EntityTO menuEntity) {

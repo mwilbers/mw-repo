@@ -324,7 +324,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				boolean toFilter = (!StringUtils.isBlank(whereMapValue));
 
 				if (toFilter) {
-					queryModel.addWhereRestriction(suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Eq,
+					queryModel.addWhereRestriction(suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Like,
 							whereMapValue);
 				}
 
@@ -352,7 +352,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 				}
 				if (toFilter) {
-					queryModel.addWhereRestriction(tabSpeig.getTabDef(), tabSpeig, OperatorEnum.Eq, entityValue);
+					queryModel.addWhereRestriction(tabSpeig.getTabDef(), tabSpeig, OperatorEnum.Like, entityValue);
 				}
 
 			}

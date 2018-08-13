@@ -4,52 +4,73 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 }
 
 App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', function ($http, $timeout, appConfigService) {
-  var ctrl = this;
+  var self = this;
 
-  ctrl.loadingTime = 1500;
-  ctrl.treeModel = [];
-  
-  ctrl.treeOptions = {
+  self.loadingTime = 1;
+  self.treeModel = [];
+  self.expandedNodes = [];
+  self.treeOptions = {
+	multiSelection: false,
     dirSelectable: false,    // Click a folder name to expand (not select)
-    isLeaf: function isLeafFn(node) {
-      return !node.hasOwnProperty('url');
-    }
+    isLeaf: function isLeafFn(node) { return !node.hasOwnProperty('url'); }
   };
 
-  function loadTreeModel( uiMenuNode ){
+  function loadTreeModel( uiMenuNodes, parentNode ){
     	
 		var treeModel = [];
-		var entityTOs = [];
-		  for(var i=0; i<uiMenuNode.length; i++) {
+		for(var i=0; i<uiMenuNodes.length; i++) {
 			
-			var currentNode = {};
-			currentNode["name"] = uiMenuNode[i].displayName;
-			if(uiMenuNode[i].url !== null) {
-				currentNode["url"] = uiMenuNode[i].url; //"nav/menu/" + uiEntity.getId();
-			} 
-			//else {
-			if(uiMenuNode[i].restUrl !== null) {
-				currentNode["restUrl"] = uiMenuNode[i].restUrl;
+			var currentNode = loadSingleNode( uiMenuNodes[i] );
+			
+			treeModel[i] = currentNode;		
+
+			if( uiMenuNodes[i].children.length > 0 ) {
+				self.expandedNodes[self.expandedNodes.length] = currentNode;
+				loadTreeModel( uiMenuNodes[i].children, currentNode );
 			}
-				// globalEntityController.fetchAllEntities();
-				/*
-				$http.get('nav/').success(function(data) {
-					ctrl.treeModel = [];
-					var wEntities = new UiEntityResult( data );
-					ctrl.treeModel = loadTreeModel( wEntities );
-				});
-				*/
-			//}
 			
-			treeModel[i] = currentNode;
-			// console.log('node json: ' + angular.toJson(currentNode));
+			if( parentNode ) {
+				parentNode["children"] = treeModel;
+			}
 			
 		} 	
     	
 		return treeModel;
   }
   
-  ctrl.fetchChildNodes = function fetchChildNodes(node, expanded) {
+  function loadSingleNode( uiMenuNode ) {
+	  
+	var currentNode = {};
+	currentNode["name"] = uiMenuNode.displayName;
+	if(uiMenuNode.url !== null) {
+		currentNode["url"] = uiMenuNode.url; //"nav/menu/" + uiEntity.getId();
+	} 
+
+	if(uiMenuNode.restUrl !== null) {
+		currentNode["restUrl"] = uiMenuNode.restUrl;
+	}
+	
+	return currentNode;
+  }
+  
+  function applyExpandedNodes( data ) {
+	console.log('applyExpandedNodes');
+	if(!data) {
+		return;
+	}
+	
+	for(var i = 0; i<= 0; i++) {
+		self.expandedNodes[i] = data[i];
+	}
+	  
+	  
+  }
+  
+  self.getExpandedNodes = function() {
+	  return self.expandedNodes;
+  };
+  
+  self.fetchChildNodes = function (node, expanded) {
     function doFetch(node) {
       if (node.hasOwnProperty('url')) {
 		  
@@ -71,20 +92,21 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
     node._sent_request = true;
     // Add a dummy node.
     node.children = [{name: 'Loading ...'}];
-    $timeout(function() { doFetch(node) }, ctrl.loadingTime);
+    $timeout(function() { doFetch(node) }, self.loadingTime);
   };
+
   
-  ctrl.callNode = function callNode(node, selected) {
+  self.callNode = function (node, selected) {
 	if(undefined !== node.restUrl) {
 		globalEntityController.setCurrentUrl( node.restUrl );
 		globalEntityController.fetchAllEntities( globalEntityInsertController );	
 	}
   };
 
+  
   $http.get('nav/')
-    .success(function(data) {
-	  ctrl.treeModel = [];	  
-	  ctrl.treeModel = loadTreeModel( data );
-    });
+	.success(function(data) {
+	  self.treeModel = loadTreeModel( data );	  
+	});
 
 }]);

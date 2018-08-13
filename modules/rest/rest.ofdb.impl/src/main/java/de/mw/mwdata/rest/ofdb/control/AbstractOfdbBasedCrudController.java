@@ -46,6 +46,14 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		this.ofdbService = ofdbService;
 	}
 
+	protected ApplicationConfigService getApplicationConfigService() {
+		return configService;
+	}
+
+	public void setApplicationConfigService(ApplicationConfigService configService) {
+		this.configService = configService;
+	}
+
 	public void setCrudService(ICrudService<? extends IEntity> crudService) {
 		this.crudService = crudService;
 	}
@@ -53,18 +61,15 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 	public ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
 			@RequestParam("pageSize") int pageSize) {
 
-		// initialize ofPropList
-		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
-		String identifierUrlPath = this.configService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
-		SessionUtils.setAttribute(SessionUtils.getHttpServletRequest().getSession(), identifierUrlPath,
-				url.getEntityName());
+		String entityName = readEntityNameFromUrl();
 
-		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(url.getEntityName());
+		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		if (null == viewDef) {
 			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList();
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
+		// initialize ofPropList
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
 		PagingModel pagingModel = new PagingModel();
@@ -86,7 +91,7 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 	private int loadPageSize() {
 
-		String pageSizeString = this.configService.getPropertyValue("app.hibernate.pageSizeForLoad");
+		String pageSizeString = this.configService.getPropertyValue(ApplicationConfigService.KEY_PAGESIZE_FOR_LOAD);
 
 		int pageSize = 0;
 		try {
@@ -109,7 +114,7 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		Object foundEntity = this.crudService.findById(entity.getClass(), id);
 
 		if (foundEntity == null) {
-			System.out.println("Entity with id " + id + " not found");
+			LOGGER.warn("Entity with id " + id + " not found");
 			return new ResponseEntity<EntityTO<E>>(HttpStatus.NOT_FOUND);
 		}
 
@@ -119,39 +124,47 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		return new ResponseEntity<EntityTO<E>>(entityTO, HttpStatus.OK);
 	}
 
-	protected ApplicationConfigService getApplicationConfigService() {
-		return configService;
+	private String readEntityNameFromUrl() {
+
+		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
+		String identifierUrlPath = this.configService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
+
+		// save current used entity view in session
+		SessionUtils.setAttribute(SessionUtils.getHttpServletRequest().getSession(), identifierUrlPath,
+				url.getEntityName());
+
+		return url.getEntityName();
 	}
 
-	public void setApplicationConfigService(ApplicationConfigService configService) {
-		this.configService = configService;
-	}
+	@Override
+	public ResponseEntity<UiEntityList<E>> filterEntities(@RequestParam("filter") String filter,
+			@RequestBody E entity) {
+		LOGGER.info("Filter Entity " + entity.toString());
 
-	// // @RequestMapping(value = "/tabDef/{id}", method = RequestMethod.PUT)
-	// public ResponseEntity<EntityTO> updateEntity(@PathVariable("id") long id,
-	// @RequestBody E entity) {
-	// System.out.println("Updating Entity " + id);
-	//
-	// // ...
-	// // generic type von UIEntityList auf AbstractMWEntity geändert, überall
-	// // angepasst,
-	// // jetzt neu bauen und testen
-	// // ansonsten @see
-	// //
-	// http://www.davismol.net/2015/03/05/jackson-json-deserialize-a-list-of-objects-of-subclasses-of-an-abstract-class/
-	//
-	// Object foundEntity = this.crudService.findById(entity.getClass(), id);
-	//
-	// if (foundEntity == null) {
-	// System.out.println("Entity with id " + id + " not found");
-	// return new ResponseEntity<EntityTO>(HttpStatus.NOT_FOUND);
-	// }
-	//
-	// this.crudService.update(entity);
-	// EntityTO<E> entityTO = new EntityTO<E>(entity);
-	// // FIXME: mapValues not set in entityTO
-	// return new ResponseEntity<EntityTO>(entityTO, HttpStatus.OK);
-	// }
+		String entityName = readEntityNameFromUrl();
+
+		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
+		if (null == viewDef) {
+			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList();
+			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
+		}
+
+		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
+
+		PagingModel pagingModel = new PagingModel();
+		pagingModel.setPageIndex(1);
+		pagingModel.setPageSize(loadPageSize());
+
+		EntityTO entityTO = new EntityTO<AbstractMWEntity>(entity);
+		PaginatedList<IEntity[]> entityResult = this.entityService.findByCriteriaPaginated(viewDef.getName(), entityTO,
+				pagingModel, new ArrayList<SortKey>());
+		pagingModel.setCount(entityResult.getCount());
+
+		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList, pagingModel);
+
+		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
+
+	}
 
 	// -------------------Create a
 	// User--------------------------------------------------------
@@ -176,26 +189,6 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 	// ------------------- Update a User
 	// --------------------------------------------------------
-
-	// @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-	// public ResponseEntity<User> updateUser(@PathVariable("id") long id,
-	// @RequestBody User user) {
-	// System.out.println("Updating User " + id);
-	//
-	// User currentUser = userService.findById(id);
-	//
-	// if (currentUser == null) {
-	// System.out.println("User with id " + id + " not found");
-	// return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-	// }
-	//
-	// currentUser.setUsername(user.getUsername());
-	// currentUser.setAddress(user.getAddress());
-	// currentUser.setEmail(user.getEmail());
-	//
-	// userService.updateUser(currentUser);
-	// return new ResponseEntity<User>(currentUser, HttpStatus.OK);
-	// }
 
 	// ------------------- Delete a User
 	// --------------------------------------------------------

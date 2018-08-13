@@ -51,4 +51,6 @@ public interface IMenue extends IEntity {
 
 	public String getAnzeigeName();
 
+	public Long getHauptMenueId();
+
 }

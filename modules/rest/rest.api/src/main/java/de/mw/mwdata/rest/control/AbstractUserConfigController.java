@@ -44,7 +44,7 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 				identifierUrlPath);
 
 		if (StringUtils.isEmpty(lastUrlPath)) {
-			String defaultEntity = this.configService.getPropertyValue("app.defaultEntity");
+			String defaultEntity = this.configService.getPropertyValue(ApplicationConfigService.KEY_DEFAULT_ENTITY);
 			lastUrlPath = defaultEntity;
 		}
 		String restUrl = this.urlService.createUrlForReadEntities(url.getServletPath(), lastUrlPath);

@@ -25,11 +25,22 @@
 		  .pagination > li {
 			  background: none;				  
 		  }
+		  .buttonGrid {
+			  padding: 2px;
+			  font-size: 10px;
+			  width: 40px;
+			  border-radius: 4px;
+			  border: 1px solid transparent;
+		  }
+		  .columnInvisible {
+			display: none;  
+		  }
 
 		</style>
 		<!-- simple angularjs readonly table -->
 		<link rel="stylesheet" href="./../static/css/bootstrap.css">
-		<link rel="stylesheet" href="./../static/css/app.css"></link>
+		<link rel="stylesheet" href="./../static/css/app.css" >
+		<link rel="stylesheet" href="./../static/css/tree-control.css" >
 		 
 		<!-- slickgrid grid -->
 		<link rel="stylesheet" href="./../static/slickgrid/slick.grid.css">
@@ -79,7 +90,7 @@
 			  <br>
 			  <treecontrol class="tree-classic" on-selection="menuCtrl.callNode(node, selected)"
 				tree-model="menuCtrl.treeModel" on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"
-				options="menuCtrl.treeOptions">
+				options="menuCtrl.treeOptions" expanded-nodes="menuCtrl.getExpandedNodes()" >
 				{{node.name}}
 			  </treecontrol>
 			</div>
@@ -112,7 +123,6 @@
 				  </div>
 				</div>
           
-				<div class="panel-heading"><span class="lead">Entity Registration Form</span></div>
 				<div class="formcontainer" >
 					<div ng-view ng-controller="EntityGridController as ctrl" id="controllerScope">
 						

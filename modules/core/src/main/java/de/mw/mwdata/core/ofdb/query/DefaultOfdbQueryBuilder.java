@@ -243,6 +243,17 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 				}
 				break;
 			}
+			case Like: {
+				if (ValueType.STRING.equals(whereRes.valueType)) {
+					sbWhere.append(" like '%");
+					sbWhere.append(whereRes.value);
+					sbWhere.append("%'");
+				} else {
+					throw new UnsupportedOperationException(
+							"Since now like-operator in hql only supported for strings");
+				}
+				break;
+			}
 			case IsNotNull: {
 				sbWhere.append(" is not null ");
 				break;

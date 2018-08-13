@@ -9,7 +9,9 @@ import org.apache.commons.lang.StringUtils;
 /**
  * An {@link EntityTO} is an TO-object containing all data and informations of
  * the primary underlying view and additional data stored in a key-value-map
- * from joined secondary views by ofdb-configuration
+ * from joined secondary views by ofdb-configuration<br>
+ * FIXME: EntityTO should have generic type IEntity for casting implicit types
+ * to IMenue instead of Menue etc. -> MenuController ...
  *
  * @author mwilbers
  *

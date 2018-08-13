@@ -1,95 +1,103 @@
-				
-						<form ng-submit="insertCtrl.submit()" name="myForm" class="form-horizontal" ng-controller="EntityInsertController as insertCtrl" id="controllerNewScope">
-				
-							<div ng-repeat=" uiInputConfig in appConfig.uiInputConfigs" >
-								<div class="row">
-									<div ng-if="uiInputConfig.mapped">
-									  <div ng-if="uiInputConfig.visible">
-									  
-										<div ng-if="uiInputConfig.listOfValues">
-										
-											<div ng-if="uiInputConfig.enum">
-												<div class="form-group col-md-12">
-													<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
-													<div class="col-md-7">
-													<select ng-model="entity[uiInputConfig.propName]" ng-options="y for (x, y) in uiInputConfig.listOfValues">
-													</select>
+						
+						<div>
+						
+							<span class="lead">Entity Registration Form</span>
+							<br>
+							<form ng-submit="insertCtrl.submit()" name="myForm" class="form-horizontal" ng-controller="EntityInsertController as insertCtrl" id="controllerNewScope">
+					
+								<div ng-repeat=" uiInputConfig in appConfig.uiInputConfigs" >
+									<div class="row">
+										<div ng-if="uiInputConfig.mapped">
+										  <div ng-if="uiInputConfig.visible">
+										  
+											<div ng-if="uiInputConfig.listOfValues">
+											
+												<div ng-if="uiInputConfig.enum">
+													<div class="form-group col-md-12">
+														<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
+														<div class="col-md-7">
+														<select ng-model="entity[uiInputConfig.propName]" ng-options="y for (x, y) in uiInputConfig.listOfValues">
+														</select>
+														</div>
+													</div>
+												</div>
+												<div ng-if="!uiInputConfig.enum">
+													<div class="form-group col-md-12">
+														<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
+														<div class="col-md-7">
+														<select ng-model="entity[uiInputConfig.propName]" ng-options="y.name for (x, y) in uiInputConfig.listOfValues">
+														</select>
+														</div>
 													</div>
 												</div>
 											</div>
-											<div ng-if="!uiInputConfig.enum">
-												<div class="form-group col-md-12">
-													<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
-													<div class="col-md-7">
-													<select ng-model="entity[uiInputConfig.propName]" ng-options="y.name for (x, y) in uiInputConfig.listOfValues">
-													</select>
-													</div>
-												</div>
-											</div>
-										</div>
-										
-									    <div ng-if="!uiInputConfig.listOfValues">
-										<div class="form-group col-md-12">
-											<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
-											<div class="col-md-7">
-											  <input type="text" ng-model="entity[uiInputConfig.propName]" name="mwInName{{uiInputConfig.propName}}" 
-											  	class="entity form-control input-sm" placeholder="{{uiInputConfig.columnTitle}}" 
-											  	ng-required="{{!uiInputConfig.nullable}}" 
-											  	ng-minlength="{{uiInputConfig.minlength}}" ng-maxlength="{{uiInputConfig.maxlength}}" 
-											  	id="mwInId-{{uiInputConfig.propName}}" title="{{uiInputConfig.diagnose}}" 
-											  	ng-blur="visitedmwInName[uiInputConfig.propName] = true" ng-click="visitedmwInName[uiInputConfig.propName] = false" />
-											  
-											  <div class="has-error" ng-show="myForm.$dirty && visitedmwInName[uiInputConfig.propName]">
-												  <span ng-show="myForm.mwInName{{uiInputConfig.propName}}.$error.required">This is a required field </span>
-												  <span ng-show="myForm.mwInName{{uiInputConfig.propName}}.$error.minlength">Minimum length required is {{uiInputConfig.minlength}}</span>
+											
+											<div ng-if="!uiInputConfig.listOfValues">
+											<div class="form-group col-md-12">
+												<label class="col-md-2 control-lable" for="mwInId-{{uiInputConfig.propName}}">{{ uiInputConfig.columnTitle }}</label>
+												<div class="col-md-7">
+												  <input type="text" ng-model="entity[uiInputConfig.propName]" name="mwInName{{uiInputConfig.propName}}" 
+													class="entity form-control input-sm" placeholder="{{uiInputConfig.columnTitle}}" 
+													ng-required="{{!uiInputConfig.nullable}}" 
+													ng-minlength="{{uiInputConfig.minlength}}" ng-maxlength="{{uiInputConfig.maxlength}}" 
+													id="mwInId-{{uiInputConfig.propName}}" title="{{uiInputConfig.diagnose}}" 
+													ng-blur="visitedmwInName[uiInputConfig.propName] = true" ng-click="visitedmwInName[uiInputConfig.propName] = false" />
 												  
-											  </div>
+												  <div class="has-error" ng-show="myForm.$dirty && visitedmwInName[uiInputConfig.propName]">
+													  <span ng-show="myForm.mwInName{{uiInputConfig.propName}}.$error.required">This is a required field </span>
+													  <span ng-show="myForm.mwInName{{uiInputConfig.propName}}.$error.minlength">Minimum length required is {{uiInputConfig.minlength}}</span>
+													  
+												  </div>
+												</div>
+												<div class="markRequired" title="input required" ng-show="{{!uiInputConfig.nullable}}">*</div>
 											</div>
-											<div class="markRequired" title="input required" ng-show="{{!uiInputConfig.nullable}}">*</div>
+											</div>
+											
+										  </div> <!-- not visible -->
 										</div>
-										</div>
-										
-									  </div> <!-- not visible -->
 									</div>
 								</div>
-							</div>
-						    
-							<div ng-if="appConfig.uiInputConfigs.length > 0">
-							<div class="row">
-								<div class="form-actions floatRight">
-									<input type="submit" value="Add" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid">
-									<button type="button" ng-click="ctrl.reset()" class="btn btn-warning btn-sm" ng-disabled="myForm.$pristine">Reset Form</button>
-								</div>
-							</div>
-							</div>
-						</form>
-				
-						<div id="innerGrid" style="width:100%;height:300px;" >
-								Loading ...								  
-						</div> 
-						
-						<div class="mw-pagination">
-							<pagination boundary-links="true" 
-								max-size="3" 
-								items-per-page="state.pagingModel.pageSize"
-								total-items="state.pagingModel.count" 
-								ng-model="state.pagingModel.pageIndex" 
-								ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )"></pagination>
 								
-						</div>
-							
-						<div>Paging configuration:<br>
-							Total number of datasets in database: {{state.pagingModel.count}}<br> 
-							Current page size: {{state.pagingModel.pageSize}}<br>
-							<br>
-							
-							<div ng-if="appConfig.uiInputConfigs.length > 0">
-								Configure Grid:<br>
-								<input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
-								Show not mapped columns<br>
+								<div ng-if="appConfig.uiInputConfigs.length > 0">
+								<div class="row">
+									<div class="form-actions floatRight">
+										<input type="submit" value="Add" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid">
+										<button type="button" ng-click="ctrl.reset()" class="btn btn-warning btn-sm" ng-disabled="myForm.$pristine">Reset Form</button>
+									</div>
+								</div>
+								</div>
+							</form>
+				
+							<form ng-submit="submitFilter()" name="gridFilterForm" class="form-horizontal" id="filterForm">
+							<div id="innerGrid" style="width:100%;height:300px;" >
+									Loading ...								  
+							</div> 
+							</form>
+						
+							<div class="mw-pagination">
+								<pagination boundary-links="true" 
+									max-size="3" 
+									items-per-page="state.pagingModel.pageSize"
+									total-items="state.pagingModel.count" 
+									ng-model="state.pagingModel.pageIndex" 
+									ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )"></pagination>
+									
 							</div>
-							<br/>
 							
-							Change page size: <input type=number ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )" ng-model='state.pagingModel.pageSize'>
-		  				
+							<div>Paging configuration:<br>
+								Total number of (filtered) datasets in database: {{state.pagingModel.count}}<br> 
+								Current page size: {{state.pagingModel.pageSize}}<br>
+								<br>
+								
+								<div ng-if="appConfig.uiInputConfigs.length > 0">
+									Configure Grid:<br>
+									<input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
+									Show not mapped columns<br>
+								</div>
+								<br/>
+								
+								Change page size: <input type=number ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )" ng-model='state.pagingModel.pageSize'>
+							
+							</div>
+						
 						</div>

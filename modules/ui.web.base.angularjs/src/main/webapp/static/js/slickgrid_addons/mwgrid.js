@@ -1,10 +1,11 @@
 
 
 function mwGrid() {
+	var self = this;
 	var grid = {};
 	var columns = [];
 	var columnFilters = {};
-	this.data = [];
+	self.data = [];
 	var dataView;
 
 	var options = {};
@@ -32,7 +33,7 @@ function mwGrid() {
 	
 			if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 				columns[columnCounter] = {};
-				columns[columnCounter]["id"] = ofdbField.propOfdbName;
+				columns[columnCounter]["id"] = ofdbField.propName;
 				columns[columnCounter]["name"] = ofdbField.columnTitle;
 				columns[columnCounter]["field"] = ofdbField.propName;
 				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
@@ -50,6 +51,7 @@ function mwGrid() {
 			columns[columnCounter]["id"] = "type";
 			columns[columnCounter]["name"] = "type";
 			columns[columnCounter]["field"] = "type";
+			columns[columnCounter]["width"] = 1;
 			columnCounter++;
 		}
 		
@@ -65,7 +67,7 @@ function mwGrid() {
 		return result.substring(0, result.length - 1);	
 	}
 	
-	this.getControllerScope = function () {
+	self.getControllerScope = function () {
 		return angular.element($("#controllerScope")).scope();
 	};
 	
@@ -73,16 +75,16 @@ function mwGrid() {
 	
 	/* public functions */
 	
-	this.getColumns = function () {
+	self.getColumns = function () {
 		return columns;
 	};
 	
-	this.getColumnFilters = function() {
+	self.getColumnFilters = function() {
 		return columnFilters;
 	};
 	
-	this.initialize = function() {
-		console.log("mwGrid initialize");
+	self.initialize = function() {
+		console.log("mwGrid: initialize");
 
 		this.options = {
 			enableCellNavigation: true,
@@ -96,7 +98,7 @@ function mwGrid() {
 		},
 		
 		$(function () {
-			console.log("mwGrid $function ");
+			console.log("mwGrid: $function ");
 
 			mwGrid.dataView = new Slick.Data.DataView();
 			mwGrid.grid = new Slick.Grid("#innerGrid", mwGrid.dataView, mwGrid.getColumns(), mwGrid.options);
@@ -105,7 +107,7 @@ function mwGrid() {
 		
 	};
 	
-	this.filter = function (item) {
+	self.filter = function (item) {
 		
 		var gridFiltersArray = mwGrid.getColumnFilters();
 		for (var columnId in gridFiltersArray ) {
@@ -123,40 +125,43 @@ function mwGrid() {
 		return true;
 	};
 	
-	this.load = function( rows, uiInputConfigs, appConfig ) {
-		console.log("mwGrid load");
+	self.load = function( rows, uiInputConfigs, appConfig ) {
+		console.log("mwGrid: load");
 		
 		initializeColumns( uiInputConfigs, appConfig );
 		
-		this.data = [];
+		self.data = [];
 		// NOTE: because mwGrid.data references memory of rows we must not reinitialize data objects by '{}' every time
-		if(rows.length > 0 && undefined == this.data[0]) {
+		if(rows.length > 0 && undefined == self.data[0]) {
 			for (var i = 0; i < rows.length; i++) {
-				this.data[i] = {};			
+				self.data[i] = {};			
 			}
+			
+			mwGrid.getColumnFilters()['type'] = rows[0]['type'];
+			
 		}
 		
 		for (var i = 0; i < rows.length; i++) {
 			for(var j=0; j < uiInputConfigs.length; j++) {
 				var ofdbField = uiInputConfigs[j];
 				if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
-					this.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
+					self.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
 				}
 				
 			}
 			
 			if(uiInputConfigs.length > 0) {
-				this.data[i]["type"] = rows[i]["type"];
-				this.data[i]["btnDelete"] = "";
+				self.data[i]["type"] = rows[i]["type"];
+				self.data[i]["btnDelete"] = "";
 			}
 		}
 		
-		this.dataView = new Slick.Data.DataView();
-		this.grid = new Slick.Grid("#innerGrid", this.dataView, this.getColumns(), this.options);
-		this.grid.setSelectionModel(new Slick.CellSelectionModel());
+		self.dataView = new Slick.Data.DataView();
+		self.grid = new Slick.Grid("#innerGrid", self.dataView, self.getColumns(), self.options);
+		self.grid.setSelectionModel(new Slick.CellSelectionModel());
 		
-		this.grid.onClick.subscribe(function(e, args) {
-			console.log("onClick");
+		self.grid.onClick.subscribe(function(e, args) {
+			console.log("mwgrid: onClick");
 			globalEntityController.setCurrentRowIndex( args.row );
 			
 			if( globalEntityController.hasRowChanged() && globalEntityController.isRowDirty() ) {
@@ -173,33 +178,48 @@ function mwGrid() {
 			mwGrid.getControllerScope().$apply();
 		});
 			
-		this.grid.onCellChange.subscribe(function(e, args) {
-			console.log("onCellChange");
+		self.grid.onCellChange.subscribe(function(e, args) {
+			console.log("mwgrid: onCellChange");
 			
 			globalEntityController.setRows( args.grid.getData().getItems() );
 			globalEntityController.processChange( args.item.id, args.item );
 			
 			mwGrid.getControllerScope().$apply();
 		});
-			
-		this.dataView.onRowCountChanged.subscribe(function (e, args) {
+		
+		self.dataView.onRowCountChanged.subscribe(function (e, args) {
 			mwGrid.grid.updateRowCount();
 			mwGrid.grid.render();
 		});
-		this.dataView.onRowsChanged.subscribe(function (e, args) {
+		self.dataView.onRowsChanged.subscribe(function (e, args) {
 		  mwGrid.grid.invalidateRows(args.rows);
 		  mwGrid.grid.render();
 		});
-		$(this.grid.getHeaderRow()).delegate(":input", "change keyup", function (e) {
+		
+		$(self.grid.getHeaderRow()).delegate(":input", "change keyup", function (e, args) {
+			
+		  // NOTE: do not replace this by self here, because this in function body here references different objects ...
 		  var columnId = $(this).data("columnId");
 		  if (columnId != null) {
 			mwGrid.getColumnFilters()[columnId] = $.trim($(this).val());
-			mwGrid.dataView.refresh();
+			globalEntityController.applyFilteredEntity( mwGrid.getColumnFilters() );
+			
 		  }
 		});
-		this.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
+		
+		
+		self.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
 			
-			if(args.column.id !== undefined) {
+			if( args.column.id === "type") {
+				$(args.node).empty();
+				// columnInvisible
+			} else if(args.column.id === "btnDelete") {
+				$(args.node).empty();
+				$("<input type='submit' value='Filter' class='btn-primary' ng-disabled='gridFilterForm.$invalid'>")
+				   .addClass('buttonGrid')
+				   .appendTo(args.node);
+				   // <input type="submit" value="Filter" class="btn btn-primary btn-sm" ng-disabled="gridFilterForm.$invalid">
+			} else if(args.column.id !== undefined) {
 				$(args.node).empty();
 				$("<input type='text'>")
 				   .data("columnId", args.column.id)
@@ -209,19 +229,19 @@ function mwGrid() {
 		});
 		
 		if(columns.length > 0) {
-			this.grid.init();
-			this.dataView.beginUpdate();
-			this.dataView.setItems(this.data);
-			this.dataView.setFilter(this.filter);
-			this.dataView.endUpdate();
+			self.grid.init();
+			self.dataView.beginUpdate();
+			self.dataView.setItems(self.data);
+			self.dataView.setFilter(self.filter);
+			self.dataView.endUpdate();
 			
-			this.grid.render();
-			console.log(this.grid);
+			self.grid.render();
+			console.log(self.grid);
 		}
 			
 	};
 	
-	this.clear = function() {
+	self.clear = function() {
 		mwGrid.data = [];
 		var cols = mwGrid.getColumns();
 		cols = [];
