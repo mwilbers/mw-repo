@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.domain.EntityTO;
+import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.IMenuService;
 import de.mw.mwdata.ofdb.domain.IMenue;
@@ -57,7 +57,44 @@ public abstract class AbstractMenuController {
 		this.applicationConfigService = applicationConfigService;
 	}
 
-	protected abstract UiMenuNode convertToUiMenu(final EntityTO menuEntity);
+	// protected abstract UiMenuNode convertToUiMenu(final EntityTO menuEntity);
+
+	protected List<UiMenuNode> convertToUiMenuNodes(final QueryResult menuResult) {
+
+		List<UiMenuNode> menuList = new ArrayList<>();
+
+		// List<IEntity[]> objectArray = Utils.toObjectArray(menuResult.getRows());
+		for (Object[] row : menuResult.getRows()) {
+			UiMenuNode menu = convertToUiMenu((IEntity) row[0]);
+
+			// FIXME: row[1] should be gained by result.metaData
+			String urlPath = (String) row[1];
+			if (!StringUtils.isEmpty(urlPath)) {
+				String restUrl = this.urlService.createUrlForReadEntities(getServletName(), urlPath);
+				menu.setRestUrl(restUrl);
+			}
+			menuList.add(menu);
+		}
+		return menuList;
+
+	}
+
+	protected UiMenuNode convertToUiMenu(final IEntity menuEntity) {
+
+		IMenue menu = (IMenue) menuEntity;
+
+		UiMenuNode node = new UiMenuNode();
+		node.setId(menu.getId());
+		node.setNodeType(menu.getTyp().name());
+		node.setDisplayName(menu.getAnzeigeName() + " ( " + menu.getTyp().name() + " ) ");
+
+		if (node.hasChildren()) {
+			String menuUrl = this.getUrlService().createUrlForMenuItem(getServletName(), menu.getId());
+			node.setUrl(menuUrl);
+		}
+
+		return node;
+	}
 
 	@RequestMapping(value = "**/", method = RequestMethod.GET)
 	@ResponseBody
@@ -70,8 +107,9 @@ public abstract class AbstractMenuController {
 		// FIXME: return UI-object of menunodes with additional ofdb-infos (visible,
 		// filterable, editable, etc.)
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
-		List<EntityTO> menuResult = this.menuService.findMainMenus(userAreaName);
-		List<UiMenuNode> menuList = convertToUiMenuList(menuResult);
+		QueryResult menuResult = this.menuService.findMainMenus(userAreaName);
+
+		List<UiMenuNode> menuList = convertToUiMenuNodes(menuResult); // convertToUiMenuList(entityTOs);
 
 		if (!CollectionUtils.isEmpty(selectedNodes)) {
 			List<UiMenuNode> currentNodes = menuList;
@@ -82,28 +120,35 @@ public abstract class AbstractMenuController {
 				UiMenuNode parentNode = findNodeById(selectedNode.getId(), currentNodes);
 				if (null != parentNode) {
 
-					List<EntityTO> childNodes = this.menuService.findChildMenus(parentNode.getId(), userAreaName);
-					List<UiMenuNode> uiChildNodes = convertToUiMenuList(childNodes);
+					QueryResult childResult = this.menuService.findChildMenus(parentNode.getId(), userAreaName);
+
+					List<UiMenuNode> uiChildNodes = this.convertToUiMenuNodes(childResult); // convertToUiMenuList(childEntityTOs);
 					parentNode.addAllChildren(uiChildNodes);
 
 					currentNodes = uiChildNodes;
+
+					if (i == selectedNodes.size() - 2) { // for deepest layer look for leaf to mark as selected
+						markSelected(uiChildNodes, selectedNodes.get(selectedNodes.size() - 1).getId());
+					}
+
 				}
 
 			}
 
 		}
 
-		// for (EntityTO item : menuResult) {
-		// UiMenuNode menu = convertToUiMenu(item);
-		// if (!StringUtils.isEmpty(item.getJoinedValue("urlPath"))) {
-		// String restUrl = this.urlService.createUrlForReadEntities(getServletName(),
-		// item.getJoinedValue("urlPath"));
-		// menu.setRestUrl(restUrl);
-		// }
-		// menuList.add(menu);
-		// }
-
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
+	}
+
+	private void markSelected(List<UiMenuNode> nodes, long id) {
+
+		for (UiMenuNode node : nodes) {
+			if (node.getId() == id) {
+				node.setSelected(true);
+				break;
+			}
+		}
+
 	}
 
 	private UiMenuNode findNodeById(final long id, final List<UiMenuNode> menuList) {
@@ -119,17 +164,26 @@ public abstract class AbstractMenuController {
 	private List<UiMenuNode> loadMenuPath(final String currentUrlPath) {
 		List<UiMenuNode> menuPath = new ArrayList<>();
 
-		EntityTO<AbstractMWEntity> menuTO = this.menuService.findMenuByUrlPath(currentUrlPath);
-		UiMenuNode uiMenu = convertToUiMenu(menuTO);
+		IMenue menu = (IMenue) this.menuService.findMenuByUrlPath(currentUrlPath);
+		if (null == menu) {
+			return menuPath;
+		}
+
+		// EntityTO entityTO = new EntityTO<AbstractMWEntity>((AbstractMWEntity) menu);
+
+		UiMenuNode uiMenu = convertToUiMenu(menu);
 		menuPath.add(uiMenu);
 
-		IMenue menu = (IMenue) menuTO.getItem();
+		// IMenue menu = (IMenue) entityTO.getItem();
 		while (menu.getHauptMenueId() != null) {
-			EntityTO<AbstractMWEntity> parentMenuTO = this.menuService.findParentMenu(menu.getHauptMenueId());
-			UiMenuNode uiParentMenu = convertToUiMenu(parentMenuTO);
+			IMenue parentMenu = (IMenue) this.menuService.findParentMenu(menu.getHauptMenueId());
+
+			// EntityTO parentMenuTO = new EntityTO<AbstractMWEntity>((AbstractMWEntity)
+			// parentMenu);
+			UiMenuNode uiParentMenu = convertToUiMenu(parentMenu);
 			menuPath.add(0, uiParentMenu);
 
-			menu = (IMenue) parentMenuTO.getItem();
+			menu = parentMenu;
 		}
 
 		return menuPath;
@@ -151,25 +205,15 @@ public abstract class AbstractMenuController {
 
 		// // FIXME: compare with where-restrictions from OfdbDao.findMenues()
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
-		List<EntityTO> menuResult = this.menuService.findChildMenus(parentMenuId, userAreaName);
-		List<UiMenuNode> menuList = convertToUiMenuList(menuResult);
+		QueryResult menuResult = this.menuService.findChildMenus(parentMenuId, userAreaName);
+
+		// List<EntityTO> entityTOs = convertToEntityTOList(menuResult.getRows(),
+		// new JoinedPropertyTO("ansichtDef", "urlPath", 1));
+
+		// FIXME : do convert directly from QueryResult to UiMenuNodes here
+		List<UiMenuNode> menuList = this.convertToUiMenuNodes(menuResult); // convertToUiMenuList(entityTOs);
 
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
-	}
-
-	private List<UiMenuNode> convertToUiMenuList(final List<EntityTO> menuResult) {
-
-		List<UiMenuNode> menuList = new ArrayList<>();
-		for (EntityTO item : menuResult) {
-			UiMenuNode menu = convertToUiMenu(item);
-			if (!StringUtils.isEmpty(item.getJoinedValue("urlPath"))) {
-				String restUrl = this.urlService.createUrlForReadEntities(getServletName(),
-						item.getJoinedValue("urlPath"));
-				menu.setRestUrl(restUrl);
-			}
-			menuList.add(menu);
-		}
-		return menuList;
 	}
 
 }

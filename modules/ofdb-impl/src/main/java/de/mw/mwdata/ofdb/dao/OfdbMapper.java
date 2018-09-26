@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.ManyToMany;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.type.CustomType;
@@ -23,8 +24,11 @@ import de.mw.mwdata.core.db.FxBooleanType;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.FxEnumType;
+import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.exception.OfdbRuntimeException;
+import de.mw.mwdata.ofdb.impl.LocalizedMessages;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
+import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 public class OfdbMapper extends HibernateDaoSupport {
 
@@ -70,8 +74,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 			final String[] props) {
 
 		OfdbEntityMapping entityMapping = new OfdbEntityMapping(tableName);
-		// Map<String, OfdbPropMapper> propMap = new HashMap<String, OfdbPropMapper>();
-
 		for (int i = 0; i < props.length; i++) {
 
 			if (persister.getPropertyColumnNames(i).length > 0 && !isAssociatedCollection(props[i])) {
@@ -84,20 +86,60 @@ public class OfdbMapper extends HibernateDaoSupport {
 				}
 
 				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
-				// OfdbPropMapper propMapper = new OfdbPropMapper(tableName, columnNameDb);
-				// propMapper.setPropertyName(props[i]);
-				// propMapper.setPropertyIndex(new Integer(i));
-
 				DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
-				// propMapper.setDbType(dbType);
 				entityMapping.addMapping(columnNameDb, props[i], new Integer(i), dbType);
 
-				// propMap.put(columnNameDb, propMapper);
+			}
+
+		}
+
+		linkAssociationProperties(entityMapping, persister, props);
+
+		return entityMapping;
+	}
+
+	private void linkAssociationProperties(final OfdbEntityMapping entityMapping,
+			final AbstractEntityPersister persister, final String[] props) {
+
+		Type[] propertyTypes = persister.getPropertyTypes();
+
+		for (int i = 0; i < props.length; i++) {
+			if (persister.getPropertyColumnNames(i).length > 0 && isAssociationType(propertyTypes[i])) {
+				String associationColumnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
+				String columnNameDb = findPropertyMapping(persister, props, associationColumnNameDb);
+
+				if (StringUtils.isEmpty(columnNameDb)) {
+					String msg = LocalizedMessages.getString("de.mw.mwdata.ofdb.messages",
+							"invalidOfdbConfig.MissingAssocationMapping", entityMapping.getTableName(),
+							persister.getPropertyColumnNames(i)[0].toUpperCase(), "");
+					throw new OfdbMissingMappingException(msg);
+				}
+
+				OfdbPropMapper propMapping = entityMapping.findPropertyMapperByColumnName(columnNameDb);
+				propMapping.setAssociatedEntityName(props[i]);
+			}
+		}
+
+	}
+
+	private String findPropertyMapping(final AbstractEntityPersister persister, final String[] props,
+			final String associationColumnNameDb) {
+
+		Type[] propertyTypes = persister.getPropertyTypes();
+
+		for (int i = 0; i < props.length; i++) {
+			if (persister.getPropertyColumnNames(i).length > 0 && !isAssociationType(propertyTypes[i])) {
+				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
+
+				if (columnNameDb.equals(associationColumnNameDb)) {
+					return columnNameDb;
+				}
+				// String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
 
 			}
 		}
 
-		return entityMapping;
+		return StringUtils.EMPTY;
 	}
 
 	private DBTYPE convertTypeToDbType(final Type type) {

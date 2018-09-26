@@ -4,8 +4,6 @@
 package de.mw.mwdata.core;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Main class for configuring globals, definitions and pathes for MWData.
@@ -15,31 +13,33 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class Constants {
 
-	/**
-	 * constant for core-Spring-Application-Context
-	 */
-	public static final String APPCONTEXT_CORE = "appContext-core.xml";
+	// /**
+	// * constant for core-Spring-Application-Context
+	// */
+	// public static final String APPCONTEXT_CORE = "appContext-core.xml";
+	//
+	// /**
+	// * constant for fx-model-Spring-Application-Context
+	// */
+	// public static final String APPCONTEXT_OFDB = "appContext-ofdb.xml";
 
-	/**
-	 * constant for fx-model-Spring-Application-Context
-	 */
-	public static final String APPCONTEXT_OFDB = "appContext-ofdb.xml";
-
-	/**
-	 * method for getting xml-based core-application-context
-	 */
-	public static ApplicationContext getAppContextCore() {
-		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { APPCONTEXT_CORE });
-		return context;
-	}
-
-	/**
-	 * method for getting xml-based ofdb-application-context
-	 */
-	public static ApplicationContext getAppContextOfdb() {
-		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { APPCONTEXT_OFDB });
-		return context;
-	}
+	// /**
+	// * method for getting xml-based core-application-context
+	// */
+	// public static ApplicationContext getAppContextCore() {
+	// ApplicationContext context = new ClassPathXmlApplicationContext(new String[]
+	// { APPCONTEXT_CORE });
+	// return context;
+	// }
+	//
+	// /**
+	// * method for getting xml-based ofdb-application-context
+	// */
+	// public static ApplicationContext getAppContextOfdb() {
+	// ApplicationContext context = new ClassPathXmlApplicationContext(new String[]
+	// { APPCONTEXT_OFDB });
+	// return context;
+	// }
 
 	/* ************************ SYS-TABLE-COLUMNS ************************** */
 

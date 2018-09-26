@@ -64,14 +64,104 @@ public class DomainMockFactory {
 
 	}
 
+	private interface AnsichtSpalteFactory {
+		public AnsichtSpalten create();
+	}
+
+	// private static class AnsichtSpalteMock implements AnsichtSpalteFactory {
+	//
+	// private AnsichtDef viewDef;
+	// private ITabSpeig tableProp;
+	// private IAnsichtTab viewTab;
+	//
+	// private AnsichtSpalteMock(final AnsichtDef viewDef, final ITabSpeig
+	// tableProp, final IAnsichtTab viewTab) {
+	// this.tableProp = tableProp;
+	// this.viewDef = viewDef;
+	// this.viewTab = viewTab;
+	// }
+	//
+	// @Override
+	// public AnsichtSpalten create() {
+	//
+	// AnsichtSpalten aSpalte = new AnsichtSpalten();
+	// aSpalte.setAnsichtDef(this.viewDef);
+	//
+	// aSpalte.setIndexGrid(1);
+	// aSpalte.setTabAKey(this.viewDef.getName());
+	// aSpalte.setEingabeNotwendig(false);
+	//
+	// aSpalte.setSpalteAKey(this.tableProp.getSpalte());
+	// aSpalte.setName(this.tableProp.getSpalte());
+	// aSpalte.setTabSpEig(this.tableProp);
+	// aSpalte.setSystem(false);
+	//
+	// aSpalte.setInGridLaden(true);
+	// aSpalte.setInGridAnzeigen(true);
+	// aSpalte.setFilter(true);
+	//
+	// aSpalte.setBearbHinzufZugelassen(true);
+	// aSpalte.setBearbZugelassen(true);
+	//
+	// aSpalte.setViewTab(this.viewTab);
+	//
+	// return aSpalte;
+	// }
+	//
+	// }
+
+	// private class JoinedAnsichtSpalteMock implements AnsichtSpalteFactory {
+	//
+	// private AnsichtDef viewDef;
+	// private IAnsichtTab viewTab;
+	//
+	// private JoinedAnsichtSpalteMock(final AnsichtDef viewDef, final ITabSpeig
+	// joinedTableProp,
+	// final IAnsichtTab viewTab) {
+	// this.viewDef = viewDef;
+	// this.viewTab = viewTab;
+	// }
+	//
+	// @Override
+	// public AnsichtSpalten create() {
+	//
+	// AnsichtSpalten aSpalte = new AnsichtSpalten();
+	// aSpalte.setAnsichtDef(this.viewDef);
+	//
+	// aSpalte.setIndexGrid(1);
+	// aSpalte.setTabAKey(this.viewDef.getName());
+	// aSpalte.setEingabeNotwendig(false);
+	//
+	// aSpalte.setSpalteAKey(this.tableProp.getSpalte());
+	// aSpalte.setName(this.tableProp.getSpalte());
+	// aSpalte.setTabSpEig(this.tableProp);
+	// aSpalte.setSystem(false);
+	//
+	// aSpalte.setInGridLaden(true);
+	// aSpalte.setInGridAnzeigen(true);
+	// aSpalte.setFilter(true);
+	//
+	// aSpalte.setBearbHinzufZugelassen(true);
+	// aSpalte.setBearbZugelassen(true);
+	//
+	// aSpalte.setViewTab(this.viewTab);
+	//
+	// return aSpalte;
+	//
+	// }
+	//
+	// }
+
 	public static AnsichtSpalten createAnsichtSpalteMock(final AnsichtDef viewDef, final ITabSpeig tableProp,
 			final IAnsichtTab viewTab) {
 
+		// AnsichtSpalteMock mock = new AnsichtSpalteMock(viewDef, tableProp, viewTab);
+		// return mock.create();
 		AnsichtSpalten aSpalte = new AnsichtSpalten();
 		aSpalte.setAnsichtDef(viewDef);
 
 		aSpalte.setIndexGrid(1);
-		aSpalte.setTabAKey(viewDef.getName());
+		aSpalte.setTabAKey(viewTab.getTabAKey());
 		aSpalte.setEingabeNotwendig(false);
 
 		aSpalte.setSpalteAKey(tableProp.getSpalte());

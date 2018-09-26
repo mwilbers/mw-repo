@@ -9,6 +9,13 @@ import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.to.OfdbField;
 
+/**
+ * FIXME: mark all these ui classes as JsonConvertable
+ * 
+ * @author WilbersM
+ *
+ * @param <E>
+ */
 public class UiEntityList<E extends AbstractMWEntity> {
 
 	/**
@@ -41,7 +48,14 @@ public class UiEntityList<E extends AbstractMWEntity> {
 			// (json-conv)
 			// vgl: OfdbField.itemKey, Value, Label felder und deren Verwendung
 
-			addEntityTO(new EntityTO((AbstractMWEntity) entity[0]));
+			EntityTO en = new EntityTO((AbstractMWEntity) entity[0]);
+			if (entity.length > 1) {
+				for (int i = 1; i <= entity.length; i++) {
+					en.addJoinedValue((String) entity[i]);
+				}
+			}
+
+			this.entityTOs.add(en);
 		}
 
 	}
@@ -56,10 +70,6 @@ public class UiEntityList<E extends AbstractMWEntity> {
 
 	public List<UiInputConfig> getUiInputConfigs() {
 		return this.uiConfigItems;
-	}
-
-	public void addEntityTO(final EntityTO<E> entityTO) {
-		this.entityTOs.add(entityTO);
 	}
 
 	public List<EntityTO<E>> getEntityTOs() {

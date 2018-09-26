@@ -17,6 +17,9 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.intercept.CrudChain;
 import de.mw.mwdata.core.intercept.ICrudInterceptable;
 import de.mw.mwdata.core.intercept.InvalidChainCheckException;
+import de.mw.mwdata.core.query.QueryResult;
+import de.mw.mwdata.core.to.OfdbField;
+import de.mw.mwdata.core.utils.Utils;
 
 // FIXME: rename class to CrudService
 public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptable {
@@ -234,13 +237,25 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
-	public List<IEntity[]> executeSql(String sql) {
-		return this.crudDao.executeSql(sql);
+	public QueryResult executeSql(String sql) {
+		List<IEntity[]> entityList = this.crudDao.executeSql(sql);
+		return QueryResult.createMetaLessQueryResult(entityList);
 	}
 
 	@Override
-	public List<IEntity[]> executeSqlPaginated(String sql, PagingModel pagingModel) {
-		return this.crudDao.executeSqlPaginated(sql, pagingModel);
+	public QueryResult executeSql(String sql, final List<OfdbField> list) {
+		List<IEntity[]> entityList = this.crudDao.executeSql(sql);
+
+		// FIXME: why conversion to objects ?
+		List<IEntity[]> objectArray = Utils.toObjectArray(entityList);
+		return new QueryResult(list, objectArray);
+	}
+
+	@Override
+	public QueryResult executeSqlPaginated(String sql, final List<OfdbField> list, PagingModel pagingModel) {
+		List<IEntity[]> entityList = this.crudDao.executeSqlPaginated(sql, pagingModel);
+		List<IEntity[]> objectArray = Utils.toObjectArray(entityList);
+		return new QueryResult(list, objectArray);
 	}
 
 	@Override

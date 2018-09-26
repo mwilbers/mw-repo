@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.mw.mwdata.core.ofdb.query.OperatorEnum;
+import de.mw.mwdata.core.query.InvalidQueryConfigurationException;
+import de.mw.mwdata.core.query.OperatorEnum;
+import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
-import de.mw.mwdata.ofdb.exception.OfdbQueryBuilderException;
+import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.query.OfdbOrderSet;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 import de.mw.mwdata.ofdb.query.OfdbWhereRestriction;
@@ -21,13 +23,16 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 
 	/**
 	 * Contains a key-value-map with key = AnsichtTab.name and values = list of
-	 * TabSpeigs
+	 * TabSpeigs<br>
+	 * FIXME: error : key not unique. key should be tableName !
 	 */
 	private Map<String, List<ITabSpeig>> aliasTabSpeigs = new HashMap<String, List<ITabSpeig>>();
 
 	private List<OfdbWhereRestriction> whereRestrictions = new ArrayList<OfdbWhereRestriction>();
 
 	private List<OfdbOrderSet> orderList = new ArrayList<OfdbOrderSet>();
+
+	private List<OfdbField> ofdbFields = new ArrayList<OfdbField>();
 
 	public void setMainTable(final ITabDef tabDef) {
 		this.tabDef = tabDef;
@@ -39,20 +44,24 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 
 	public void addAlias(final IAnsichtTab ansichtTab, final ITabSpeig tabSpeig) {
 
-		List<ITabSpeig> list = this.aliasTabSpeigs.get(ansichtTab.getName());
+		List<ITabSpeig> list = this.aliasTabSpeigs.get(ansichtTab.getTabAKey());
 
 		if (null == list) {
 			list = new ArrayList<ITabSpeig>();
-			this.aliasTabSpeigs.put(ansichtTab.getName(), list);
+			this.aliasTabSpeigs.put(ansichtTab.getTabAKey(), list);
+		} else {
+			// FIXME: should be fixed !
+			throw new OfdbInvalidConfigurationException(
+					"Invalid Query Model configuration. Duplicate key for ansichtTab.name " + ansichtTab.getName());
 		}
 
 		list.add(tabSpeig);
 
 	}
 
-	public List<ITabSpeig> getAlias(final String viewName) {
+	public List<ITabSpeig> getAlias(final IAnsichtTab viewTab) {
 
-		List<ITabSpeig> list = this.aliasTabSpeigs.get(viewName);
+		List<ITabSpeig> list = this.aliasTabSpeigs.get(viewTab.getTabAKey());
 
 		if (null == list) {
 			return new ArrayList<ITabSpeig>();
@@ -66,7 +75,7 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 		return this.tabDef;
 	}
 
-	public List<IAnsichtTab> getJoinedViews() {
+	public List<IAnsichtTab> getJoinedTables() {
 		return this.joinAnsichtTabs;
 	}
 
@@ -96,8 +105,8 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 			final OperatorEnum whereOperator, final Object whereValue) {
 
 		if (!isTabDefRegistered(whereTabDef)) {
-			throw new OfdbQueryBuilderException(
-					"TabDef " + whereTabDef.getName() + " not registered in OfdbQueryBuilder.");
+			throw new InvalidQueryConfigurationException(
+					"TabDef " + whereTabDef.getName() + " not registered in QueryBuilder.");
 		}
 
 		OfdbWhereRestriction whereRes = new OfdbWhereRestriction(whereTabDef, whereTabSpeig, whereOperator, whereValue);
@@ -128,6 +137,16 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 	// @Override
 	public void resetOrderSet() {
 		this.orderList.clear();
+	}
+
+	@Override
+	public void addMetaData(List<OfdbField> ofdbFields) {
+		this.ofdbFields.addAll(ofdbFields);
+	}
+
+	@Override
+	public List<OfdbField> getMetaData() {
+		return this.ofdbFields;
 	}
 
 }

@@ -14,6 +14,13 @@ public class OfdbPropMapper implements Serializable {
 	private DBTYPE dbType;
 
 	/**
+	 * Holds the propertyname of the association list based property in Entity with
+	 * same columnName. E.g. for TabDef: propName = 'bereichsID' =>
+	 * associationPropName = 'bereich'
+	 */
+	private String associatedEntityName;
+
+	/**
 	 * Describes the index of the property in the hibernate persistence array of all
 	 * properties
 	 */
@@ -73,6 +80,14 @@ public class OfdbPropMapper implements Serializable {
 
 	public boolean isAssociationType() {
 		return this.dbType.equals(DBTYPE.ENTITY);
+	}
+
+	public String getAssociatedEntityName() {
+		return associatedEntityName;
+	}
+
+	public void setAssociatedEntityName(String associatedEntityName) {
+		this.associatedEntityName = associatedEntityName;
 	}
 
 }

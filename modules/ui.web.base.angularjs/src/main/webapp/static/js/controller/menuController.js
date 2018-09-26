@@ -9,6 +9,7 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
   self.loadingTime = 1;
   self.treeModel = [];
   self.expandedNodes = [];
+  self.selectedNode = {};
   self.treeOptions = {
 	multiSelection: false,
     dirSelectable: false,    // Click a folder name to expand (not select)
@@ -31,6 +32,10 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
 			
 			if( parentNode ) {
 				parentNode["children"] = treeModel;
+			}
+			
+			if( uiMenuNodes[i].selected ) {
+				self.selectedNode = currentNode;
 			}
 			
 		} 	
@@ -68,6 +73,9 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
   
   self.getExpandedNodes = function() {
 	  return self.expandedNodes;
+  };
+  self.getSelectedNode = function() {
+	  return self.selectedNode;
   };
   
   self.fetchChildNodes = function (node, expanded) {

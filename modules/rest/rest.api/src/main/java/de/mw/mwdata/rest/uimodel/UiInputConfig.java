@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.mw.mwdata.core.domain.DBTYPE;
+import de.mw.mwdata.core.domain.JoinedPropertyTO;
 import de.mw.mwdata.core.to.OfdbField;
 
 /**
@@ -80,6 +81,8 @@ public class UiInputConfig {
 	 */
 	private String itemKey;
 
+	private JoinedPropertyTO joinedProperty;
+
 	public UiInputConfig(final OfdbField ofdbField) {
 		this.tabSpeigSytemWert = ofdbField.getTabSpeigSystemWert();
 		this.tabSpeigBearbErlaubt = ofdbField.getTabSpeigBearbErlaubt();
@@ -103,6 +106,8 @@ public class UiInputConfig {
 		this.nullable = ofdbField.isNullable();
 		this.visible = ofdbField.isVisible();
 		this.filterable = ofdbField.isFilterable();
+
+		this.joinedProperty = ofdbField.getJoinedProperty();
 	}
 
 	private void addDiagnose(final String name, final String value) {
@@ -218,7 +223,7 @@ public class UiInputConfig {
 		if (this.tabSpeigSytemWert || !this.tabSpeigBearbErlaubt) {
 			return false;
 		} else {
-			if (this.ansichtSpalteBearbZugelassen) {
+			if (this.ansichtSpalteBearbHinzufuegenZugelassen) {
 				return true;
 			} else {
 				return false;
@@ -350,4 +355,13 @@ public class UiInputConfig {
 	public void setAnsichtSpalteBearbHinzufuegenZugelassen(boolean ansichtSpalteBearbHinzufuegenZugelassen) {
 		this.ansichtSpalteBearbHinzufuegenZugelassen = ansichtSpalteBearbHinzufuegenZugelassen;
 	}
+
+	public boolean isSystem() {
+		return this.tabSpeigSytemWert;
+	}
+
+	public JoinedPropertyTO getJoinedProperty() {
+		return joinedProperty;
+	}
+
 }

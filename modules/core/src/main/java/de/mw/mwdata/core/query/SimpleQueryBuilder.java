@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.ofdb.query;
+package de.mw.mwdata.core.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,28 +11,51 @@ import org.springframework.util.CollectionUtils;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.LocalizedMessages;
 
-public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
-
-	// private OfdbQueryModel queryModel;
+public class SimpleQueryBuilder implements QueryBuilder {
 
 	private boolean count;
 
-	private String mainTable;
+	private String mainEntityName;
 	private String mainTableAlias;
+
 	private Map<String, String> joinTables = new HashMap<String, String>();
 	private Map<String, TableColumnPair> leftJoinTables = new HashMap<String, TableColumnPair>();
-
 	private Map<String, String> joinEntities = new HashMap<String, String>();
+	private EntityAliasPair entityAliasPair = new EntityAliasPair(StringUtils.EMPTY, StringUtils.EMPTY);
 
-	private Map<String, String> selectTableAliasItems = new HashMap<String, String>();
-
+	// FIXME: should be Map<String, List<String>> for more alias columns by table
+	/**
+	 * key = alias name of the ofdb table <br>
+	 * value = property name of the underlying entity
+	 */
 	private Map<String, String> selectColumnAliasItems = new HashMap<String, String>();
-
 	private List<JoinRestriction> joinRestrictions = new ArrayList<JoinRestriction>();
-
 	private List<WhereRestriction> whereRestrictions = new ArrayList<WhereRestriction>();
-
 	private List<OrderSet> orderSet = new ArrayList<OrderSet>();
+
+	private class EntityAliasPair {
+
+		private String entityName;
+		private String tableAliasName;
+
+		private EntityAliasPair(final String entityName, final String tableAliasName) {
+			this.entityName = entityName;
+			this.tableAliasName = tableAliasName;
+		}
+
+		private String getEntityName() {
+			return this.entityName;
+		}
+
+		private String getTableAliasName() {
+			return this.tableAliasName;
+		}
+
+		private boolean isEmpty() {
+			return StringUtils.isEmpty(this.entityName);
+		}
+
+	}
 
 	private class TableColumnPair {
 
@@ -110,7 +133,7 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 	// @Override
 	@Override
-	public OfdbQueryBuilder setCount(final boolean count) {
+	public QueryBuilder setCount(final boolean count) {
 		this.count = count;
 		return this;
 	}
@@ -131,16 +154,16 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 			sbSelect.append(" count(*) ");
 		} else {
 
-			if (CollectionUtils.isEmpty(this.selectTableAliasItems)
-					&& CollectionUtils.isEmpty(this.selectColumnAliasItems)) {
+			if (this.entityAliasPair.isEmpty() && CollectionUtils.isEmpty(this.selectColumnAliasItems)) {
 				String msg = LocalizedMessages.getString(Constants.BUNDLE_NAME_COMMON,
 						"mwdata.core.queryBuilder.InvalidQueryMissingTableAndAlias");
 				throw new InvalidQueryConfigurationException(msg);
 			}
 
-			for (Map.Entry<String, String> entry : this.selectTableAliasItems.entrySet()) {
-				sbSelect.append(" ").append(entry.getValue()).append(",");
-			}
+			// for (Map.Entry<String, String> entry : this.selectTableAliasItems.entrySet())
+			// {
+			sbSelect.append(" ").append(this.entityAliasPair.getTableAliasName()).append(",");
+			// }
 			for (Map.Entry<String, String> entry : this.selectColumnAliasItems.entrySet()) {
 				sbSelect.append(" ").append(entry.getKey()).append(".").append(entry.getValue()).append(",");
 			}
@@ -154,13 +177,13 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 
 		// build from-part
 
-		if (StringUtils.isBlank(this.mainTable) && StringUtils.isBlank(this.mainTableAlias)) {
+		if (StringUtils.isBlank(this.mainEntityName) && StringUtils.isBlank(this.mainTableAlias)) {
 			String msg = LocalizedMessages.getString(Constants.BUNDLE_NAME_COMMON,
 					"mwdata.core.queryBuilder.InvalidQueryMissingFromTable");
 			throw new InvalidQueryConfigurationException(msg);
 		}
 
-		sbFrom.append(" from ").append(this.mainTable).append(" as ").append(this.mainTableAlias);
+		sbFrom.append(" from ").append(this.mainEntityName).append(" as ").append(this.mainTableAlias);
 
 		for (Map.Entry<String, String> joinEntry : this.joinEntities.entrySet()) {
 
@@ -290,36 +313,37 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		// concatenate all parts
 		sbSelect.append(sbFrom).append(sbWhere.toString()).append(sbOrder.toString());
 
-		this.reset();
+		// this.reset();
 		return sbSelect.toString();
 
 	}
 
-	// @Override
 	@Override
-	public OfdbQueryBuilder selectTable(final String tableName, final String tableAlias) {
-		// this.mainTable = tableName;
-		this.selectTableAliasItems.put(tableName, tableAlias);
+	public QueryBuilder selectEntity(final String entityName, final String tableAlias) {
+
+		if (!this.entityAliasPair.isEmpty()) {
+			// FIXME: can be removed after tests
+			throw new InvalidQueryConfigurationException("QueryBuilder cannot be reused.");
+		}
+
+		this.entityAliasPair = new EntityAliasPair(entityName, tableAlias);
 		return this;
 	}
 
-	// @Override
 	@Override
-	public OfdbQueryBuilder joinTable(final String tableName, final String tableAlias) {
+	public QueryBuilder joinTable(final String tableName, final String tableAlias) {
 		this.joinTables.put(tableName, tableAlias);
 		return this;
 	}
 
 	@Override
-	public OfdbQueryBuilder leftJoinTable(final String leftTableAlias, final String association,
-			final String assocAlias) {
+	public QueryBuilder leftJoinTable(final String leftTableAlias, final String association, final String assocAlias) {
 		this.leftJoinTables.put(assocAlias, new TableColumnPair(leftTableAlias, association));
 		return this;
 	}
 
-	// @Override
 	@Override
-	public OfdbQueryBuilder whereJoin(final String join1Table, final String join1Column, final String join2Table,
+	public QueryBuilder whereJoin(final String join1Table, final String join1Column, final String join2Table,
 			final String join2Column) {
 		this.joinRestrictions.add(new JoinRestriction(new TableColumnPair(join1Table, join1Column),
 				new TableColumnPair(join2Table, join2Column)));
@@ -327,21 +351,20 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 	}
 
 	@Override
-	public OfdbQueryBuilder fromTable(final String tableName, final String tableAlias) {
-		this.mainTable = tableName;
+	public QueryBuilder fromEntity(final String entityName, final String tableAlias) {
+		this.mainEntityName = entityName;
 		this.mainTableAlias = tableAlias;
 		return this;
 	}
 
-	// @Override
 	@Override
-	public OfdbQueryBuilder selectAlias(final String tableAlias, final String columnAlias) {
-		this.selectColumnAliasItems.put(tableAlias, columnAlias);
+	public QueryBuilder selectAlias(final String tableAlias, final String propertyName) {
+		this.selectColumnAliasItems.put(tableAlias, propertyName);
 		return this;
 	}
 
 	@Override
-	public OfdbQueryBuilder andWhereRestriction(final String tableAlias, final String columnAlias,
+	public QueryBuilder andWhereRestriction(final String tableAlias, final String columnAlias,
 			final OperatorEnum operator, final Object value, final ValueType valueType) {
 
 		TableColumnPair pair = new TableColumnPair(tableAlias, columnAlias);
@@ -351,30 +374,29 @@ public class DefaultOfdbQueryBuilder implements OfdbQueryBuilder {
 		return this;
 	}
 
-	// @Override
 	@Override
-	public OfdbQueryBuilder orderBy(final String tableAlias, final String columnAlias, final String orderDirection) {
+	public QueryBuilder orderBy(final String tableAlias, final String columnAlias, final String orderDirection) {
 
 		this.orderSet.add(new OrderSet(new TableColumnPair(tableAlias, columnAlias), orderDirection));
 		return this;
 	}
 
-	@Override
-	public void reset() {
-		this.count = false;
-		this.mainTable = null;
-		this.mainTableAlias = null;
-		this.joinRestrictions.clear();
-		this.joinTables.clear();
-		this.selectColumnAliasItems.clear();
-		this.selectTableAliasItems.clear();
-		this.orderSet.clear();
-		this.whereRestrictions.clear();
+	// @Override
+	// public void reset() {
+	// this.count = false;
+	// this.mainTable = null;
+	// this.mainTableAlias = null;
+	// this.joinRestrictions.clear();
+	// this.joinTables.clear();
+	// this.selectColumnAliasItems.clear();
+	// this.selectTableAliasItems.clear();
+	// this.orderSet.clear();
+	// this.whereRestrictions.clear();
+	//
+	// }
 
-	}
-
 	@Override
-	public OfdbQueryBuilder joinEntity(final String entityName, final String entityAlias) {
+	public QueryBuilder joinEntity(final String entityName, final String entityAlias) {
 		this.joinEntities.put(entityName, entityAlias);
 		return this;
 	}

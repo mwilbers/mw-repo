@@ -2,9 +2,11 @@ package de.mw.mwdata.ofdb.service;
 
 import java.util.List;
 
+import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -48,8 +50,9 @@ public interface IOfdbService {
 
 	public List<OfdbField> initializeOfdbFields(final String viewName);
 
-	public String buildFilteredSQL(final String viewName, final EntityTO<? extends AbstractMWEntity> filterEntityTO,
-			final List<SortKey> sortKeys);
+	// public String buildFilteredSQL(final String viewName, final EntityTO<?
+	// extends AbstractMWEntity> filterEntityTO,
+	// final List<SortKey> sortKeys);
 
 	// public void presetDefaultValues(final AbstractMWEntity entity);
 
@@ -134,7 +137,13 @@ public interface IOfdbService {
 
 	public String buildSQL(final String viewName, final List<SortKey> sortKeys);
 
-	public String buildSQLCount(final String viewName);
+	public QueryResult executeQueryModel(final String viewName, final List<SortKey> sortKeys,
+			final PagingModel pagingModel);
+
+	public QueryResult executeFilteredQueryModel(final String viewName, List<SortKey> sortKeys,
+			final PagingModel pagingModel, final EntityTO<? extends AbstractMWEntity> entityTO);
+
+	// public String buildSQLCount(final String viewName);
 
 	/**
 	 * Checks if all properties of the given AnsichtDef-object are valid for the

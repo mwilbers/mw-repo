@@ -1,10 +1,10 @@
 package de.mw.mwdata.core.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import de.mw.mwdata.core.query.InvalidQueryConfigurationException;
 
 /**
  * An {@link EntityTO} is an TO-object containing all data and informations of
@@ -24,7 +24,7 @@ public class EntityTO<E extends AbstractMWEntity> {
 	private E entity;
 
 	@SuppressWarnings("unchecked")
-	private Map<String, JoinedValue> map;
+	private List<JoinedValue> joinedValues;
 
 	/**
 	 * Internal class for managing all joined table column values by key/value -
@@ -60,11 +60,11 @@ public class EntityTO<E extends AbstractMWEntity> {
 
 	public EntityTO(final E entity) {
 		this.entity = entity;
-		this.map = new HashMap<>();
+		this.joinedValues = new ArrayList<>();
 	}
 
 	private EntityTO() {
-		this.map = new HashMap<>();
+		this.joinedValues = new ArrayList<>();
 	}
 
 	public static EntityTO<AbstractMWEntity> createEmptyEntityTO() {
@@ -79,27 +79,24 @@ public class EntityTO<E extends AbstractMWEntity> {
 		return this.entity;
 	}
 
-	public String getJoinedValue(final String mapKey) {
-
-		if (null == this.map.get(mapKey)) {
-			return StringUtils.EMPTY;
-		}
-
-		return this.map.get(mapKey).getValue();
+	public void addJoinedValue(final String value) {
+		this.joinedValues.add(new JoinedValue(value));
 	}
 
-	public boolean hasJoinedValues() {
-		for (Entry<String, JoinedValue> entry : this.map.entrySet()) {
-			if (!StringUtils.isBlank(entry.getValue().getValue())) {
-				return true;
-			}
+	/**
+	 * 
+	 * @param joinedValuesIndex
+	 * @return the value of all joined properties given by the 1-based index
+	 */
+	public String getJoinedValue(final int joinedValuesIndex) {
+
+		if (joinedValuesIndex > this.joinedValues.size()) {
+			String msg = MessageFormat.format(
+					"Called invalid joined property of configured entity based view for index {0}", joinedValuesIndex);
+			throw new InvalidQueryConfigurationException(msg);
 		}
 
-		return false;
-	}
-
-	public void addJoinedValue(final String mapKey, final String mapValue) {
-		this.map.put(mapKey, new JoinedValue(mapValue));
+		return this.joinedValues.get(joinedValuesIndex - 1).getValue();
 	}
 
 }

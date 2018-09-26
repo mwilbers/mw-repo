@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.ofdb.query;
+package de.mw.mwdata.core.query;
 
 public class InvalidQueryConfigurationException extends RuntimeException {
 

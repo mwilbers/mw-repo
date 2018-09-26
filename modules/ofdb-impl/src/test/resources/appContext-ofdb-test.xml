@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
     
-	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
+	<bean id="viewService" class="de.mw.mwdata.ofdb.service.ViewService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="crudService" ref="crudService" />
 	 	<property name="ofdbService" ref="ofdbService" />	

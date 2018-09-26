@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.mw.mwdata.core.daos.PagingModel;
-import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.query.QueryResult;
+import de.mw.mwdata.core.to.OfdbField;
 
 public interface ICrudService<T> {
 
@@ -54,9 +55,11 @@ public interface ICrudService<T> {
 	 */
 	public T findByName(final Class<T> clazz, final String name);
 
-	public List<IEntity[]> executeSql(String sql);
+	public QueryResult executeSql(String sql);
 
-	public List<IEntity[]> executeSqlPaginated(final String sql, final PagingModel pagingModel);
+	public QueryResult executeSql(String sql, final List<OfdbField> list);
+
+	public QueryResult executeSqlPaginated(final String sql, final List<OfdbField> list, final PagingModel pagingModel);
 
 	public long executeCountSql(final String sqlCount);
 

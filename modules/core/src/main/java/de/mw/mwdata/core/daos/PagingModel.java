@@ -6,6 +6,15 @@ public class PagingModel {
 	private int pageIndex;
 	private long count;
 
+	public PagingModel(final int pageSize, final int pageIndex) {
+		this.pageIndex = pageIndex;
+		this.pageSize = pageSize;
+	}
+
+	public static PagingModel createDefaultModel() {
+		return new PagingModel(100, 1);
+	}
+
 	public int getPageSize() {
 		return pageSize;
 	}

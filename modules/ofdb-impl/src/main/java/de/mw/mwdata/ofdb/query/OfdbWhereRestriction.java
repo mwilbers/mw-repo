@@ -1,6 +1,6 @@
 package de.mw.mwdata.ofdb.query;
 
-import de.mw.mwdata.core.ofdb.query.OperatorEnum;
+import de.mw.mwdata.core.query.OperatorEnum;
 import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 

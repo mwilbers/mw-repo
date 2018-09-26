@@ -177,6 +177,18 @@ public class ViewConfigHandle {
 		return null;
 	}
 
+	public ITabDef findTableDefByEntityName(final String simpleEntityName) {
+
+		for (IAnsichtTab viewTab : getViewTabs()) {
+			if (viewTab.getTabDef().getFullClassName().endsWith(simpleEntityName)) {
+				return viewTab.getTabDef();
+			}
+		}
+
+		return null;
+
+	}
+
 	public List<OfdbField> getOfdbFieldList() {
 		return this.viewConfig.getOfdbFieldList();
 	}
@@ -239,6 +251,10 @@ public class ViewConfigHandle {
 	@Override
 	public String toString() {
 		return this.viewConfig.toString();
+	}
+
+	public boolean isJoinedViewColumn(final IAnsichtSpalte viewColumn) {
+		return !(viewColumn.getViewTab().getTabAKey().equals(this.getMainAnsichtTab().getTabAKey()));
 	}
 
 }

@@ -45,11 +45,12 @@
 	<!-- +++++++++++++++++++++++++++++++ -->
 	
 	<bean id="ofdbMenuService" class="de.mw.mwdata.ofdb.service.OfdbMenuService">
-		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="crudService" ref="crudService" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="ofdbService" ref="ofdbService" />
 	</bean>
 	
-	<bean id="entityService" class="de.mw.mwdata.ofdb.service.EntityService">
+	<bean id="viewService" class="de.mw.mwdata.ofdb.service.ViewService">
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />		
 		<property name="crudService" ref="crudService" />

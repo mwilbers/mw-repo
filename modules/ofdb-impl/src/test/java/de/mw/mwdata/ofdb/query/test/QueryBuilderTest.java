@@ -1,15 +1,15 @@
-package de.mw.mwdata.core.ofdb.daos;
+package de.mw.mwdata.ofdb.query.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.InvalidQueryConfigurationException;
-import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.OperatorEnum;
-import de.mw.mwdata.core.ofdb.query.ValueType;
+import de.mw.mwdata.core.query.InvalidQueryConfigurationException;
+import de.mw.mwdata.core.query.OperatorEnum;
+import de.mw.mwdata.core.query.QueryBuilder;
+import de.mw.mwdata.core.query.SimpleQueryBuilder;
+import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.test.data.TestConstants;
 
 public class QueryBuilderTest {
@@ -20,7 +20,7 @@ public class QueryBuilderTest {
 	public void testEmptyFailedQueryBuilder() {
 
 		try {
-			OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
+			QueryBuilder builder = new SimpleQueryBuilder();
 			builder.buildSQL();
 			Assert.fail();
 		} catch (InvalidQueryConfigurationException e) {
@@ -32,9 +32,9 @@ public class QueryBuilderTest {
 	@Test
 	public void testSimpleQuery() {
 
-		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
-		builder.selectTable(TestConstants.TABLENAME_TABDEF, "TA");
-		builder.fromTable(TestConstants.TABLENAME_TABDEF, "TA");
+		QueryBuilder builder = new SimpleQueryBuilder();
+		builder.selectEntity(TestConstants.TABLENAME_TABDEF, "TA");
+		builder.fromEntity(TestConstants.TABLENAME_TABDEF, "TA");
 		String sql = builder.buildSQL();
 		String expectedSql = "select TA from FX_TabDef_K as TA where 1=1 ";
 		assertEqualsSqlIgnoringWhitespaces(sql, expectedSql);
@@ -48,10 +48,10 @@ public class QueryBuilderTest {
 	@Test
 	public void testQueryWithJoin() {
 
-		OfdbQueryBuilder builder = new DefaultOfdbQueryBuilder();
-		builder.selectTable("FromTable", "FT");
+		QueryBuilder builder = new SimpleQueryBuilder();
+		builder.selectEntity("FromTable", "FT");
 		builder.selectAlias("FT", "ColAlias");
-		builder.fromTable("FromTable", "FT");
+		builder.fromEntity("FromTable", "FT");
 
 		// add joined table
 		builder.joinTable("JoinTable", "JT");

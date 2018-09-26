@@ -86,9 +86,7 @@ public class PaginatedListTest {
 	public void testInitListWith31ItemAndCount1000() {
 		initItems(30); // Paging: 1 2 3 4 5 6 > 34
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(1);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 1);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 1000, pagingModel);
 
@@ -107,9 +105,7 @@ public class PaginatedListTest {
 	public void testInitListWith31ItemAndCount1000AndIndex10() {
 		initItems(30); // Paging: 1 < 5 6 7 8 9 10 11 12 13 14 15 > 34
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(10);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 10);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 1000, pagingModel);
 
@@ -129,9 +125,7 @@ public class PaginatedListTest {
 	public void testInitListWith31ItemAndCount1000AndIndex32() {
 		initItems(30); // Paging: 1 < 27 28 29 30 31 32 33 34
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(32);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 32);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 1000, pagingModel);
 
@@ -150,9 +144,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex2() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(2);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 2);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -171,9 +163,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex4() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 8 9 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(4);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 4);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -192,9 +182,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex7() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 8 9 10 11 12 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(7);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 7);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -214,9 +202,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex271() {
 		initItems(30); // Paging: 1 < 266 267 268 269 270 271 272 273 274 275 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(271);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 271);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -235,9 +221,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex270() {
 		initItems(30); // Paging: 1 < 265 266 267 268 269 270 271 272 273 274 275 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(270);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 270);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -257,9 +241,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount8277AndIndex6() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 8 9 10 11 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(6);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 6);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 8277, pagingModel);
 
@@ -278,9 +260,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount127AndIndex1() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 8 9 10 11 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(1);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 1);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 127, pagingModel);
 
@@ -298,9 +278,7 @@ public class PaginatedListTest {
 	public void testInitListWith30ItemAndCount127AndIndex4() {
 		initItems(30); // Paging: 1 2 3 4 5 6 7 8 9 10 11 > 276
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(4);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 4);
 
 		PaginatedList<String> list = new PaginatedList<String>(this.items, 127, pagingModel);
 

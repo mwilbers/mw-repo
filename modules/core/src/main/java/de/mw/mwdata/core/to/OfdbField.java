@@ -6,11 +6,14 @@ package de.mw.mwdata.core.to;
 import java.util.List;
 
 import de.mw.mwdata.core.domain.DBTYPE;
+import de.mw.mwdata.core.domain.JoinedPropertyTO;
+import de.mw.mwdata.core.query.QueryResult;
 
 /**
- * TO-class used in presentation-layer for all ofdb-relevant informations<br>
- * FIXME: ist OfdbField still necessary or can UiItemConfig primarily be built
- * up in UI from TabSpeig / AnsichtSpalte ?
+ * Metadata that describes the structure of a {@link QueryResult }. That is
+ * holding informations about rows, columns rights for read, change, insert,
+ * update and other rights. <br>
+ * FIXME: rename to MetaDataColumn
  *
  * @author Wilbers, Markus
  * @version 1.0
@@ -77,6 +80,8 @@ public class OfdbField {
 	 * there are two referenced tables in view with the same columnname
 	 */
 	private String itemKey;
+
+	private JoinedPropertyTO joinedProperty;
 
 	public OfdbField() {
 	}
@@ -306,6 +311,18 @@ public class OfdbField {
 
 	public boolean getAnsichtSpalteBearbHinzufuegenZugelassen() {
 		return this.ansichtSpalteBearbHinzufuegenZugelassen;
+	}
+
+	public JoinedPropertyTO getJoinedProperty() {
+		return this.joinedProperty;
+	}
+
+	public boolean hasJoinedProperty() {
+		return (null != this.joinedProperty);
+	}
+
+	public void setJoinedProperty(JoinedPropertyTO joinedProperty) {
+		this.joinedProperty = joinedProperty;
 	}
 
 }

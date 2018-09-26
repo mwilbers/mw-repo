@@ -10,6 +10,7 @@ public class UiMenuNode implements UiJsonConvertable {
 	private String restUrl; // url for requesting REST-API for loading entities
 	private String nodeType;
 	private long id;
+	private boolean selected = false;
 
 	private List<UiMenuNode> children = new ArrayList<>();
 
@@ -63,6 +64,14 @@ public class UiMenuNode implements UiJsonConvertable {
 
 	public List<UiMenuNode> getChildren() {
 		return this.children;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 }

@@ -19,10 +19,11 @@ import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.OperatorEnum;
-import de.mw.mwdata.core.ofdb.query.ValueType;
+import de.mw.mwdata.core.query.OperatorEnum;
+import de.mw.mwdata.core.query.QueryBuilder;
+import de.mw.mwdata.core.query.QueryResult;
+import de.mw.mwdata.core.query.SimpleQueryBuilder;
+import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
@@ -153,15 +154,15 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		this.applicationFactory.init();
 
 		// 1. test find TabDef with "TABELLE" = "FX_TabDef_K"
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable("TabDef", "tDef").fromTable("TabDef", "tDef")
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity("TabDef", "tDef").fromEntity("TabDef", "tDef")
 				.andWhereRestriction("tDef", "name", OperatorEnum.Eq, TestConstants.TABLENAME_TABDEF, ValueType.STRING)
 				.buildSQL();
-		List<IEntity[]> results = this.getCrudService().executeSql(sql);
+		QueryResult result = this.getCrudService().executeSql(sql);
 
 		List<TabDef> tabDefs = new ArrayList<TabDef>();
-		for (int i = 0; i < results.size(); i++) {
-			IEntity[] entityArray = results.get(i);
+		for (int i = 0; i < result.size(); i++) {
+			IEntity[] entityArray = result.getRows().get(i);
 			tabDefs.add((TabDef) entityArray[0]);
 		}
 
@@ -172,15 +173,15 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		// 2. test findByCriteria with enum-value (strategy: we fetch objects from
 		// hibernate-sessions, change them
 		// and do the test with findByCriteria. There is no update-call to database)
-		b = new DefaultOfdbQueryBuilder();
-		sql = b.selectTable("tabDef", "tDef").fromTable("AnsichtTab", "aTab").joinEntity("tabDef", "tDef")
+		b = new SimpleQueryBuilder();
+		sql = b.selectEntity("tabDef", "tDef").fromEntity("AnsichtTab", "aTab").joinEntity("tabDef", "tDef")
 				.andWhereRestriction("tDef", "datenbank", OperatorEnum.Eq, DATENBANK.K.name(), ValueType.STRING)
 				.buildSQL();
-		results = this.getCrudService().executeSql(sql);
+		result = this.getCrudService().executeSql(sql);
 
 		tabDefs = new ArrayList<TabDef>();
-		for (int i = 0; i < results.size(); i++) {
-			IEntity[] entityArray = results.get(i);
+		for (int i = 0; i < result.size(); i++) {
+			IEntity[] entityArray = result.getRows().get(i);
 			tabDefs.add((TabDef) entityArray[0]);
 		}
 
@@ -193,14 +194,14 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		saveForTest(tabSpeigEingabeNotwendig);
 
 		List<TabSpeig> tabSpeigs = new ArrayList<TabSpeig>();
-		b = new DefaultOfdbQueryBuilder();
-		sql = b.selectTable("TabSpeig", "tSpeig").fromTable("TabSpeig", "tSpeig")
+		b = new SimpleQueryBuilder();
+		sql = b.selectEntity("TabSpeig", "tSpeig").fromEntity("TabSpeig", "tSpeig")
 				.andWhereRestriction("tSpeig", "eingabeNotwendig", OperatorEnum.Eq, Boolean.TRUE, ValueType.BOOLEAN)
 				.buildSQL();
-		results = this.getCrudService().executeSql(sql);
+		result = this.getCrudService().executeSql(sql);
 		tabSpeigs.clear();
-		for (int i = 0; i < results.size(); i++) {
-			IEntity[] entityArray = results.get(i);
+		for (int i = 0; i < result.size(); i++) {
+			IEntity[] entityArray = result.getRows().get(i);
 			tabSpeigs.add((TabSpeig) entityArray[0]);
 		}
 

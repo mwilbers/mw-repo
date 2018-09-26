@@ -13,15 +13,15 @@ package de.mw.mwdata.ofdb.exception;
  * @author mwilbers
  * 
  */
-public class OfdbMissingMappingException extends OfdbException {
+public class OfdbMissingMappingException extends OfdbRuntimeException {
 
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -4941311775038042996L;
+	private static final long serialVersionUID = -4941311775038042996L;
 
 	public OfdbMissingMappingException(final String message) {
-		super( message );
+		super(message);
 
 	}
 

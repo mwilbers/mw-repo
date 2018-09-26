@@ -90,7 +90,7 @@
 			  <br>
 			  <treecontrol class="tree-classic" on-selection="menuCtrl.callNode(node, selected)"
 				tree-model="menuCtrl.treeModel" on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"
-				options="menuCtrl.treeOptions" expanded-nodes="menuCtrl.getExpandedNodes()" >
+				options="menuCtrl.treeOptions" expanded-nodes="menuCtrl.getExpandedNodes()" selected-node="menuCtrl.selectedNode"  >
 				{{node.name}}
 			  </treecontrol>
 			</div>

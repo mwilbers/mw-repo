@@ -15,9 +15,10 @@ import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
-import de.mw.mwdata.core.service.IEntityService;
+import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.core.utils.SortKey;
@@ -33,13 +34,13 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOfdbBasedCrudController.class);
 
-	private IEntityService<IEntity> entityService;
+	private IViewService<IEntity> viewService;
 	private IOfdbService ofdbService;
 	private ICrudService crudService;
 	private ApplicationConfigService configService;
 
-	public void setEntityService(IEntityService entityService) {
-		this.entityService = entityService;
+	public void setViewService(IViewService viewService) {
+		this.viewService = viewService;
 	}
 
 	public void setOfdbService(IOfdbService ofdbService) {
@@ -70,21 +71,19 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		}
 
 		// initialize ofPropList
+		// FIXME: ofdbFieldList no more needed: check if still needed in angularjs based
+		// configController ...
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(pageIndex);
-		if (pageSize == 0) {
-			pagingModel.setPageSize(this.loadPageSize());
-		} else {
-			pagingModel.setPageSize(pageSize);
-		}
+		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
 
-		PaginatedList<IEntity[]> entityResult = this.entityService.loadViewPaginated(viewDef.getName(), pagingModel,
+		// FIXME: PaginatedList no more necessary here
+		QueryResult entityResult = this.viewService.executeViewQuery(viewDef.getName(), pagingModel,
 				new ArrayList<SortKey>());
-		pagingModel.setCount(entityResult.getCount());
+		// pagingModel.setCount(entityResult.getCount());
 
-		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList, pagingModel);
+		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getRows(), entityResult.getMetaData(),
+				pagingModel);
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 	}
@@ -151,12 +150,10 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(1);
-		pagingModel.setPageSize(loadPageSize());
+		PagingModel pagingModel = new PagingModel(loadPageSize(), 1);
 
 		EntityTO entityTO = new EntityTO<AbstractMWEntity>(entity);
-		PaginatedList<IEntity[]> entityResult = this.entityService.findByCriteriaPaginated(viewDef.getName(), entityTO,
+		PaginatedList<IEntity[]> entityResult = this.viewService.executePaginatedViewQuery(viewDef.getName(), entityTO,
 				pagingModel, new ArrayList<SortKey>());
 		pagingModel.setCount(entityResult.getCount());
 

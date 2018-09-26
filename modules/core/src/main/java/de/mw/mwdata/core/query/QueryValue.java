@@ -1,4 +1,4 @@
-package de.mw.mwdata.core.ofdb.query;
+package de.mw.mwdata.core.query;
 
 /**
  * Holds all information for a hsql compatible value. This is type and real data object.

@@ -9,17 +9,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.servlet.FrameworkServlet;
-
-import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.domain.EntityTO;
-import de.mw.mwdata.rest.control.AbstractRestCrudController;
-import de.mw.mwdata.rest.utils.SessionUtils;
 
 public class NavigationFilter implements Filter {
 
@@ -35,34 +24,41 @@ public class NavigationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpSession session = httpRequest.getSession(); // get or initial create
-														// session
-		NavigationState state = SessionUtils.getNavigationState(session);
+		// HttpServletRequest httpRequest = (HttpServletRequest) request;
+		// HttpSession session = httpRequest.getSession(); // get or initial create
+		// // session
+		// NavigationState state = SessionUtils.getNavigationState(session);
 
 		// ... NPE when called from rest-api per url: context admin wrong here ! and
 		// restController , too !
 
-		WebApplicationContext webContext = WebApplicationContextUtils.getWebApplicationContext(this.context,
-				FrameworkServlet.SERVLET_CONTEXT_PREFIX + "admin");
-		NavigationManager navigationManager = webContext.getBean(NavigationManager.class);
-
-		if (null == state) {
-
-			AbstractRestCrudController controller = (AbstractRestCrudController) webContext
-					.getBean("rest.ofdb.crudController");
-			EntityTO<? extends AbstractMWEntity> filterSet = controller.populateFilterSet();
-
-			state = navigationManager.createNavigationState(httpRequest.getRequestURL().toString(), filterSet);
-			SessionUtils.setNavigationState(session, state);
-		} else {
-			// ... fixen: filterSet setzen in navigationManager , wenn wechsel
-			// auf /tabSpeig
-			// ... testen: wenn wechsel von tabDef auf tabSpeig, dann bislang
-			// fehler, weil filterSet nicht besetzt war -> testen !
-			navigationManager.applyUrlPath(httpRequest.getRequestURL().toString(), state);
-			SessionUtils.setNavigationState(session, state);
-		}
+		// WebApplicationContext webContext =
+		// WebApplicationContextUtils.getWebApplicationContext(this.context,
+		// FrameworkServlet.SERVLET_CONTEXT_PREFIX + "admin");
+		// NavigationManager navigationManager =
+		// webContext.getBean(NavigationManager.class);
+		//
+		// if (null == state) {
+		//
+		// AbstractRestCrudController controller = (AbstractRestCrudController)
+		// webContext
+		// .getBean("rest.ofdb.crudController");
+		// EntityTO<? extends AbstractMWEntity> filterSet =
+		// controller.populateFilterSet();
+		//
+		// state =
+		// navigationManager.createNavigationState(httpRequest.getRequestURL().toString(),
+		// filterSet);
+		// SessionUtils.setNavigationState(session, state);
+		// } else {
+		// // ... fixen: filterSet setzen in navigationManager , wenn wechsel
+		// // auf /tabSpeig
+		// // ... testen: wenn wechsel von tabDef auf tabSpeig, dann bislang
+		// // fehler, weil filterSet nicht besetzt war -> testen !
+		// navigationManager.applyUrlPath(httpRequest.getRequestURL().toString(),
+		// state);
+		// SessionUtils.setNavigationState(session, state);
+		// }
 
 		chain.doFilter(request, response);
 	}

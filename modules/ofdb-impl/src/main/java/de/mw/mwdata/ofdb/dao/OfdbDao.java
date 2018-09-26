@@ -19,10 +19,10 @@ import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.ofdb.query.DefaultOfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.OfdbQueryBuilder;
-import de.mw.mwdata.core.ofdb.query.OperatorEnum;
-import de.mw.mwdata.core.ofdb.query.ValueType;
+import de.mw.mwdata.core.query.OperatorEnum;
+import de.mw.mwdata.core.query.QueryBuilder;
+import de.mw.mwdata.core.query.SimpleQueryBuilder;
+import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
@@ -81,8 +81,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<ITabSpeig> findTabSpeigByTable(final String table) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_TABPROPS, "tSpeig").fromTable(ConfigOfdb.T_TABPROPS, "tSpeig")
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity(ConfigOfdb.T_TABPROPS, "tSpeig").fromEntity(ConfigOfdb.T_TABPROPS, "tSpeig")
 				.joinTable(ConfigOfdb.T_TABDEF, "tDef").whereJoin("tSpeig", "tabDefId", "tDef", "id")
 				.andWhereRestriction("tDef", "name", OperatorEnum.Eq, table, ValueType.STRING)
 				.orderBy("tSpeig", "reihenfolge", "ASC").buildSQL();
@@ -103,8 +103,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsicht(final long ansichtId) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_VIEWPROPS, "aSpalten").fromTable(ConfigOfdb.T_VIEWPROPS, "aSpalten")
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity(ConfigOfdb.T_VIEWPROPS, "aSpalten").fromEntity(ConfigOfdb.T_VIEWPROPS, "aSpalten")
 				.andWhereRestriction("aSpalten", "ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(),
 						ValueType.NUMBER)
 				.orderBy("aSpalten", "indexGrid", "asc").buildSQL();
@@ -125,8 +125,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Override
 	public TabDef findTableDefByFullClassName(final String fullClassName) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_TABDEF, "t").fromTable(ConfigOfdb.T_TABDEF, "t")
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity(ConfigOfdb.T_TABDEF, "t").fromEntity(ConfigOfdb.T_TABDEF, "t")
 				.andWhereRestriction("t", "fullClassName", OperatorEnum.Eq, fullClassName, ValueType.STRING).buildSQL();
 		List<IEntity[]> result = this.crudDao.executeSql(sql);
 		if (null == result) {
@@ -142,8 +142,11 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<AnsichtOrderBy> findAnsichtOrderByAnsichtId(final long ansichtId) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_VIEWORDERBY, "aOrder").fromTable(ConfigOfdb.T_VIEWORDERBY, "aOrder")
+		// ... implement MetaDataBasedQueryBuilder with constructor viewHandle, here use
+		// SimpleQueryBuilder
+
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity(ConfigOfdb.T_VIEWORDERBY, "aOrder").fromEntity(ConfigOfdb.T_VIEWORDERBY, "aOrder")
 				.joinTable(ConfigOfdb.T_VIEWTAB, "aTab").whereJoin("aOrder", "ansichtTabId", "aTab", "id")
 				.andWhereRestriction("aTab", "ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(),
 						ValueType.NUMBER)
@@ -165,9 +168,9 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<IAnsichtTab> findAnsichtTabAnsichtId(final long ansichtId) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
+		QueryBuilder b = new SimpleQueryBuilder();
 		String sql = b
-				.selectTable("AnsichtTab", "aTab").fromTable("AnsichtTab", "aTab").andWhereRestriction("aTab",
+				.selectEntity("AnsichtTab", "aTab").fromEntity("AnsichtTab", "aTab").andWhereRestriction("aTab",
 						"ansichtDefId", OperatorEnum.Eq, new Long(ansichtId).toString(), ValueType.NUMBER)
 				.orderBy("aTab", "reihenfolge", "asc").buildSQL();
 		List<IEntity[]> results = this.crudDao.executeSql(sql);
@@ -201,8 +204,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		}
 
 		if (tabSpeig.getDbDatentyp() == DBTYPE.ENUM) {
-
-			// FIXME: is tabSpeig.getSpalte() correct as propertyName ?
 			Class<Enum> c = this.ofdbMapper.getEnumType(propMapper.getPropertyName(), entityClassType);
 			result = Enum.valueOf(c, value.toString()); // FIXME: toString replaced by getDescription() ?
 		} else {
@@ -218,8 +219,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Override
 	public List<AnsichtDef> loadViewsForRegistration(final String nameBenutzerBereich) {
 
-		OfdbQueryBuilder b = new DefaultOfdbQueryBuilder();
-		String sql = b.selectTable(ConfigOfdb.T_VIEWDEF, "viewDef").fromTable(ConfigOfdb.T_VIEWDEF, "viewDef")
+		QueryBuilder b = new SimpleQueryBuilder();
+		String sql = b.selectEntity(ConfigOfdb.T_VIEWDEF, "viewDef").fromEntity(ConfigOfdb.T_VIEWDEF, "viewDef")
 				.joinEntity("bereich", "bBereich")
 				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, nameBenutzerBereich, ValueType.STRING)
 				.andWhereRestriction("viewDef", "urlPath", OperatorEnum.IsNotNull, "null", ValueType.STRING)

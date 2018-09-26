@@ -64,7 +64,7 @@
 	
 	<bean id="rest.ofdb.crudController" class="de.mw.mwdata.app.admin.client.controller.AdminCrudController">
 		<property name="ofdbService" ref="ofdbService" />
-		<property name="entityService" ref="entityService" />
+		<property name="viewService" ref="viewService" />
 		<property name="crudService" ref="crudService" />
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />

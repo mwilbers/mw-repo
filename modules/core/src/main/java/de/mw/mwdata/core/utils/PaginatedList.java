@@ -17,7 +17,8 @@ import de.mw.mwdata.core.daos.PagingModel;
  * </pre>
  *
  * in custom steps. Variables in example: numSteps = 5, count = 365,
- * indexCurrentStep = 9
+ * indexCurrentStep = 9<br>
+ * FIXME: class still needed for UI ? paging replaced by angularjs-component
  *
  * @author Wilbers, Markus
  * @version 1.0

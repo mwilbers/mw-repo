@@ -55,9 +55,15 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 		List<UiInputConfig> uiInputConfigs = loadUiInputConfigurations(lastUrlPath);
 		userConfig.setUiInputConfigs(uiInputConfigs);
 
-		String sShowNotMappedColumnsInGrid = this.configService.getPropertyValue("app.showNotMappedColumnsInGrid");
+		String sShowNotMappedColumnsInGrid = this.configService
+				.getPropertyValue(ApplicationConfigService.KEY_SHOW_NOT_MAPPED_COLS);
 		Boolean show = Boolean.valueOf(sShowNotMappedColumnsInGrid);
 		userConfig.setShowNotMappedColumnsInGrid(show.booleanValue());
+
+		String sShowSystemColumns = this.configService
+				.getPropertyValue(ApplicationConfigService.KEY_SHOW_SYSTEM_COLUMNS);
+		show = Boolean.valueOf(sShowSystemColumns);
+		userConfig.setShowSystemColumns(show.booleanValue());
 
 		return new ResponseEntity<UiUserConfig>(userConfig, HttpStatus.OK);
 

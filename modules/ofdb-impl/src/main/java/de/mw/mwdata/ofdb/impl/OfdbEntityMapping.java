@@ -86,4 +86,19 @@ public class OfdbEntityMapping {
 		return null;
 	}
 
+	public OfdbPropMapper findPropertyMapperByColumnName(final String columnName) {
+
+		for (OfdbPropMapper mapper : getMappings()) {
+			if (mapper.getColumnName().toUpperCase().equals(columnName.toUpperCase())) {
+				return mapper;
+			}
+		}
+
+		return null;
+	}
+
+	public String getTableName() {
+		return this.tableName;
+	}
+
 }

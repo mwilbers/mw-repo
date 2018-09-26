@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.LocalizedMessages;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.ClassNameUtils;
 import de.mw.mwdata.ofdb.cache.ViewConfiguration.Builder;
@@ -30,10 +27,11 @@ import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbFieldComparator;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.impl.OfdbUtils;
+import de.mw.mwdata.ofdb.query.MetaDataGenerator;
 import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 import de.mw.mwdata.ofdb.query.impl.DefaultOfdbQueryModel;
+import de.mw.mwdata.ofdb.query.impl.ViewMetaDataGenerator;
 import de.mw.mwdata.ofdb.service.IOfdbService;
 
 public class ViewConfigFactoryBean implements ViewConfigFactory {
@@ -186,7 +184,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		// ... FIXME: no mainAnsichtTab for ADAnsichtenDef
 		initQueryModel(viewName, builder);
 
-		List<OfdbField> ofFieldList = createOfdbFields(builder.buildHandle(), CRUD.SELECT, mainEntityMapping);
+		List<OfdbField> ofFieldList = createViewMetaData(builder.buildHandle());
 		builder.setOfdbFields(ofFieldList);
 
 		return builder.buildHandle();
@@ -248,67 +246,8 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 	}
 
-	private String calculateMaxLength(final ITabSpeig tabSpeig) {
-
-		if (null == tabSpeig.getMaximum()) {
-
-			int result = 0;
-			switch (tabSpeig.getDbDatentyp()) {
-			case BOOLEAN:
-				result = 1;
-			case DATE:
-				result = 10;
-			case DATETIME:
-				result = 10;
-			case LONGINTEGER:
-				result = 9;
-			case STRING:
-				result = 255;
-			default: {
-				LOGGER.error("No maxlength defined for DBType: " + tabSpeig.getDbDatentyp().getDescription()
-						+ ", tabSpeig: " + tabSpeig.getSpalte());
-			}
-			}
-
-			return String.valueOf(result);
-		} else {
-			return tabSpeig.getMaximum();
-		}
-
-	}
-
-	private String calculateMinLength(final ITabSpeig tabSpeig) {
-
-		if (null == tabSpeig.getMinimum()) {
-
-			int result = 0;
-			switch (tabSpeig.getDbDatentyp()) {
-			case BOOLEAN:
-				result = 1;
-			case DATE:
-				result = 10;
-			case DATETIME:
-				result = 10;
-			case LONGINTEGER:
-				result = 1;
-			case STRING:
-				result = 1;
-			default: {
-				LOGGER.error("No minlength defined for DBType: " + tabSpeig.getDbDatentyp().getDescription()
-						+ ", tabSpeig: " + tabSpeig.getSpalte());
-			}
-			}
-
-			return String.valueOf(result);
-		} else {
-			return tabSpeig.getMinimum();
-		}
-
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
-	private List<OfdbField> createOfdbFields(final ViewConfigHandle viewHandle, final CRUD crud,
-			final OfdbEntityMapping mainEntityMapping) {
+	private List<OfdbField> createViewMetaData(final ViewConfigHandle viewHandle) {
 		List<OfdbField> ofFields = new ArrayList<OfdbField>();
 
 		List<IAnsichtSpalte> ansichtSpalten = viewHandle.getViewColumns();
@@ -318,6 +257,7 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		for (IAnsichtSpalte ansichtSpalte : ansichtSpalten) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(ansichtSpalte.getTabAKey(),
 					ansichtSpalte.getSpalteAKey());
+			resultIndex = findHighestResultIndex(ofFields);
 
 			// FIXME: exception can be removed if there is foreign key from
 			// FX_AnsichtSpalten_K.spalteakey to
@@ -329,136 +269,28 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 				throw new OfdbInvalidConfigurationException(msg);
 			}
 
-			OfdbField ofField = OfdbUtils.createOfdbField(tabSpeig, ansichtSpalte);
-			OfdbPropMapper propMapper = mainEntityMapping.getMapper(tabSpeig); // .get(tabSpeig.getSpalte().toUpperCase());
-
-			String propName = StringUtils.EMPTY;
-			if (null != propMapper) {
-				propName = propMapper.getPropertyName();
-				ofField.setPropName(propName);
-			}
-			ofField.setMaxlength(calculateMaxLength(tabSpeig));
-			ofField.setMinlength(calculateMinLength(tabSpeig));
-
-			if (!StringUtils.isEmpty(ansichtSpalte.getAnsichtSuchen())) {
-
-				// zu 1.:
-				ViewConfigHandle viewHandleSuchen = this.ofdbCacheManager
-						.getViewConfig(ansichtSpalte.getAnsichtSuchen());
-
-				IAnsichtTab ansichtTab = viewHandle.findAnsichtTabByTabAKey(ansichtSpalte.getSuchwertAusTabAKey());
-
-				// FIXME: null-check no more needed when we use db-foreign-keys on ansichtDefId
-				if (null == ansichtTab) {
-					String msg = MessageFormat.format(
-							"Fehlende Tabelle für Verknüpfung in FX_AnsichtTab_K zum Feld FX_AnsichtSpalten_K.SuchWertAusTabAKey für Ansicht: {0}, Spalte: {1}",
-							ansichtSpalte.getAnsichtDef().getName(), ansichtSpalte.getSpalteAKey());
-					throw new OfdbInvalidConfigurationException(msg);
-				}
-
-				// ... replace genericofdbdao with ofdbDao
-				ITabDef tabDef = null;
-				if (ansichtSpalte.getSuchwertAusTabAKey().equals(ansichtSpalte.getTabAKey())) {
-					tabDef = viewHandle.getMainAnsichtTab().getTabDef();
-					viewHandleSuchen = viewHandle;
-				} else {
-					tabDef = this.ofdbCacheManager.findRegisteredTableDef(ansichtSpalte.getSuchwertAusTabAKey());
-					if (null == tabDef) {
-						String msg = MessageFormat.format(
-								"Wrong order of loading registered views. View {0} is referencing missing view {1}",
-								ansichtSpalte.getAnsichtDef().getName(), ansichtSpalte.getSuchwertAusTabAKey());
-						LOGGER.error(msg);
-					}
-				}
-
-				if (ofField.isMapped()) {
-
-					// TODO: tabBeziehnungen here still needed? this.daoMap still needed ?
-					Class<IEntity> clazz = ClassNameUtils.loadClass(tabDef.getFullClassName());
-					List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, tabSpeig,
-							viewHandleSuchen.getViewOrders(), clazz);
-					ofField.setListOfValues(listOfValues);
-
-					ITabSpeig suchWertTabSpeig = viewHandleSuchen.findTabSpeigByTabAKeyAndSpalteAKey(
-							ansichtSpalte.getSuchwertAusTabAKey(), ansichtSpalte.getSuchwertAusSpalteAKey());
-
-					// e.g. TableA references TableA recursively ...
-					OfdbPropMapper suchPropMapper = null;
-					if (tabSpeig.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
-						suchPropMapper = mainEntityMapping.getMapper(suchWertTabSpeig);
-						// .get(suchWertTabSpeig.getSpalte().toUpperCase());
-					} else {
-						suchPropMapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
-						// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
-					}
-
-					String listPropValueName = suchPropMapper.getPropertyName();
-					String itemKey = null;
-					ofField.setItemValue(listPropValueName);
-
-					if (!StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchTabAKey())
-							&& !StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchSpalteAKey())) {
-
-						suchWertTabSpeig = viewHandleSuchen.findTabSpeigByTabAKeyAndSpalteAKey(
-								ansichtSpalte.getVerdeckenDurchTabAKey(), ansichtSpalte.getVerdeckenDurchSpalteAKey());
-
-						OfdbPropMapper mapper = null;
-						if (tabSpeig.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
-							mapper = mainEntityMapping.getMapper(suchWertTabSpeig);
-							// .get(suchWertTabSpeig.getSpalte().toUpperCase());
-						} else {
-							mapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
-							// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
-						}
-
-						// OfdbPropMapper mapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig(
-						// suchWertTabSpeig
-						// );
-						listPropValueName = mapper.getPropertyName();
-						queryModel.addAlias(ansichtTab, suchWertTabSpeig);
-						ofField.setResultIndex(++resultIndex);
-						ofField.setColumnTitle(suchWertTabSpeig.getSpaltenkopf());
-						ofField.setItemValue(listPropValueName);
-						itemKey = OfdbUtils.generateItemKey(suchWertTabSpeig.getTabDef(), listPropValueName);
-
-					} else {
-
-						ofField.setResultIndex(0);
-						itemKey = OfdbUtils.generateItemKey(ansichtTab.getTabDef(), listPropValueName);
-
-					}
-					queryModel.addJoinTable(ansichtTab);
-					ofField.setItemLabel(listPropValueName);
-					ofField.setItemKey(itemKey);
-
-				} else {
-					// no index needed here
-				}
-
-			} else { // AnsichtSuchen is empty
-
-				if (ofField.isEnum()) {
-					ofField.setItemLabel(propName);
-					ofField.setItemValue(propName);
-					ofField.setItemKey(propName);
-
-					List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, tabSpeig, null, null);
-					ofField.setListOfValues(listOfValues);
-					// this.ofdbDao.setListOfValues( ofField, tabSpeig, null, null );
-
-				} else {
-
-				}
-				ofField.setResultIndex(0);
-			}
-
+			MetaDataGenerator metaDataGenerator = new ViewMetaDataGenerator(viewHandle, tabSpeig, ansichtSpalte,
+					resultIndex, this.ofdbCacheManager, this.ofdbService);
+			OfdbField ofField = metaDataGenerator.createColumnMetaData();
+			// OfdbField ofField = createColumnMetaData(viewHandle, tabSpeig, ansichtSpalte,
+			// resultIndex);
 			ofFields.add(ofField);
 
 		}
 
 		Collections.sort(ofFields, new OfdbFieldComparator());
+		queryModel.addMetaData(ofFields);
 
 		return ofFields;
 
 	}
+
+	private int findHighestResultIndex(final List<OfdbField> ofFields) {
+		int result = 0;
+		for (OfdbField field : ofFields) {
+			result = (field.getResultIndex() > result ? field.getResultIndex() : result);
+		}
+		return result;
+	}
+
 }

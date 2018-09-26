@@ -16,6 +16,9 @@ public interface ApplicationConfigService extends Identifiable {
 	public static final String KEY_PAGESIZE_FOR_LOAD = "app.hibernate.pageSizeForLoad";
 	public static final String KEY_DEFAULT_ENTITY = "app.defaultEntity";
 
+	public static final String KEY_SHOW_NOT_MAPPED_COLS = "app.showNotMappedColumnsInGrid";
+	public static final String KEY_SHOW_SYSTEM_COLUMNS = "app.showSystemColumnsInGrid";
+
 	public String getPropertyValue(final String key);
 
 }

@@ -18,6 +18,7 @@ public class UiUserConfig implements UiJsonConvertable {
 
 	private String defaultRestUrl;
 	private boolean showNotMappedColumnsInGrid;
+	private boolean showSystemColumns;
 	private List<UiInputConfig> uiInputConfigs;
 
 	public String getDefaultRestUrl() {
@@ -42,6 +43,14 @@ public class UiUserConfig implements UiJsonConvertable {
 
 	public void setUiInputConfigs(List<UiInputConfig> uiInputConfigs) {
 		this.uiInputConfigs = uiInputConfigs;
+	}
+
+	public boolean isShowSystemColumns() {
+		return showSystemColumns;
+	}
+
+	public void setShowSystemColumns(boolean showSystemColumns) {
+		this.showSystemColumns = showSystemColumns;
 	}
 
 }

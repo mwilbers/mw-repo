@@ -1,5 +1,6 @@
 package de.mw.mwdata.ofdb.service.test;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,17 +12,21 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import de.mw.mwdata.core.ApplicationFactory;
+import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
+import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
-import de.mw.mwdata.core.service.IEntityService;
+import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.core.utils.PaginatedList;
+import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
@@ -44,7 +49,7 @@ import de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory;
 public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 	@Autowired
-	private IEntityService<IEntity> entityService;
+	private IViewService<IEntity> entityService;
 
 	@Autowired
 	private IOfdbService ofdbService;
@@ -141,21 +146,24 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.init();
 
-		PagingModel pagingModel = new PagingModel();
-		pagingModel.setPageIndex(1);
-		pagingModel.setPageSize(100);
+		PagingModel pagingModel = new PagingModel(100, 1);
 
 		@SuppressWarnings("unchecked")
-		PaginatedList<IEntity[]> paginatedResult = this.entityService.loadViewPaginated(TestConstants.TABLENAME_TABDEF,
-				pagingModel);
+		QueryResult paginatedResult = this.entityService.executeViewQuery(TestConstants.TABLENAME_TABDEF, pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
-		Assert.assertEquals(paginatedResult.getItems().size(), 2);
-		Object[] item = paginatedResult.getItems().get(0);
-		Assert.assertTrue(item.length == 1);
-		Assert.assertTrue(item[0] instanceof TabDef);
+		Assert.assertEquals(paginatedResult.getRows().size(), 2);
 
-		List<IEntity[]> entities = this.entityService.loadView(TestConstants.TABLENAME_TABDEF);
+		// Object[] item = paginatedResult.getRows().get(0);
+		Object[] row = paginatedResult.getRows().get(0);
+		Assert.assertTrue(row.length == 1);
+		// Object[] item = paginatedResult.getRows().get(0);
+		// Assert.assertTrue(item.length == 1);
+		Assert.assertTrue(row[0] instanceof TabDef);
+
+		QueryResult queryResult = this.entityService.executeViewQuery(TestConstants.TABLENAME_TABDEF, pagingModel);
+		List<IEntity[]> entities = queryResult.getRows();
+		// .loadView(TestConstants.TABLENAME_TABDEF);
 		Assert.assertEquals(entities.size(), 2);
 		Assert.assertEquals(entities.get(0)[0], aTabBenutzerBereich.getTabDef());
 
@@ -172,6 +180,13 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		AnsichtSpalten ansichtSpalteMock = (AnsichtSpalten) aSpalteBereichsId; // (AnsichtSpalten)
 																				// viewPropMap.get("BEREICHSID");
 
+		// find column "NAME" from table BenutzerBereicheDef and add it to db
+		ViewConfigHandle viewHandleBereich = this.getOfdbCacheManger()
+				.findViewConfigByTableName(aTabBenutzerBereich.getTabDef().getName());
+		ITabSpeig tablePropBereichName = viewHandleBereich.findTablePropByProperty(aTabBenutzerBereich.getTabDef(),
+				"name");
+
+		// FIXME: method configure should only be inherited from test based interface
 		this.applicationFactory.configure();
 
 		// 2.test: reset cache
@@ -191,35 +206,75 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		saveForTest(ansichtTabMock);
 
+		AnsichtSpalten viewColBereichName = DomainMockFactory
+				.createAnsichtSpalteMock((AnsichtDef) aTabTabDef.getAnsichtDef(), tablePropBereichName, ansichtTabMock);
+		viewColBereichName.setAngelegtAm(new Date());
+		viewColBereichName.setAngelegtVon(Constants.SYS_USER_DEFAULT);
+		this.saveForTest(viewColBereichName);
+		// ITabSpeig tabPropBereichName =
+		// DomainMockFactory.createTabSpeigMock(aTabBenutzerBereich.getTabDef(), "Name",
+		// 100, DBTYPE.STRING);
+		// this.saveForTest(tabPropBereichName);
+		//
+		// AnsichtSpalten viewColBereichName = DomainMockFactory
+		// .createAnsichtSpalteMock((AnsichtDef) aTabTabDef.getAnsichtDef(),
+		// tabPropBereichName, aTabTabDef);
+		// viewColBereichName.setAngelegtAm(new Date());
+		// viewColBereichName.setAngelegtVon(Constants.SYS_USER_DEFAULT);
+		// this.saveForTest(viewColBereichName);
+
 		// register new
 		this.applicationFactory.init();
 
-		pagingModel = new PagingModel();
-		pagingModel.setPageIndex(1);
-		pagingModel.setPageSize(100);
+		pagingModel = new PagingModel(100, 1);
 
-		paginatedResult = this.entityService.loadViewPaginated(aTabTabDef.getTabDef().getName(), pagingModel);
+		paginatedResult = this.entityService.executeViewQuery(aTabTabDef.getTabDef().getName(), pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
-		Assert.assertEquals(paginatedResult.getItems().size(), 2);
-		item = paginatedResult.getItems().get(0);
-		Assert.assertTrue(item instanceof Object[]);
-		Object[] resArray = item;
-		Assert.assertTrue(resArray[0] instanceof TabDef);
+		Assert.assertEquals(paginatedResult.getRows().size(), 2);
+
+		// FIXME: should be improved by internal access methods of QueryResult
+		row = paginatedResult.getRows().get(0);
+
+		// item = paginatedResult.getRows().get(0);
+		// Assert.assertTrue(item instanceof Object[]);
+		// Object[] resArray = item;
+		Assert.assertTrue(row[0] instanceof TabDef);
 
 		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
-		Assert.assertTrue(resArray[1].equals(
+
+		// ... hier fehler, da Bereich.name über die AnsichtSpalten noch nicht
+		// eingeblendet ist.
+		// Regel: wenn eine solche AnsichtSpalte fehlt, dann nur interne
+		// entity-verknüpfung über JoinedPropertyTO
+		// falls vorhanden, dann als alias ins QueryModel (ViewMetaDataGenerator) mit
+		// aufnehmen und hier auf index 1 auswerten
+		// siehe auch beispiele etwa in FO_REchnungsDef in KD_RRE_PROD
+
+		Assert.assertTrue(row[1].equals(
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA)));
 
 		EntityTO<TabDef> entityTO = new EntityTO<TabDef>(new TabDef());
-		entityTO.addJoinedValue("BenutzerBereich.name",
+		// OfdbEntityMapping entityMapping =
+		// this.getOfdbCacheManger().getEntityMapping(aTabTabDef.getTabDef().getName());
+		// OfdbPropMapper propMapping =
+		// entityMapping.getMapper(ansichtSpalteMock.getTabSpEig());
+
+		// ViewConfigHandle viewHandle =
+		// this.getOfdbCacheManger().getViewConfig(aTabTabDef.getName());
+		// ITabSpeig suchTabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(
+		// ansichtSpalteMock.getVerdeckenDurchTabAKey(),
+		// ansichtSpalteMock.getVerdeckenDurchSpalteAKey());
+
+		// String mappedPropName =
+		// this.getOfdbService().mapTabSpeig2Property(suchTabSpeig);
+
+		entityTO.addJoinedValue(
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
 
-		pagingModel = new PagingModel();
-		pagingModel.setPageIndex(0);
-		pagingModel.setPageSize(100);
+		pagingModel = new PagingModel(100, 0);
 
-		PaginatedList<IEntity[]> items = this.entityService.findByCriteriaPaginated(TestConstants.TABLENAME_TABDEF,
+		PaginatedList<IEntity[]> items = this.entityService.executePaginatedViewQuery(TestConstants.TABLENAME_TABDEF,
 				entityTO, pagingModel, null);
 
 		Assert.assertEquals(items.getItems().size(), 2);
