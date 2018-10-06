@@ -827,11 +827,56 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	@Override
 	public void doChainActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud) {
 
+		updateAssociationPropertyValues(entity);
+
 		presetDefaultValues(entity);
 
 		if (null != this.nextChainItem) {
 			this.nextChainItem.doChainActionsBeforeCheck(entity, crud);
 		}
+	}
+
+	private void updateAssociationPropertyValues(AbstractMWEntity entity) {
+
+		String urlPath = ClassNameUtils.convertClassNameToUrlPath(entity);
+		IAnsichtDef viewDef = findAnsichtByUrlPath(urlPath);
+		if (null == viewDef) {
+			return;
+		}
+
+		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewDef.getName());
+		IAnsichtTab viewToTable = viewHandle.getMainAnsichtTab();
+
+		List<ITabSpeig> tabSpeigs = viewHandle.getTableProps(viewToTable.getTabDef());
+		for (ITabSpeig tabSpeig : tabSpeigs) {
+
+			OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
+
+			if (null == propMapper) {
+				continue;
+			}
+
+			if (propMapper.hasAssociatedEntity()) {
+				Long id = (Long) this.getOfdbDao().getEntityValue(entity, propMapper.getPropertyIndex());
+				ITabSpeig entityProp = viewHandle.findTablePropByProperty(tabSpeig.getTabDef(),
+						propMapper.getAssociatedEntityName(), true);
+
+				OfdbPropMapper entityPropMapper = viewHandle.findPropertyMapperByTabProp(entityProp);
+				IEntity associatedEntity = (IEntity) this.getOfdbDao().getEntityValue(entity,
+						entityPropMapper.getAssociatedPropertyIndex());
+				// associatedEntity = this.crudService.findById((Class<IEntity>)
+				// associatedEntity.getClass(), id);
+
+				if (id != associatedEntity.getId()) {
+					associatedEntity = this.crudService.findById((Class<IEntity>) associatedEntity.getClass(), id);
+					this.getOfdbDao().setEntityValue(entity, associatedEntity, entityProp,
+							entityPropMapper.getAssociatedPropertyMapper());
+				}
+
+			}
+
+		}
+
 	}
 
 	@Override
@@ -852,7 +897,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				continue;
 			}
 
-			ITabSpeig tableProp = viewHandle.findTablePropByProperty(tabDef, mapper.getPropertyName());
+			ITabSpeig tableProp = viewHandle.findTablePropByProperty(tabDef, mapper.getPropertyName(), false);
 			if (null == tableProp) {
 				continue; // e.g. TabSpeig.getName() runs here ...
 			}

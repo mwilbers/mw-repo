@@ -28,7 +28,6 @@ import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.exception.OfdbRuntimeException;
 import de.mw.mwdata.ofdb.impl.LocalizedMessages;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
-import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 
 public class OfdbMapper extends HibernateDaoSupport {
 
@@ -79,13 +78,15 @@ public class OfdbMapper extends HibernateDaoSupport {
 			if (persister.getPropertyColumnNames(i).length > 0 && !isAssociatedCollection(props[i])) {
 
 				Type[] propertyTypes = persister.getPropertyTypes();
+				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
 
 				if (propertyTypes[i] instanceof ManyToOneType) {
 					continue; // we imply for manytoone-types there is an additional id property,
 					// e.g.: for TabDef.Bereich there is TabDef.BereichsId
+					// LOGGER.error("manytoone");
+
 				}
 
-				String columnNameDb = persister.getPropertyColumnNames(i)[0].toUpperCase();
 				DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
 				entityMapping.addMapping(columnNameDb, props[i], new Integer(i), dbType);
 
@@ -115,8 +116,17 @@ public class OfdbMapper extends HibernateDaoSupport {
 					throw new OfdbMissingMappingException(msg);
 				}
 
-				OfdbPropMapper propMapping = entityMapping.findPropertyMapperByColumnName(columnNameDb);
-				propMapping.setAssociatedEntityName(props[i]);
+				DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
+				entityMapping.addAssociationMapping(columnNameDb, props[i], new Integer(i), dbType);
+				// OfdbPropMapper propMapping =
+				// entityMapping.findPropertyMapperByColumnName(columnNameDb);
+
+				// ... hier neues OfdbPropMapper anlegen für associationProperty und am
+				// propMapping referenzieren.
+				// später bei CRUDTest, NPE, dort dann die find-Methode erweitern und nach
+				// associatedProperty suchen lassen
+
+				// propMapping.setAssociatedEntityName(props[i]);
 			}
 		}
 

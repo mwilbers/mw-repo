@@ -89,7 +89,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	var rowChanged = false;
 	
     $scope.state = {};
-    $scope.state.rows = [];
+    $scope.state.entityRows = [];
 	$scope.state.pagingModel = {};
 	
 	$scope.appConfig = {
@@ -127,7 +127,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		if(undefined === $scope.state) {
 			$scope.state = {};
 		}
-		$scope.state.rows = newRows;
+		$scope.state.entityRows = newRows;
 	}
 	
 	function setCurrentUrl( newUrl ) {
@@ -143,18 +143,24 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     	for(var i = 0; i < entityTOs.length; i++){            
     		var entityTO = entityTOs[i].item;
 			
+			/*
 			var row = {};
 			for(var j = 0; j < uiInputConfigs.length; j++) {
 				if(uiInputConfigs[j].mapped) {
-					row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].propName];
+					if( uiInputConfigs[j].joinedProperty ) {
+						row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].joinedProperty.entityName][uiInputConfigs[j].joinedProperty.propName];	
+					} else {
+						row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].propName];	
+					}
 				} else {
 					row[j] = "-";
 				}
 			}
 			
 			row["type"] = entityTO.type;
+			*/
 			
-    		$scope.state.rows.push(row);    		
+    		$scope.state.entityRows.push(entityTO);    		
         }    	
     	
     }
@@ -172,19 +178,20 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
             .then(
             function(d) {
                 
-				$scope.state.rows = [];
+				$scope.state.entityRows = [];
 				
 				if(d.uiInputConfigs.length == 0) {
 					console.warn('Could not load Ofdb informations.');
 				}
 				
-				if(undefined !== otherController) {
-					otherController.initializeConfig( d.uiInputConfigs );
-				}
+				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
+				// if(undefined !== otherController) {
+					// otherController.initializeConfig( d.uiInputConfigs );
+				// }
 				
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.uiInputConfigs );
-				mwGrid.load( $scope.state.rows, d.uiInputConfigs, $scope.appConfig );
+				mwGrid.load( $scope.state.entityRows, d.uiInputConfigs, $scope.appConfig );
 				console.log(d.pagingModel.count);
 				$scope.state.pagingModel = d.pagingModel;
             },
@@ -297,7 +304,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
             .then(
             function(d) {
                 console.log("ctrl.filterEntities for " + newUrl);
-				$scope.state.rows = [];
+				$scope.state.entityRows = [];
 				
 				if(d.uiInputConfigs.length == 0) {
 					console.warn('Could not load Ofdb informations.');
@@ -305,7 +312,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.uiInputConfigs );
-				mwGrid.load( $scope.state.rows, d.uiInputConfigs, $scope.appConfig );
+				mwGrid.load( $scope.state.entityRows, d.uiInputConfigs, $scope.appConfig );
 				console.log(d.pagingModel.count);
 				$scope.state.pagingModel = d.pagingModel;
             },

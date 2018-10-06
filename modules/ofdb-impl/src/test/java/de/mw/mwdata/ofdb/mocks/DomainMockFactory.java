@@ -286,6 +286,7 @@ public class DomainMockFactory {
 		tabDef.setSystem(Boolean.FALSE);
 		tabDef.setAlias(tableName);
 		tabDef.setBereichsId(bereich.getId());
+		tabDef.setBereich(bereich);
 		tabDef.setDatenbank(DATENBANK.X);
 		tabDef.setEindeutigerSchluessel("DSID");
 

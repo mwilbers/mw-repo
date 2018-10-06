@@ -57,6 +57,21 @@ public class OfdbEntityMapping {
 		this.mapping.put(columnNameDb, propMapper);
 	}
 
+	public void addAssociationMapping(String columnNameDb, String propertyName, Integer propertyIndex, DBTYPE dbType) {
+
+		OfdbPropMapper propMapper = new OfdbPropMapper(this.tableName, columnNameDb);
+		propMapper.setPropertyName(propertyName);
+		propMapper.setPropertyIndex(propertyIndex);
+
+		// DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
+		propMapper.setDbType(dbType);
+
+		OfdbPropMapper idPropertyMapper = findPropertyMapperByColumnName(columnNameDb);
+		idPropertyMapper.setAssociatedPropertyMapper(propMapper);
+
+		// this.mapping.put(columnNameDb, propMapper);
+	}
+
 	public boolean hasMapping(final ITabSpeig tableProp) {
 		OfdbPropMapper mapper = this.mapping.get(tableProp.getSpalte().toUpperCase());
 		return (null != mapper);
@@ -86,7 +101,7 @@ public class OfdbEntityMapping {
 		return null;
 	}
 
-	public OfdbPropMapper findPropertyMapperByColumnName(final String columnName) {
+	private OfdbPropMapper findPropertyMapperByColumnName(final String columnName) {
 
 		for (OfdbPropMapper mapper : getMappings()) {
 			if (mapper.getColumnName().toUpperCase().equals(columnName.toUpperCase())) {

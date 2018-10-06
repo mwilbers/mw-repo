@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.BenutzerBereich;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -27,6 +29,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_AnsichtDef_K" /* , schema = Constants.DB_SCHEMA */)
+@JsonPropertyOrder({ "id", "name", "bereich", "bereichsId" })
 public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 
 	/**
@@ -46,8 +49,11 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 	private String name;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "BEREICHSID", referencedColumnName = "BEREICHSID", nullable = false)
+	@JoinColumn(name = "BEREICHSID", referencedColumnName = "BEREICHSID", insertable = false, updatable = false, nullable = false)
 	private BenutzerBereich bereich;
+
+	@Column(name = "BEREICHSID", insertable = true, updatable = true, nullable = false)
+	private Long bereichsId;
 
 	@Column(name = "BEZEICHNUNG")
 	private String bezeichnung;
@@ -113,6 +119,7 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 
 	public void setBereich(final BenutzerBereich bereich) {
 		this.bereich = bereich;
+		this.bereichsId = bereich.getId();
 	}
 
 	public String getBezeichnung() {
@@ -219,6 +226,14 @@ public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 		}
 
 		return true;
+	}
+
+	public Long getBereichsId() {
+		return bereichsId;
+	}
+
+	public void setBereichsId(Long bereichsId) {
+		this.bereichsId = bereichsId;
 	}
 
 }

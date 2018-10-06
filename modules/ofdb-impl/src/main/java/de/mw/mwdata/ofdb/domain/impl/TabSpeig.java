@@ -23,6 +23,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.ofdb.domain.ITabDef;
@@ -43,6 +45,7 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 @Table(name = "FX_TabSpEig_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "TABDEFID", "SPALTE" }),
 		@UniqueConstraint(columnNames = { "TABDEFID", "REIHENFOLGE" }) })
+@JsonPropertyOrder({ "id", "name", "tabDef", "tabDefId" })
 public class TabSpeig extends AbstractMWEntity implements ITabSpeig {
 
 	/**

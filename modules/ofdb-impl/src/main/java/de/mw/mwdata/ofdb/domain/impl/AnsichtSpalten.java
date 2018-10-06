@@ -17,6 +17,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -35,6 +37,7 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_ANSICHTSPALTEN_K" /* , schema = Constants.DB_SCHEMA */)
+@JsonPropertyOrder({ "id", "name", "ansichtDef", "ansichtDefId", "viewTab", "viewTabId" })
 public class AnsichtSpalten extends AbstractMWEntity implements IAnsichtSpalte {
 
 	private static final long serialVersionUID = -8040480474359231162L;

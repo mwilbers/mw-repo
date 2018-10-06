@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -28,53 +30,54 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_ANSICHTORDERBY_K" /* , schema = Constants.DB_SCHEMA */)
+@JsonPropertyOrder({ "id", "name", "ansichtTab", "ansichtTabId", "ansichtSpalten", "ansichtSpaltenId" })
 public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy {
 
 	/**
 	 *
 	 */
-	private static final long	serialVersionUID	= 4202224101431839827L;
-	private final static String	SEQUENCE_KEY		= "FX_AnsichtOrderBy_K:DSID";
+	private static final long serialVersionUID = 4202224101431839827L;
+	private final static String SEQUENCE_KEY = "FX_AnsichtOrderBy_K:DSID";
 
 	@Id
 	@GeneratedValue(generator = "SEQ_GEN")
 	@GenericGenerator(name = "SEQ_GEN", strategy = "de.mw.mwdata.core.db.FxSequenceGenerator")
 	@Column(name = "DSID")
-	private Long				id;
+	private Long id;
 
 	@Column(name = "ANSICHT", updatable = true, nullable = false, unique = true)
-	private String				name;
+	private String name;
 
 	@Column(name = "ANSICHTTABID", insertable = false, updatable = false, nullable = false, unique = false)
-	private Long				ansichtTabId;
+	private Long ansichtTabId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	// @PrimaryKeyJoinColumn
 	// @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "ANSICHTTABID", referencedColumnName = "DSID", updatable = true, insertable = true, nullable = true)
-	private AnsichtTab			ansichtTab;
+	private AnsichtTab ansichtTab;
 
 	@Column(name = "REIHENFOLGE", updatable = true, nullable = false, unique = true)
-	private Integer				reihenfolge;
+	private Integer reihenfolge;
 
 	@Column(name = "TABAKEY", updatable = true, nullable = false, unique = false)
-	private String				tabAKey;
+	private String tabAKey;
 
 	@Column(name = "ANSICHTSPALTENID", insertable = false, updatable = false, nullable = false, unique = false)
-	private Long				ansichtSpaltenId;
+	private Long ansichtSpaltenId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	// @PrimaryKeyJoinColumn
 	// @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "ANSICHTSPALTENID", referencedColumnName = "DSID", updatable = true, insertable = true, nullable = true)
-	private AnsichtSpalten		ansichtSpalten;
+	private AnsichtSpalten ansichtSpalten;
 
 	@Column(name = "SPALTEAKEY", updatable = true, nullable = false, unique = false)
-	private String				spalteAKey;
+	private String spalteAKey;
 
 	@Column(name = "AUFSTEIGEND", columnDefinition = "NUMBER(1) default 0")
 	@Type(type = "fxboolean")
-	private Boolean				aufsteigend;
+	private Boolean aufsteigend;
 
 	@Override
 	public String getSequenceKey() {
@@ -87,7 +90,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	}
 
 	@Override
-	public void setId( final Long id ) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -97,7 +100,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	}
 
 	@Override
-	public void setName( final String name ) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -112,9 +115,11 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy#setAnsichtTab(de.mw.mwdata.core.ofdb.domain.AnsichtTab)
+	 * @see
+	 * de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy#setAnsichtTab(de.mw.mwdata.core
+	 * .ofdb.domain.AnsichtTab)
 	 */
-	public void setAnsichtTab( final IAnsichtTab ansichtTab ) {
+	public void setAnsichtTab(final IAnsichtTab ansichtTab) {
 		this.ansichtTab = (AnsichtTab) ansichtTab;
 		this.ansichtTabId = ansichtTab.getId();
 		this.name = ansichtTab.getName();
@@ -133,9 +138,10 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy#setAnsichtSpalten(de.mw.mwdata.core.ofdb.domain.AnsichtSpalten)
+	 * de.mw.mwdata.core.ofdb.domain.IAnsichtOrderBy#setAnsichtSpalten(de.mw.mwdata.
+	 * core.ofdb.domain.AnsichtSpalten)
 	 */
-	public void setAnsichtSpalten( final IAnsichtSpalte ansichtSpalten ) {
+	public void setAnsichtSpalten(final IAnsichtSpalte ansichtSpalten) {
 		this.ansichtSpalten = (AnsichtSpalten) ansichtSpalten;
 		this.ansichtSpaltenId = ansichtSpalten.getId();
 
@@ -150,7 +156,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 		return this.ansichtSpalten;
 	}
 
-	public void setReihenfolge( final Integer reihenfolge ) {
+	public void setReihenfolge(final Integer reihenfolge) {
 		this.reihenfolge = reihenfolge;
 	}
 
@@ -158,7 +164,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 		return this.reihenfolge;
 	}
 
-	public void setTabAKey( final String tabAKey ) {
+	public void setTabAKey(final String tabAKey) {
 		this.tabAKey = tabAKey;
 	}
 
@@ -166,7 +172,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 		return this.tabAKey;
 	}
 
-	public void setSpalteAKey( final String spalteAKey ) {
+	public void setSpalteAKey(final String spalteAKey) {
 		this.spalteAKey = spalteAKey;
 	}
 
@@ -174,7 +180,7 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 		return this.spalteAKey;
 	}
 
-	public void setAufsteigend( final Boolean aufsteigend ) {
+	public void setAufsteigend(final Boolean aufsteigend) {
 		this.aufsteigend = aufsteigend;
 	}
 
@@ -185,11 +191,11 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append( "AnsichtOrderBy [TabAKey: " );
-		b.append( this.getTabAKey() );
-		b.append( ", SpalteAKey: " );
-		b.append( this.getSpalteAKey() );
-		b.append( "]" );
+		b.append("AnsichtOrderBy [TabAKey: ");
+		b.append(this.getTabAKey());
+		b.append(", SpalteAKey: ");
+		b.append(this.getSpalteAKey());
+		b.append("]");
 
 		return b.toString();
 	}

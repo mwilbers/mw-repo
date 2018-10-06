@@ -47,12 +47,20 @@ public class ViewConfigHandle {
 		return this.viewConfig.getEntityMapping(tableName);
 	}
 
-	private OfdbPropMapper findOfdbPropMapperByProperty(final String tableName, final String propertyName) {
+	private OfdbPropMapper findOfdbPropMapperByProperty(final String tableName, final String propertyName,
+			final boolean findAssociationProperty) {
 		OfdbEntityMapping entityMapping = getEntityMapping(tableName);
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
-			if (mapper.getPropertyName().equals(propertyName)) {
-				return mapper;
+			if (findAssociationProperty) {
+				if (mapper.getAssociatedEntityName().equals(propertyName)) {
+					return mapper;
+				}
+			} else {
+				if (mapper.getPropertyName().equals(propertyName)) {
+					return mapper;
+				}
 			}
+			// || mapper.getAssociatedEntityName().equals(propertyName)
 		}
 		return null;
 	}
@@ -63,13 +71,15 @@ public class ViewConfigHandle {
 	 * @param propertyName
 	 * @return table property found by searching property mapping
 	 */
-	public ITabSpeig findTablePropByProperty(final ITabDef tableDef, final String propertyName) {
+	public ITabSpeig findTablePropByProperty(final ITabDef tableDef, final String propertyName,
+			final boolean findAssociatedProperty) {
 
-		OfdbPropMapper propMapper = findOfdbPropMapperByProperty(tableDef.getName(), propertyName);
+		OfdbPropMapper propMapper = findOfdbPropMapperByProperty(tableDef.getName(), propertyName,
+				findAssociatedProperty);
 		List<ITabSpeig> tableProps = getTableProps(tableDef);
 
 		for (ITabSpeig tabProp : tableProps) {
-			if (tabProp.getSpalte().toUpperCase().equals(propMapper.getColumnName().toUpperCase())) {
+			if (tabProp.getSpalte().equalsIgnoreCase(propMapper.getColumnName())) {
 				return tabProp;
 			}
 		}

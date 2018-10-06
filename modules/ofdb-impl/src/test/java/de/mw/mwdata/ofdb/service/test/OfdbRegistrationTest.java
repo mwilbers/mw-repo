@@ -184,7 +184,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		ViewConfigHandle viewHandleBereich = this.getOfdbCacheManger()
 				.findViewConfigByTableName(aTabBenutzerBereich.getTabDef().getName());
 		ITabSpeig tablePropBereichName = viewHandleBereich.findTablePropByProperty(aTabBenutzerBereich.getTabDef(),
-				"name");
+				"name", false);
 
 		// FIXME: method configure should only be inherited from test based interface
 		this.applicationFactory.configure();

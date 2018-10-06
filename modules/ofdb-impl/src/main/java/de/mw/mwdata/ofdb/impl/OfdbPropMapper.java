@@ -14,11 +14,12 @@ public class OfdbPropMapper implements Serializable {
 	private DBTYPE dbType;
 
 	/**
-	 * Holds the propertyname of the association list based property in Entity with
-	 * same columnName. E.g. for TabDef: propName = 'bereichsID' =>
-	 * associationPropName = 'bereich'
+	 * Holds the mapper of the association list based property in Entity with same
+	 * columnName. E.g. for TabDef: propName = 'bereichsID' => associationPropName =
+	 * 'bereich'
 	 */
-	private String associatedEntityName;
+	// private String associatedEntityName;
+	private OfdbPropMapper associatedPropertyMapper;
 
 	/**
 	 * Describes the index of the property in the hibernate persistence array of all
@@ -83,11 +84,33 @@ public class OfdbPropMapper implements Serializable {
 	}
 
 	public String getAssociatedEntityName() {
-		return associatedEntityName;
+		if (null == this.associatedPropertyMapper) {
+			return "";
+		}
+		return this.associatedPropertyMapper.getPropertyName();
 	}
 
-	public void setAssociatedEntityName(String associatedEntityName) {
-		this.associatedEntityName = associatedEntityName;
+	public Integer getAssociatedPropertyIndex() {
+		if (null == this.associatedPropertyMapper) {
+			return null;
+		}
+		return this.associatedPropertyMapper.getPropertyIndex();
+	}
+
+	// public void setAssociatedEntityName(String associatedEntityName) {
+	// // this.associatedEntityName = associatedEntityName;
+	// }
+
+	public boolean hasAssociatedEntity() {
+		return null != this.associatedPropertyMapper;
+	}
+
+	public OfdbPropMapper getAssociatedPropertyMapper() {
+		return associatedPropertyMapper;
+	}
+
+	public void setAssociatedPropertyMapper(OfdbPropMapper associatedPropertyMapper) {
+		this.associatedPropertyMapper = associatedPropertyMapper;
 	}
 
 }

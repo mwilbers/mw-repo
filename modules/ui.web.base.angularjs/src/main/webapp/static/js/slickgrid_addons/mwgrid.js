@@ -33,11 +33,21 @@ function mwGrid() {
 	
 			if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
 				columns[columnCounter] = {};
+				
 				columns[columnCounter]["id"] = ofdbField.propName;
 				columns[columnCounter]["name"] = ofdbField.columnTitle;
-				columns[columnCounter]["field"] = ofdbField.propName;
+				
+				if( ofdbField.joinedProperty ) {
+					columns[columnCounter]["field"] = ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName;
+				} else {
+					columns[columnCounter]["field"] = ofdbField.propName;
+				}
+				
+				
+				
+				
 				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
-					var result = buildListOfValuesString( ofdbField.listOfValues );
+					var result = buildListOfValuesString( ofdbField.listOfValues, ofdbField.joinedProperty );
 					columns[columnCounter]["options"] = result;
 					columns[columnCounter]["editor"] = SelectCellEditor;
 				}
@@ -59,10 +69,17 @@ function mwGrid() {
 	
 	
 	
-	function buildListOfValuesString( listOfValuesArray ) {
+	function buildListOfValuesString( listOfValuesArray, joinedProperty ) {
 		var result = "";
 		for(var l=0; l<listOfValuesArray.length; l++) {
-			result += listOfValuesArray[l] + ",";
+			var listItem = listOfValuesArray[l];
+			
+			if(joinedProperty) {
+				result += listItem[joinedProperty.propName] + ":" + listItem['id'] + ",";
+			} else {
+				result += listItem + ":" + listItem + ",";
+			}
+			
 		}
 		return result.substring(0, result.length - 1);	
 	}
@@ -137,22 +154,29 @@ function mwGrid() {
 				self.data[i] = {};			
 			}
 			
-			mwGrid.getColumnFilters()['type'] = rows[0]['type'];
+			mwGrid.getColumnFilters()['type'] = rows[0].type;
 			
 		}
 		
 		for (var i = 0; i < rows.length; i++) {
+			var entityTO = rows[i];
+			
+			
 			for(var j=0; j < uiInputConfigs.length; j++) {
 				var ofdbField = uiInputConfigs[j];
-				if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
-					self.data[i][ofdbField.propName] = rows[i][ofdbField.propName];
+				if( ofdbField.joinedProperty ) {
+					entityTO[ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName] = entityTO[ofdbField.joinedProperty.entityName][ofdbField.joinedProperty.propName];
+					//self.data[i][ofdbField.propName] = entityTO[ofdbField.joinedProperty.entityName][ofdbField.joinedProperty.propName];	
+					
 				}
 				
 			}
 			
+			
 			if(uiInputConfigs.length > 0) {
-				self.data[i]["type"] = rows[i]["type"];
-				self.data[i]["btnDelete"] = "";
+				//self.data[i]["type"] = entityTO.type;
+				//self.data[i]["btnDelete"] = "";
+				entityTO["btnDelete"] = "";
 			}
 		}
 		
@@ -167,15 +191,17 @@ function mwGrid() {
 			if( globalEntityController.hasRowChanged() && globalEntityController.isRowDirty() ) {
 				globalEntityController.submit();
 				globalEntityController.reset();
+				mwGrid.getControllerScope().$apply();
 			} else if (args.grid.getColumns()[args.cell].field == 'btnDelete') {
 			   // FIXME: perform real delete
 			   alert('delete not yet implemented');
 			   // assume delete function uses data field id; simply pass args.row if row number is accepted for delete
 			   mwGrid.dataView.deleteItem(args.grid.getDataItem(args.row).id);
 			   args.grid.invalidate();
+			   mwGrid.getControllerScope().$apply();
 			}
 			
-			mwGrid.getControllerScope().$apply();
+			
 		});
 			
 		self.grid.onCellChange.subscribe(function(e, args) {
@@ -231,7 +257,7 @@ function mwGrid() {
 		if(columns.length > 0) {
 			self.grid.init();
 			self.dataView.beginUpdate();
-			self.dataView.setItems(self.data);
+			self.dataView.setItems(rows);
 			self.dataView.setFilter(self.filter);
 			self.dataView.endUpdate();
 			
