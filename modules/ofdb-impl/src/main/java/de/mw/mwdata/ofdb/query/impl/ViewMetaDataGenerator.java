@@ -112,10 +112,8 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 				OfdbPropMapper suchPropMapper = null;
 				if (this.tabProp.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
 					suchPropMapper = mainEntityMapping.getMapper(suchWertTabSpeig);
-					// .get(suchWertTabSpeig.getSpalte().toUpperCase());
 				} else {
 					suchPropMapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
-					// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
 				}
 
 				String listPropValueName = suchPropMapper.getPropertyName();
@@ -131,22 +129,11 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 					OfdbPropMapper mapper = null;
 					if (this.tabProp.getTabDef().equals(suchWertTabSpeig.getTabDef())) {
 						mapper = mainEntityMapping.getMapper(suchWertTabSpeig);
-						// .get(suchWertTabSpeig.getSpalte().toUpperCase());
 					} else {
 						mapper = viewHandleSuchen.findPropertyMapperByTabProp(suchWertTabSpeig);
-						// this.ofdbCacheManager.findPropertyMapperByTabSpeig( suchWertTabSpeig );
 					}
 
-					// OfdbPropMapper mapper = this.ofdbCacheManager.findPropertyMapperByTabSpeig(
-					// suchWertTabSpeig
-					// );
 					listPropValueName = mapper.getPropertyName();
-					// queryModel.addAlias(ansichtTab, suchWertTabSpeig);
-
-					// OfdbEntityMapping entityMapping = this.ofdbCacheManager
-					// .getEntityMapping(tabSpeig.getTabDef().getName());
-					// OfdbPropMapper propMapping =
-					// entityMapping.findPropertyMapperByTabProp(tabSpeig);
 
 					ofField.setResultIndex(highestResultIndex + 1);
 					ofField.setColumnTitle(suchWertTabSpeig.getSpaltenkopf());
@@ -155,7 +142,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 					JoinedPropertyTO joinedProperty = new JoinedPropertyTO(propMapper.getAssociatedEntityName(),
 							listPropValueName, highestResultIndex + 1);
-					// joinedProperty.setValue(listPropValueName);
 					ofField.setJoinedProperty(joinedProperty);
 
 				} else {
@@ -181,7 +167,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 				List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, this.tabProp, null, null);
 				ofField.setListOfValues(listOfValues);
-				// this.ofdbDao.setListOfValues( ofField, tabSpeig, null, null );
 
 			} else {
 

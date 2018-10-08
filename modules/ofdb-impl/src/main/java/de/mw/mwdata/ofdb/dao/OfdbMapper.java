@@ -51,11 +51,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 
 		String[] keyColumnNames = persister.getKeyColumnNames();
 		for (int i = 0; i < keyColumnNames.length; i++) {
-			// OfdbPropMapper mapper = new OfdbPropMapper(tableName, keyColumnNames[i]);
-			// mapper.setPropertyName(persister.getIdentifierPropertyName());
-			// mapper.setDbType(DBTYPE.LONGINTEGER);
-
-			// propMap.put(keyColumnNames[i], mapper);
 			entityMapping.addMapping(keyColumnNames[i], persister.getIdentifierPropertyName(), 0, DBTYPE.LONGINTEGER);
 		}
 
@@ -118,15 +113,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 
 				DBTYPE dbType = convertTypeToDbType(propertyTypes[i]);
 				entityMapping.addAssociationMapping(columnNameDb, props[i], new Integer(i), dbType);
-				// OfdbPropMapper propMapping =
-				// entityMapping.findPropertyMapperByColumnName(columnNameDb);
-
-				// ... hier neues OfdbPropMapper anlegen für associationProperty und am
-				// propMapping referenzieren.
-				// später bei CRUDTest, NPE, dort dann die find-Methode erweitern und nach
-				// associatedProperty suchen lassen
-
-				// propMapping.setAssociatedEntityName(props[i]);
 			}
 		}
 

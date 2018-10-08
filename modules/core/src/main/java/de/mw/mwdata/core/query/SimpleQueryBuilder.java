@@ -160,10 +160,7 @@ public class SimpleQueryBuilder implements QueryBuilder {
 				throw new InvalidQueryConfigurationException(msg);
 			}
 
-			// for (Map.Entry<String, String> entry : this.selectTableAliasItems.entrySet())
-			// {
 			sbSelect.append(" ").append(this.entityAliasPair.getTableAliasName()).append(",");
-			// }
 			for (Map.Entry<String, String> entry : this.selectColumnAliasItems.entrySet()) {
 				sbSelect.append(" ").append(entry.getKey()).append(".").append(entry.getValue()).append(",");
 			}
@@ -243,10 +240,8 @@ public class SimpleQueryBuilder implements QueryBuilder {
 						sbWhere.append(" != ");
 					}
 					if (bVal) {
-						// sbWhere.append( " is true " );
 						sbWhere.append("'").append(Integer.valueOf(Constants.SYS_VAL_TRUE)).append("'");
 					} else {
-						// sbWhere.append( " is not true " );
 						sbWhere.append("'").append(Integer.valueOf(Constants.SYS_VAL_FALSE)).append("'");
 					}
 
@@ -285,13 +280,6 @@ public class SimpleQueryBuilder implements QueryBuilder {
 				throw new IllegalStateException("Missing operator enum for DefaultOfdbQueryBuilder.");
 			}
 			}
-			// .append( whereRes.operator );
-
-			// if ( whereRes.isString() ) {
-			// sbWhere.append( "'" ).append( whereRes.value ).append( "'" );
-			// } else {
-			// sbWhere.append( whereRes.value );
-			// }
 
 		}
 
@@ -380,20 +368,6 @@ public class SimpleQueryBuilder implements QueryBuilder {
 		this.orderSet.add(new OrderSet(new TableColumnPair(tableAlias, columnAlias), orderDirection));
 		return this;
 	}
-
-	// @Override
-	// public void reset() {
-	// this.count = false;
-	// this.mainTable = null;
-	// this.mainTableAlias = null;
-	// this.joinRestrictions.clear();
-	// this.joinTables.clear();
-	// this.selectColumnAliasItems.clear();
-	// this.selectTableAliasItems.clear();
-	// this.orderSet.clear();
-	// this.whereRestrictions.clear();
-	//
-	// }
 
 	@Override
 	public QueryBuilder joinEntity(final String entityName, final String entityAlias) {

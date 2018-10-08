@@ -39,15 +39,6 @@ public class UiEntityList<E extends AbstractMWEntity> {
 
 		for (Object[] entity : entities) {
 
-			// FIXME:
-			// ... add here additional values for index > 0 as key value pairs
-			// maybe key is of type (tablekey|columnkey)
-			// means: redesign in OfdbDao.executeQuery()
-			// means: return type IEntity[] of ofdbDao is wrong: should be Object[] ->
-			// change and test clientside
-			// (json-conv)
-			// vgl: OfdbField.itemKey, Value, Label felder und deren Verwendung
-
 			EntityTO en = new EntityTO((AbstractMWEntity) entity[0]);
 			if (entity.length > 1) {
 				for (int i = 1; i <= entity.length; i++) {

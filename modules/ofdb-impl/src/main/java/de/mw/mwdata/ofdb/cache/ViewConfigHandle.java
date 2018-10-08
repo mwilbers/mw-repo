@@ -204,8 +204,6 @@ public class ViewConfigHandle {
 	}
 
 	public ITabSpeig findTabSpeigByAnsichtOrderBy(final IAnsichtOrderBy ansichtOrderBy) {
-
-		// findAnsichtTabByTabAKey( ansichtOrderBy.getTabAKey() );
 		return findTabSpeigByTabAKeyAndSpalteAKey(ansichtOrderBy.getAnsichtTab().findTableName(),
 				ansichtOrderBy.getSpalteAKey());
 
@@ -251,10 +249,6 @@ public class ViewConfigHandle {
 
 		List<ITabSpeig> tableProps = getTableProps(tabDef);
 		UniqueTabSpeigBucket uniqueMap = new UniqueTabSpeigBucket(tableProps);
-		// this.ofdbCacheManager.findRegisteredTabSpeigs( tabDef.getName() ) );
-		// List<ITabSpeig> uniqueTabSpeigs =
-		// uniqueMap.getTabSpeigsByUniqueIdentifier(uniqueIdent);
-
 		return uniqueMap.getUniqueTableProps(uniqueIdent);
 	}
 

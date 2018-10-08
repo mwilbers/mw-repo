@@ -206,12 +206,7 @@ public abstract class AbstractMenuController {
 		// // FIXME: compare with where-restrictions from OfdbDao.findMenues()
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findChildMenus(parentMenuId, userAreaName);
-
-		// List<EntityTO> entityTOs = convertToEntityTOList(menuResult.getRows(),
-		// new JoinedPropertyTO("ansichtDef", "urlPath", 1));
-
-		// FIXME : do convert directly from QueryResult to UiMenuNodes here
-		List<UiMenuNode> menuList = this.convertToUiMenuNodes(menuResult); // convertToUiMenuList(entityTOs);
+		List<UiMenuNode> menuList = convertToUiMenuNodes(menuResult);
 
 		return new ResponseEntity<List<UiMenuNode>>(menuList, HttpStatus.OK);
 	}

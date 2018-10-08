@@ -143,23 +143,6 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     	for(var i = 0; i < entityTOs.length; i++){            
     		var entityTO = entityTOs[i].item;
 			
-			/*
-			var row = {};
-			for(var j = 0; j < uiInputConfigs.length; j++) {
-				if(uiInputConfigs[j].mapped) {
-					if( uiInputConfigs[j].joinedProperty ) {
-						row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].joinedProperty.entityName][uiInputConfigs[j].joinedProperty.propName];	
-					} else {
-						row[uiInputConfigs[j].propName] = entityTO[uiInputConfigs[j].propName];	
-					}
-				} else {
-					row[j] = "-";
-				}
-			}
-			
-			row["type"] = entityTO.type;
-			*/
-			
     		$scope.state.entityRows.push(entityTO);    		
         }    	
     	
@@ -185,9 +168,6 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				}
 				
 				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
-				// if(undefined !== otherController) {
-					// otherController.initializeConfig( d.uiInputConfigs );
-				// }
 				
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs, d.uiInputConfigs );
@@ -401,7 +381,6 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
     }
 	
 	function initializeConfig( uiInputConfigs ) {
-		// $scope.appConfig.currentUrl = appConfigService.getApplicationConfig().defaultRestUrl;
 		$scope.appConfig.uiInputConfigs = uiInputConfigs;
 	}
 

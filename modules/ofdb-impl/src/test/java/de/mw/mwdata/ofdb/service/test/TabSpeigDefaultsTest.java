@@ -57,15 +57,14 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 		// FIXME: hier fehler, da AnsichtDef mit name = FX_TabDef_K zweimal persistiert
 		// wurde
 		// create some views and tables
-		IAnsichtTab ansichtTabMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		IAnsichtTab ansichtTabMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 		ITabDef tabDef = ansichtTabMock.getTabDef();
 		ViewConfigHandle viewHandleTabDef = this.viewConfigFactory
 				.createViewConfiguration(ansichtTabMock.getAnsichtDef().getName());
 		this.getOfdbCacheManger().registerView(viewHandleTabDef);
 
-		IAnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG,
-				TabSpeig.class.getName(), "tabSpeig", TabSpeig.class);
+		IAnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG, "tabSpeig",
+				TabSpeig.class);
 		ViewConfigHandle viewHandle = this.viewConfigFactory.createViewConfiguration(ansichtTab_TabSpeig.getName());
 		this.getOfdbCacheManger().registerView(viewHandle);
 
@@ -113,10 +112,10 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab_TabDefMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF,
-				TabDef.class.getName(), "tabDef", TabDef.class);
-		IAnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG,
-				TabSpeig.class.getName(), "tabSpeig", TabSpeig.class);
+		IAnsichtTab ansichtTab_TabDefMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef",
+				TabDef.class);
+		IAnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG, "tabSpeig",
+				TabSpeig.class);
 		ViewConfigHandle viewHandle = this.viewConfigFactory
 				.createViewConfiguration(ansichtTab_TabSpeig.getAnsichtDef().getName());
 		this.getOfdbCacheManger().registerView(viewHandle);
@@ -133,7 +132,7 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 		saveForTest(tabSpeig);
 
 		IAnsichtTab ansichtTab_ansichtSpalteMock = this.setUpAnsichtAndTab(TestConstants.TABLENAME_ANSICHTSPALTEN,
-				AnsichtSpalten.class.getName(), "ansichtSpalten", AnsichtSpalten.class);
+				"ansichtSpalten", AnsichtSpalten.class);
 
 		IAnsichtSpalte aSpaltePS = null;
 		for (IAnsichtSpalte aSpalte : viewHandle.getViewColumns()) {

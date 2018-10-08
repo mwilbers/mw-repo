@@ -82,12 +82,6 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 		// FIXME: here add feature toggle for loading or not loading viewConfigs to
 		// cache ...
 
-		// FIXME:
-		// 1. hier die AnsichtDefs mit dem datenfilter BenutzerBereich laden
-		// 2. in app.admin im MenuController die views AnsichtDef, TableDef etc.
-		// anzeigen lassen
-		// 3. in app.calendar.admin im MenuController die views Group, location,
-		// category anzeigen lassen
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		List<AnsichtDef> viewList = this.ofdbService.loadViewsForRegistration(userAreaName);
 

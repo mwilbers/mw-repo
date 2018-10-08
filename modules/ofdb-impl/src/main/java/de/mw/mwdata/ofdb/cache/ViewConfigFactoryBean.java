@@ -227,7 +227,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		return entityClassType;
 	}
 
-	// //@Override
 	private void initQueryModel(final String viewName, final Builder builder) {
 
 		OfdbQueryModel queryModel = new DefaultOfdbQueryModel();
@@ -272,8 +271,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 			MetaDataGenerator metaDataGenerator = new ViewMetaDataGenerator(viewHandle, tabSpeig, ansichtSpalte,
 					resultIndex, this.ofdbCacheManager, this.ofdbService);
 			OfdbField ofField = metaDataGenerator.createColumnMetaData();
-			// OfdbField ofField = createColumnMetaData(viewHandle, tabSpeig, ansichtSpalte,
-			// resultIndex);
 			ofFields.add(ofField);
 
 		}

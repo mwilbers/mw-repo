@@ -56,14 +56,6 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 	private static final String TABLENAME_TAB1 = "TestTabDef1";
 	private static final String TABLENAME_TAB2 = "TestTabDef2";
 
-	// 1. ansichtorder.tabdefid muss in hsql-db-ddl hinzugefügt werden -> erledigt
-	// dann das ganze für
-	// 2. ansichtspalten.tabspeigid -> noch in hsql
-	// 3. ansichtspalten.ansichttabid -> noch in hsql
-	// 4. validierungsregeln prüfen, ob überflüssige dabei sind
-	// 5. dann weiter mit Umbau ofdbCrudInterceptor und die chain verlegen nach
-	// ofdbService
-
 	@Test
 	public void testFindAllWithSorting() throws OfdbMissingMappingException {
 
@@ -141,15 +133,13 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		// z.B. admin oder calendar
 		//
 		// add ansichtDef, ansichtTab, tabDef for FX_TabDef_K, BenutzerBereicheDef
-		this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH, BenutzerBereich.class.getName(),
-				"benutzerBereich", BenutzerBereich.class);
-		IAnsichtTab ansichtTab_TabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH, "benutzerBereich", BenutzerBereich.class);
+		IAnsichtTab ansichtTab_TabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 		ansichtTab_TabDef.getTabDef().setDatenbank(DATENBANK.K);
 		saveForTest(ansichtTab_TabDef.getTabDef());
 
-		AnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG,
-				TabSpeig.class.getName(), "tabSpeig", TabSpeig.class);
+		AnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG, "tabSpeig",
+				TabSpeig.class);
 
 		this.applicationFactory.init();
 
@@ -223,8 +213,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab viewTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(), "tabDef",
-				TabDef.class);
+		IAnsichtTab viewTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		this.applicationFactory.init();
 

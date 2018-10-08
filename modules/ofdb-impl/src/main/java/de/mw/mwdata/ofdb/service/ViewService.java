@@ -62,21 +62,6 @@ public class ViewService implements IViewService<IEntity> {
 		this.ofdbCacheManager = ofdbCacheManager;
 	}
 
-	// @Override
-	// public List<IEntity[]> loadView(final String viewName, final List<SortKey>...
-	// sortKeys) {
-	//
-	// List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
-	// QueryResult queryResult = this.getOfdbService().executeQueryModel(viewName,
-	// cols, PagingModel.createDefaultModel());
-	//// String sql = this.ofdbService.buildSQL(viewName, cols);
-	//// QueryResult result = this.crudService.executeSql(sql);
-	//
-	// // FIXME: better return queryResult
-	// return result.getRows();
-	//
-	// }
-
 	protected List<SortKey> prepareSortColumns(final String viewName, final List<SortKey>... sortKeys) {
 		List<SortKey> cols = new ArrayList<SortKey>();
 
@@ -112,16 +97,7 @@ public class ViewService implements IViewService<IEntity> {
 
 		QueryResult queryResult = this.getOfdbService().executeFilteredQueryModel(viewName, cols, pagingModel,
 				entityTO);
-
-		// String sql = this.getOfdbService().buildFilteredSQL(viewName, entityTO,
-		// cols);
-		//
-		// String sqlCount = getOfdbService().buildSQLCount(viewName);
-		// QueryResult result = getCrudService().executeSqlPaginated(sql, pagingModel);
 		List<IEntity[]> objectArray = Utils.toObjectArray(queryResult.getRows());
-
-		// long count = this.getCrudService().executeCountSql(sqlCount);
-
 		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray,
 				queryResult.getCountWithoutPaging(), pagingModel);
 
@@ -135,22 +111,8 @@ public class ViewService implements IViewService<IEntity> {
 			final List<SortKey>... sortKeys) {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
-
-		// String sqlCount = getOfdbService().buildSQLCount(viewName);
-		// long count = getCrudService().executeCountSql(sqlCount);
-
 		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
-
 		QueryResult queryResult = getOfdbService().executeQueryModel(viewName, cols, pagingModel);
-
-		// String sql = getOfdbService().buildSQL(viewName, cols);
-		// List<IEntity[]> resultList = getCrudService().executeSqlPaginated(sql,
-		// pagingModel);
-		// List<IEntity[]> objectArray = Utils.toObjectArray(resultList);
-
-		// PaginatedList<IEntity[]> pagingList = new
-		// PaginatedList<IEntity[]>(queryResult.getRows(),
-		// queryResult.getCountWithoutPaging(), pagingModel);
 
 		return queryResult;
 

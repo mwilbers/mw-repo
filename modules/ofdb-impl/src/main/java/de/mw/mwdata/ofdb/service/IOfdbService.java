@@ -135,15 +135,11 @@ public interface IOfdbService {
 
 	public String mapTabSpeig2Property(final ITabSpeig tabSpeig);
 
-	public String buildSQL(final String viewName, final List<SortKey> sortKeys);
-
 	public QueryResult executeQueryModel(final String viewName, final List<SortKey> sortKeys,
 			final PagingModel pagingModel);
 
 	public QueryResult executeFilteredQueryModel(final String viewName, List<SortKey> sortKeys,
 			final PagingModel pagingModel, final EntityTO<? extends AbstractMWEntity> entityTO);
-
-	// public String buildSQLCount(final String viewName);
 
 	/**
 	 * Checks if all properties of the given AnsichtDef-object are valid for the

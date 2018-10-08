@@ -90,7 +90,7 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 		List<ITabSpeig> props = new ArrayList<ITabSpeig>();
 		for (int i = 0; i < tabProps.size(); i++) {
-			// Object o = tabProp;
+
 			IEntity[] entityArray = tabProps.get(i);
 			props.add((TabSpeig) entityArray[0]);
 		}
@@ -98,7 +98,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		return props;
 	}
 
-	// @Override
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<IAnsichtSpalte> findAnsichtSpaltenByAnsicht(final long ansichtId) {
@@ -113,9 +112,9 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 		List<IAnsichtSpalte> list = new ArrayList<IAnsichtSpalte>(results.size());
 		for (int i = 0; i < results.size(); i++) {
 			IEntity[] entityArray = results.get(i);
-			IAnsichtSpalte aSpalte = (IAnsichtSpalte) entityArray[0]; // ansichtSpalten.get( i );
+			IAnsichtSpalte aSpalte = (IAnsichtSpalte) entityArray[0];
 			list.add(aSpalte);
-			// map.put(aSpalte.getSpalteAKey().toUpperCase(), aSpalte);
+
 		}
 		return list;
 
@@ -141,9 +140,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<AnsichtOrderBy> findAnsichtOrderByAnsichtId(final long ansichtId) {
-
-		// ... implement MetaDataBasedQueryBuilder with constructor viewHandle, here use
-		// SimpleQueryBuilder
 
 		QueryBuilder b = new SimpleQueryBuilder();
 		String sql = b.selectEntity(ConfigOfdb.T_VIEWORDERBY, "aOrder").fromEntity(ConfigOfdb.T_VIEWORDERBY, "aOrder")
@@ -185,7 +181,6 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 
 	}
 
-	// @Override
 	@Override
 	public Object setEntityValue(final AbstractMWEntity entity, final Object value, final ITabSpeig tabSpeig,
 			final OfdbPropMapper propMapper) {

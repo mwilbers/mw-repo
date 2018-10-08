@@ -175,7 +175,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		int reihenfolge = 0;
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
-			// OfdbPropMapper propMapper = propEntry.getValue();
 			reihenfolge++;
 
 			ITabSpeig tabSpeig = DomainMockFactory.createTabSpeigMock(tabDef, mapper.getColumnName(), reihenfolge,
@@ -189,17 +188,12 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 				tabSpeigImpl.setDefaultWert(Constants.MWDATADEFAULT.USERID.getName());
 			}
 
-			// if (setDefaultCredentials) {
-			// tabSpeig.setAngelegtAm(new Date());
-			// tabSpeig.setAngelegtVon(Constants.SYS_USER_DEFAULT);
-			// }
-
 			saveForTest(tabSpeig);
 		}
 
 	}
 
-	protected AnsichtTab setUpAnsichtAndTab(final String tableName, final String fullClassName, final String urlPath,
+	protected AnsichtTab setUpAnsichtAndTab(final String tableName, final String urlPath,
 			final Class<? extends AbstractMWEntity> type) {
 
 		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapping(type, tableName);
@@ -212,16 +206,15 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		if (null == tabDef) {
 			tabDef = DomainMockFactory.createTabDefMock(tableName, this.getTestBereich(), !isAppInitialized());
-			tabDef.setFullClassName(fullClassName);
+			tabDef.setFullClassName(type.getName());
 
-			// this.getCrudDao().insert( tabDef );
 			saveForTest(tabDef);
 
 			// create and save all Tabprops
 			saveOrUpdateAllTabProps(entityMapping, tabDef);
 
 		} else {
-			tabDef.setFullClassName(fullClassName);
+			tabDef.setFullClassName(type.getName());
 			this.getCrudDao().update(tabDef);
 		}
 
@@ -231,8 +224,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			ansichtDefMock = DomainMockFactory.createAnsichtDefMock(tableName, this.getTestBereich(),
 					!isAppInitialized());
 			ansichtDefMock.setUrlPath(urlPath);
-			// ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
-
 			saveForTest(ansichtDefMock);
 
 			// save AnsichtTab
@@ -245,7 +236,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		} else {
 			ansichtDefMock.setUrlPath(urlPath);
-			// ansichtDefMock.setAppContextPath(Constants.SYS_CONTEXTPATH_ADMIN);
 			this.getCrudDao().update(ansichtDefMock);
 
 			ansichtTabMock = (AnsichtTab) this.getCrudDao().findByName(AnsichtTab.class, tableName);
@@ -259,7 +249,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			final IAnsichtTab ansichtTabMock) {
 
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
-			// OfdbPropMapper propMapper = propEntry.getValue();
 
 			ITabSpeig tabProp = this.ofdbService.loadTablePropByTableName(ansichtTabMock.getTabDef().getName(),
 					mapper.getColumnName());
@@ -302,7 +291,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		// FIXME: do delete all entities after method or better after class ?
 		while (!this.entityStack.empty()) {
-			// this.ofdbService.delete( this.entityStack.pop() );
 			IEntity entity = this.entityStack.pop();
 
 			if (entity instanceof AnsichtDef) {

@@ -14,28 +14,17 @@ import de.mw.mwdata.ofdb.service.IOfdbService;
 public class OfdbMetaDataQueryBuilder extends SimpleQueryBuilder implements MetaDataQueryBuilder {
 
 	private ViewConfigHandle viewHandle;
-	// private MetaDataGenerator metadataGenerator;
 	private IOfdbService ofdbService;
 
 	public OfdbMetaDataQueryBuilder(final ViewConfigHandle viewHandle, final IOfdbService ofdbService) {
 		this.viewHandle = viewHandle;
 		this.ofdbService = ofdbService;
-		// this.metadataGenerator = metadataGenerator;
 	}
 
 	@Override
 	public List<OfdbField> buildMetaData() {
 
-		// OfdbEntityMapping mainEntityMapping = this.viewHandle
-		// .getEntityMapping(this.viewHandle.getMainAnsichtTab().getTabDef().getName());
-		// String fullQualifiedEntityName =
-		// this.viewHandle.getMainAnsichtTab().getTabDef().getFullClassName();
-		// String simpleEntityName =
-		// OfdbUtils.getSimpleName(this.viewHandle.getMainAnsichtTab().getTabDef());
-		// ITabDef tableDef =
-		// this.viewHandle.findTableDefByEntityName(this.mainEntityName);
 		List<ITabSpeig> tableProps = this.viewHandle.getTableProps(this.viewHandle.getMainAnsichtTab().getTabDef());
-
 		List<OfdbField> ofFields = new ArrayList<>();
 
 		for (ITabSpeig tableProp : tableProps) {

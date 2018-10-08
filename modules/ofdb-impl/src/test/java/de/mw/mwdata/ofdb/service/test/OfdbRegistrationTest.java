@@ -71,8 +71,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		saveForTest(ansichtTab.getTabDef());
 		this.applicationFactory.init();
@@ -93,8 +92,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		AnsichtDef ansichtDef = (AnsichtDef) ansichtTab.getAnsichtDef();
 		ansichtDef.setUrlPath(StringUtils.EMPTY);
@@ -116,8 +114,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		ansichtTab.getTabDef().setFullClassName(StringUtils.EMPTY);
 		saveForTest(ansichtTab.getTabDef());
@@ -140,9 +137,8 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		this.applicationFactory.configure();
 
 		IAnsichtTab aTabBenutzerBereich = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH,
-				BenutzerBereich.class.getName(), "benutzerBereich", BenutzerBereich.class);
-		IAnsichtTab aTabTabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+				"benutzerBereich", BenutzerBereich.class);
+		IAnsichtTab aTabTabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		this.applicationFactory.init();
 

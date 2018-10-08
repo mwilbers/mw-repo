@@ -38,8 +38,8 @@ import de.mw.mwdata.ofdb.domain.ITabDef;
 		@TypeDef(name = "fxdatenbank", typeClass = de.mw.mwdata.ofdb.domain.enums.TypeDATENBANK.class) })
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
-@Table(name = "FX_TabDef_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "TABELLE" }), @UniqueConstraint(columnNames = { "ALIAS" }) })
+@Table(name = "FX_TabDef_K", uniqueConstraints = { @UniqueConstraint(columnNames = { "TABELLE" }),
+		@UniqueConstraint(columnNames = { "ALIAS" }) })
 @JsonPropertyOrder({ "id", "name", "bereich", "bereichsId" })
 public class TabDef extends AbstractMWEntity implements ITabDef {
 

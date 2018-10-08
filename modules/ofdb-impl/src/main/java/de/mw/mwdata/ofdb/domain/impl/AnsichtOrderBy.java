@@ -29,7 +29,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtTab;
  */
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
-@Table(name = "FX_ANSICHTORDERBY_K" /* , schema = Constants.DB_SCHEMA */)
+@Table(name = "FX_ANSICHTORDERBY_K")
 @JsonPropertyOrder({ "id", "name", "ansichtTab", "ansichtTabId", "ansichtSpalten", "ansichtSpaltenId" })
 public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy {
 
@@ -67,8 +67,6 @@ public class AnsichtOrderBy extends AbstractMWEntity implements IAnsichtOrderBy 
 	private Long ansichtSpaltenId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	// @PrimaryKeyJoinColumn
-	// @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "ANSICHTSPALTENID", referencedColumnName = "DSID", updatable = true, insertable = true, nullable = true)
 	private AnsichtSpalten ansichtSpalten;
 

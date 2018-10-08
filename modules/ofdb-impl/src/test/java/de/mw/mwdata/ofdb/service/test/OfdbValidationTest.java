@@ -58,8 +58,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 		List<IAnsichtTab> ansichtTabList = new ArrayList<IAnsichtTab>();
 		ViewConfigValidationResultSet resultSet = new ViewConfigValidationResultSet();
 
-		AnsichtTab ansichtTab1 = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, TabDef.class.getName(),
-				"tabDef", TabDef.class);
+		AnsichtTab ansichtTab1 = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 		ansichtTabList.add(ansichtTab1);
 
 		AnsichtTab ansichtTabMock = DomainMockFactory.createAnsichtTabMock(ansichtTab1.getAnsichtDef(),
@@ -111,8 +110,8 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 		this.applicationFactory.configure();
 
 		// 1. build up ofdb configuration
-		IAnsichtTab ansichtTab_config = this.setUpAnsichtAndTab(TestConstants.TABLENAME_ANSICHTDEF,
-				AnsichtDef.class.getName(), "ansichtDef", AnsichtDef.class);
+		IAnsichtTab ansichtTab_config = this.setUpAnsichtAndTab(TestConstants.TABLENAME_ANSICHTDEF, "ansichtDef",
+				AnsichtDef.class);
 		ITabDef tabDef = ansichtTab_config.getTabDef();
 		List<ITabSpeig> registeredTabSpeigs = this.getOfdbService().loadTablePropListByTableName(tabDef.getName());
 		ITabSpeig tabSpeig = null;

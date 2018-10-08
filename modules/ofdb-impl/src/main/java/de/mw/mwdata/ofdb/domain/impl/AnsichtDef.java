@@ -28,7 +28,7 @@ import de.mw.mwdata.ofdb.domain.IAnsichtDef;
  */
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
-@Table(name = "FX_AnsichtDef_K" /* , schema = Constants.DB_SCHEMA */)
+@Table(name = "FX_AnsichtDef_K")
 @JsonPropertyOrder({ "id", "name", "bereich", "bereichsId" })
 public class AnsichtDef extends AbstractMWEntity implements IAnsichtDef {
 

@@ -133,7 +133,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 					urlPath);
 			LOGGER.warn(message);
 			return null;
-			// throw new OfdbMissingObjectException(message);
+
 		}
 
 		Object[] o = result.getRows().get(0);
@@ -147,12 +147,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 			ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
 			return viewHandle.getViewDef();
 		}
-
-		// ... 2 Varianten des QueryBuilders.
-		// 1. SimpleQueryBuilder (siehe hier unten, kein ViewHandle, keine Ofdb-Objekte
-		// daher whereREstriction mit '')
-		// 2. OfdbQueryBuilder ( siehe buildFilteredSql() mit Aufbau über das QueryModel
-		// )
 
 		QueryBuilder b = new SimpleQueryBuilder();
 		String sql = b.selectEntity(ConfigOfdb.T_VIEWDEF, "v").fromEntity(ConfigOfdb.T_VIEWDEF, "v")
@@ -168,17 +162,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		IEntity[] entityArray = result.getRows().get(0);
 		return (IAnsichtDef) entityArray[0];
 
-	}
-
-	// FIXME: method not used any more
-	@Override
-	public String buildSQL(final String viewName, final List<SortKey> sortKeys) {
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		OfdbQueryModel queryModel = viewHandle.getQueryModel();
-
-		extendQueryModelByOrderSets(queryModel, viewName, sortKeys);
-		return buildSQLInternal(queryModel, viewName, false);
 	}
 
 	@Override
@@ -219,11 +202,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		result.setCountWithoutPaging(count);
 		pagingModel.setCount(count);
 
-		// FIXME: cast to objects still necessary here or better in crudService ?
-		// List<IEntity[]> objectArray = Utils.toObjectArray(result.getRows());
-		// QueryResult queryResult = new QueryResult(queryModel.getMetaData(),
-		// objectArray, count);
-
 		return result;
 	}
 
@@ -255,7 +233,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 			ViewConfigHandle joinedViewHandle = this.ofdbCacheManager
 					.getViewConfig(ansichtTab.getAnsichtDef().getName());
 
-			// AnsichtTab ansichtTab = ansichtTabEntry.getValue();
 			if (ansichtTab.getJoinTyp().equalsIgnoreCase("x")) {
 				continue;
 			}
@@ -305,7 +282,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	}
 
-	// @Override
 	private OfdbQueryModel extendQueryModelByFilters(final String viewName,
 			final EntityTO<? extends AbstractMWEntity> filterEntityTO) {
 
@@ -353,7 +329,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				Object entityValue = null;
 				try {
 					OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-					// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+
 					if (null == propMapper) {
 						// FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg
 						// durch Id /
@@ -377,11 +353,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 		}
 
-		// addOrderToQueryModel(queryModel, viewName, sortKeys);
-		// String sqlFiltered = buildSQLInternal(queryModel, viewName, false);
-
 		return queryModel;
-
 	}
 
 	private QueryValue convertValueToQueryValue(final Object value, final ITabSpeig whereTabSpeig) {
@@ -447,7 +419,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		return null;
 	}
 
-	// @Override
 	private String buildSQLCount(final String viewName) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
@@ -508,13 +479,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	public String mapTabSpeig2Property(final ITabSpeig tabSpeig) {
 		OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName());
 		return entityMapping.getMapper(tabSpeig).getPropertyName();
-
-		// FIXME: NPE auf getMapper(für tabDef.ERGTABFUERABRECHNUNG):
-		// fix: Methode mapTabSpeig2Property sollte OfdbPropMapper zurückgeben, an allen
-		// aufrufstellen dann abfragen:
-		// mapper == null oder besser isMapped()
-
-		// propertyMap.get(tabSpeig.getSpalte().toUpperCase()).getPropertyName();
 	}
 
 	private Object getOfdbDefault(final ITabSpeig tabSpeig) throws OfdbNullValueException {
@@ -657,17 +621,10 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	}
 
-	// @Override
-	// public List<IEntity[]> executeQuery(final String sql) {
-	// ...
-	// return this.crudService.executeSql(sql);
-	// }
-
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public boolean isEmpty(final AbstractMWEntity entity) throws OfdbMissingMappingException {
 
-		// String fullClassName = entity.getClass().getName();
 		TabDef tabDef = findTableDefByEntity(entity);
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(tabDef.getName());
@@ -676,7 +633,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		boolean isEmpty = true;
 		for (ITabSpeig tabSpeig : tabSpeigs) {
 			OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-			// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
+
 			if (null == propMapper) {
 				// FIXME: should not happen. happens e.g. for TabDef.bereich but should be
 				// removed in future because of
@@ -809,9 +766,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 						.getViewConfig(ansichtOrderBy.getAnsichtTab().getAnsichtDef().getName());
 				ITabSpeig tabProp = viewHandle.findTabSpeigByAnsichtOrderBy(ansichtOrderBy);
 				OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabProp);
-				// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabProp );
-				// OfdbPropMapper propMapper = this.getOfdbDao().mapTabSpeigToProperty( tabProp
-				// );
 				String asc = (ansichtOrderBy.getAufsteigend() ? "asc" : "desc");
 
 				sortColumns.put(propMapper.getPropertyName(), asc);
@@ -823,7 +777,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	}
 
-	// @Override
 	@Override
 	public void doChainActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud) {
 
@@ -864,8 +817,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				OfdbPropMapper entityPropMapper = viewHandle.findPropertyMapperByTabProp(entityProp);
 				IEntity associatedEntity = (IEntity) this.getOfdbDao().getEntityValue(entity,
 						entityPropMapper.getAssociatedPropertyIndex());
-				// associatedEntity = this.crudService.findById((Class<IEntity>)
-				// associatedEntity.getClass(), id);
 
 				if (id != associatedEntity.getId()) {
 					associatedEntity = this.crudService.findById((Class<IEntity>) associatedEntity.getClass(), id);
@@ -971,28 +922,10 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	}
 
-	// @Override
 	@Override
 	public void doChainCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException {
 
 		try {
-
-			// implement: build object ChangedEntity with list of objects holding
-			// propertyname, flag changed and index
-			// ...
-
-			// OfdbPropMapper propMapper =
-			// this.ofdbCacheManager.findPropertyMapperByTabSpeig( tabSpeig );
-			// if ( null == propMapper ) {
-			// // FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg
-			// durch Id /
-			// // verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich)
-			// throw new OfdbMissingMappingException( "Given TabSpeig not mapped by
-			// property." );
-			// }
-			// entityValue = this.getOfdbDao().getEntityValue( filterEntityTO.getItem(),
-			// propMapper.getPropertyIndex() );
-
 			checkAllUniques(entity, crud);
 
 		} catch (OfdbUniqueConstViolationException e) {
@@ -1063,7 +996,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		}
 	}
 
-	// @Override
 	public ViewConfigValidationResultSet isAnsichtTabListValid(final IAnsichtDef ansichtDef,
 			final List<IAnsichtTab> ansichtTabList) {
 
@@ -1097,8 +1029,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 		// check Primary key definitions
 		checkOnePrimaryKeyProperty(tabDef, tableProps, set);
-
-		// checkUniquePropertiesAreMapped(tabDef, tableProps, set);
 
 		return set;
 	}
