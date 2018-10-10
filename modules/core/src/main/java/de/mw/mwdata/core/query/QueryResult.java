@@ -34,17 +34,12 @@ public class QueryResult {
 
 	private QueryResult(final List<IEntity[]> rows) {
 		this.rows = rows;
-		// this.queryMetaData = queryMetaData;
 		this.countWithoutPaging = rows.size();
 	}
 
 	public static QueryResult createMetaLessQueryResult(final List<IEntity[]> rows) {
 		return new QueryResult(rows);
 	}
-
-	// public QueryResult(final List<IEntity[]> rows) {
-	// this.rows = rows;
-	// }
 
 	public boolean isEmpty() {
 		return CollectionUtils.isEmpty(this.rows);
@@ -55,7 +50,15 @@ public class QueryResult {
 	}
 
 	public IEntity getEntityByRowIndex(final int rowIndex) {
-		return this.getRows().get(rowIndex)[0];
+
+		// NOTE: read Object[] works, but not read simple Object from array Object[] !
+		Object[] o = this.getRows().get(rowIndex);
+		return (IEntity) o[0];
+	}
+
+	public String getAliasByRowAndColumnIndex(final int rowIndex, final int colIndex) {
+		Object[] o = this.getRows().get(rowIndex);
+		return (String) o[colIndex];
 	}
 
 	public long size() {
@@ -64,6 +67,13 @@ public class QueryResult {
 		}
 
 		return this.getRows().size();
+	}
+
+	public long columnSize() {
+		if (this.isEmpty()) {
+			return 0;
+		}
+		return this.getRows().get(0).length;
 	}
 
 	public long getCountWithoutPaging() {

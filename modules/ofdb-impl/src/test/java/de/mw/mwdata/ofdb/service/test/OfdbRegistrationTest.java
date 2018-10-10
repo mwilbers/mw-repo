@@ -136,9 +136,9 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		this.applicationFactory.configure();
 
-		IAnsichtTab aTabBenutzerBereich = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH,
+		IAnsichtTab viewTab_BenutzerBereich = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH,
 				"benutzerBereich", BenutzerBereich.class);
-		IAnsichtTab aTabTabDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
+		IAnsichtTab viewTab_tableDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
 		this.applicationFactory.init();
 
@@ -148,94 +148,65 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		QueryResult paginatedResult = this.entityService.executeViewQuery(TestConstants.TABLENAME_TABDEF, pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
-		Assert.assertEquals(paginatedResult.getRows().size(), 2);
-
-		// Object[] item = paginatedResult.getRows().get(0);
-		Object[] row = paginatedResult.getRows().get(0);
-		Assert.assertTrue(row.length == 1);
-		// Object[] item = paginatedResult.getRows().get(0);
-		// Assert.assertTrue(item.length == 1);
-		Assert.assertTrue(row[0] instanceof TabDef);
-
-		QueryResult queryResult = this.entityService.executeViewQuery(TestConstants.TABLENAME_TABDEF, pagingModel);
-		List<IEntity[]> entities = queryResult.getRows();
-		// .loadView(TestConstants.TABLENAME_TABDEF);
-		Assert.assertEquals(entities.size(), 2);
-		Assert.assertEquals(entities.get(0)[0], aTabBenutzerBereich.getTabDef());
+		Assert.assertEquals(paginatedResult.size(), 2); // BenutzerBereicheDef und FX_TabDef_K
+		Assert.assertTrue(paginatedResult.columnSize() == 1);
+		Assert.assertTrue(paginatedResult.getEntityByRowIndex(0) instanceof TabDef);
+		Assert.assertEquals(paginatedResult.getEntityByRowIndex(0), viewTab_BenutzerBereich.getTabDef());
 
 		List<IAnsichtSpalte> viewPropList = this.ofdbService
-				.findAnsichtSpaltenByAnsichtId(aTabTabDef.getAnsichtDef().getId());
+				.findAnsichtSpaltenByAnsichtId(viewTab_tableDef.getAnsichtDef().getId());
 
-		IAnsichtSpalte aSpalteBereichsId = null;
+		AnsichtSpalten viewColumn_bereichsId = null;
 		for (IAnsichtSpalte aSpalte : viewPropList) {
 			if (aSpalte.getName().equals("BEREICHSID")) {
-				aSpalteBereichsId = aSpalte;
+				viewColumn_bereichsId = (AnsichtSpalten) aSpalte;
 				break;
 			}
 		}
-		AnsichtSpalten ansichtSpalteMock = (AnsichtSpalten) aSpalteBereichsId; // (AnsichtSpalten)
-																				// viewPropMap.get("BEREICHSID");
 
 		// find column "NAME" from table BenutzerBereicheDef and add it to db
 		ViewConfigHandle viewHandleBereich = this.getOfdbCacheManger()
-				.findViewConfigByTableName(aTabBenutzerBereich.getTabDef().getName());
-		ITabSpeig tablePropBereichName = viewHandleBereich.findTablePropByProperty(aTabBenutzerBereich.getTabDef(),
+				.findViewConfigByTableName(viewTab_BenutzerBereich.getTabDef().getName());
+		ITabSpeig tablePropBereichName = viewHandleBereich.findTablePropByProperty(viewTab_BenutzerBereich.getTabDef(),
 				"name", false);
 
 		// FIXME: method configure should only be inherited from test based interface
 		this.applicationFactory.configure();
 
 		// 2.test: reset cache
-		this.getOfdbCacheManger().unregisterView(ansichtSpalteMock.getAnsichtDef().getName());
-		this.getOfdbCacheManger().unregisterView(aTabBenutzerBereich.getAnsichtDef().getName());
+		this.getOfdbCacheManger().unregisterView(viewColumn_bereichsId.getAnsichtDef().getName());
+		this.getOfdbCacheManger().unregisterView(viewTab_BenutzerBereich.getAnsichtDef().getName());
 
 		// link TabDef.BereichsID with BenutzerBereicheDef.BereichsId
-		ansichtSpalteMock.setAnsichtSuchen(TestConstants.TABLENAME_BENUTZERBEREICH);
-		ansichtSpalteMock.setSuchwertAusTabAKey(TestConstants.TABLENAME_BENUTZERBEREICH);
-		ansichtSpalteMock.setSuchwertAusSpalteAKey("BEREICHSID");
-		ansichtSpalteMock.setVerdeckenDurchTabAKey(TestConstants.TABLENAME_BENUTZERBEREICH);
-		ansichtSpalteMock.setVerdeckenDurchSpalteAKey("NAME");
+		viewColumn_bereichsId.setAnsichtSuchen(TestConstants.TABLENAME_BENUTZERBEREICH);
+		viewColumn_bereichsId.setSuchwertAusTabAKey(TestConstants.TABLENAME_BENUTZERBEREICH);
+		viewColumn_bereichsId.setSuchwertAusSpalteAKey("BEREICHSID");
+		viewColumn_bereichsId.setVerdeckenDurchTabAKey(TestConstants.TABLENAME_BENUTZERBEREICH);
+		viewColumn_bereichsId.setVerdeckenDurchSpalteAKey("NAME");
 
-		IAnsichtTab ansichtTabMock = DomainMockFactory.createAnsichtTabMock((AnsichtDef) aTabTabDef.getAnsichtDef(),
-				(TabDef) aTabBenutzerBereich.getTabDef(), 2, "=", "BEREICHSID", "BEREICHSID", "FX_TabDef_K",
-				!isAppInitialized());
+		// AnsichtTab TableDef -> BenutzerBereich
+		IAnsichtTab viewTab_tableDef_BenBereich = DomainMockFactory.createAnsichtTabMock(
+				(AnsichtDef) viewTab_tableDef.getAnsichtDef(), (TabDef) viewTab_BenutzerBereich.getTabDef(), 2, "=",
+				"BEREICHSID", "BEREICHSID", "FX_TabDef_K", !isAppInitialized());
+		saveForTest(viewTab_tableDef_BenBereich);
 
-		saveForTest(ansichtTabMock);
-
-		AnsichtSpalten viewColBereichName = DomainMockFactory
-				.createAnsichtSpalteMock((AnsichtDef) aTabTabDef.getAnsichtDef(), tablePropBereichName, ansichtTabMock);
+		// create additional table column Bereich.name for view TableDef
+		AnsichtSpalten viewColBereichName = DomainMockFactory.createAnsichtSpalteMock(
+				(AnsichtDef) viewTab_tableDef.getAnsichtDef(), tablePropBereichName, viewTab_tableDef_BenBereich);
 		viewColBereichName.setAngelegtAm(new Date());
 		viewColBereichName.setAngelegtVon(Constants.SYS_USER_DEFAULT);
 		this.saveForTest(viewColBereichName);
-		// ITabSpeig tabPropBereichName =
-		// DomainMockFactory.createTabSpeigMock(aTabBenutzerBereich.getTabDef(), "Name",
-		// 100, DBTYPE.STRING);
-		// this.saveForTest(tabPropBereichName);
-		//
-		// AnsichtSpalten viewColBereichName = DomainMockFactory
-		// .createAnsichtSpalteMock((AnsichtDef) aTabTabDef.getAnsichtDef(),
-		// tabPropBereichName, aTabTabDef);
-		// viewColBereichName.setAngelegtAm(new Date());
-		// viewColBereichName.setAngelegtVon(Constants.SYS_USER_DEFAULT);
-		// this.saveForTest(viewColBereichName);
 
 		// register new
 		this.applicationFactory.init();
 
 		pagingModel = new PagingModel(100, 1);
 
-		paginatedResult = this.entityService.executeViewQuery(aTabTabDef.getTabDef().getName(), pagingModel);
+		paginatedResult = this.entityService.executeViewQuery(viewTab_tableDef.getTabDef().getName(), pagingModel);
 
 		Assert.assertNotNull(paginatedResult);
-		Assert.assertEquals(paginatedResult.getRows().size(), 2);
-
-		// FIXME: should be improved by internal access methods of QueryResult
-		row = paginatedResult.getRows().get(0);
-
-		// item = paginatedResult.getRows().get(0);
-		// Assert.assertTrue(item instanceof Object[]);
-		// Object[] resArray = item;
-		Assert.assertTrue(row[0] instanceof TabDef);
+		Assert.assertEquals(paginatedResult.size(), 2);
+		Assert.assertTrue(paginatedResult.getEntityByRowIndex(0) instanceof TabDef);
 
 		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
 
@@ -247,23 +218,10 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		// aufnehmen und hier auf index 1 auswerten
 		// siehe auch beispiele etwa in FO_REchnungsDef in KD_RRE_PROD
 
-		Assert.assertTrue(row[1].equals(
+		Assert.assertTrue(paginatedResult.getAliasByRowAndColumnIndex(0, 1).equals(
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA)));
 
 		EntityTO<TabDef> entityTO = new EntityTO<TabDef>(new TabDef());
-		// OfdbEntityMapping entityMapping =
-		// this.getOfdbCacheManger().getEntityMapping(aTabTabDef.getTabDef().getName());
-		// OfdbPropMapper propMapping =
-		// entityMapping.getMapper(ansichtSpalteMock.getTabSpEig());
-
-		// ViewConfigHandle viewHandle =
-		// this.getOfdbCacheManger().getViewConfig(aTabTabDef.getName());
-		// ITabSpeig suchTabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(
-		// ansichtSpalteMock.getVerdeckenDurchTabAKey(),
-		// ansichtSpalteMock.getVerdeckenDurchSpalteAKey());
-
-		// String mappedPropName =
-		// this.getOfdbService().mapTabSpeig2Property(suchTabSpeig);
 
 		entityTO.addJoinedValue(
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
@@ -275,5 +233,16 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		Assert.assertEquals(items.getItems().size(), 2);
 
+		// next test changing additional property only by id: change bereichsId from 1
+		// (Administrator) to 2 (Testbereich2)
+		TabDef tabDef_tabDef = (TabDef) viewTab_tableDef.getTabDef();
+		BenutzerBereich testBereich2 = DomainMockFactory.createBenutzerBereichMock("Testbereich2");
+		this.crudDao.insert(testBereich2);
+
+		tabDef_tabDef.setBereichsId(testBereich2.getId());
+
+		Assert.assertEquals(tabDef_tabDef.getBereich().getName(), "Administrator");
+		this.getCrudService().insert(tabDef_tabDef);
+		Assert.assertEquals(tabDef_tabDef.getBereich().getName(), "Testbereich2");
 	}
 }
