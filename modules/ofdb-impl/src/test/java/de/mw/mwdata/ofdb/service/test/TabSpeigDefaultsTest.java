@@ -12,7 +12,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.DBTYPE;
 import de.mw.mwdata.core.test.data.TestConstants;
@@ -31,6 +30,7 @@ import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
+import de.mw.mwdata.ofdb.test.impl.ConfigurableApplicationFactory;
 
 @ContextConfiguration(locations = { "classpath:/appContext-ofdb.xml", "classpath:/appContext-ofdb-test.xml",
 		"classpath:/appContext-common-test-db.xml" })
@@ -43,7 +43,7 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 	private ViewConfigFactory viewConfigFactory;
 
 	@Autowired
-	private ApplicationFactory applicationFactory;
+	private ConfigurableApplicationFactory applicationFactory;
 
 	@Test(enabled = true)
 	public void testInsertDefaults_String_And_Enum() throws OfdbMissingMappingException {

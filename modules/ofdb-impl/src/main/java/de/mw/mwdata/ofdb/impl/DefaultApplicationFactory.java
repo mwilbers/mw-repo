@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mw.mwdata.core.ApplicationFactory;
-import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigFactory;
@@ -33,8 +32,6 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 	protected OfdbCacheManager ofdbCacheManager;
 
-	private ApplicationState state;
-
 	// protected String nameBenutzerBereich;
 
 	private ApplicationConfigService applicationConfigService;
@@ -52,18 +49,6 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 	}
 
 	public DefaultApplicationFactory() {
-
-		// weiteres vorgehen:
-		// admin-app erweiteren: alle konfig-datensätze der Tabellen MWIV_ORT,
-		// MWIV_KATEGORIE, MWIV_GRUPPE hinzufügen etc.
-		//
-		// noch wichtiger: neues Ticket-SYstem verwenden, dort weitere Tickets anlegen:
-		// 1. admin-app: neues Featuer Hinzufügen von Datensätzen ergänzen (verarbeitung
-		// von System-DS, defaults, etc.)
-		// 2. insert-statements generieren und ins sql-changelog der app INTERVEREIN
-		// einfügen
-
-		// this.nameBenutzerBereich = nameBenutzerBereich;
 	}
 
 	public void setOfdbService(final IOfdbService ofdbService) {
@@ -71,13 +56,8 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 	}
 
 	@Override
-	public void configure() {
-		this.state = ApplicationState.CONFIGURE;
-	}
-
-	@Override
 	public void init() {
-		this.state = ApplicationState.INITIALIZE;
+		// this.state = ApplicationState.INITIALIZE;
 
 		// FIXME: here add feature toggle for loading or not loading viewConfigs to
 		// cache ...
@@ -100,16 +80,11 @@ public class DefaultApplicationFactory implements ApplicationFactory {
 
 		}
 
-		this.state = ApplicationState.RUNNING;
+		// this.state = ApplicationState.RUNNING;
 	}
 
 	public void setOfdbCacheManager(final OfdbCacheManager ofdbCacheManager) {
 		this.ofdbCacheManager = ofdbCacheManager;
-	}
-
-	@Override
-	public ApplicationState getState() {
-		return this.state;
 	}
 
 }

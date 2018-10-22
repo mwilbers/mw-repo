@@ -671,21 +671,6 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 	}
 
 	@Override
-	public ITabSpeig loadTablePropByTableName(final String tableName, final String columnName) {
-
-		// FIXME: method only used in tests
-
-		List<ITabSpeig> tableProps = loadTablePropListByTableName(tableName);
-		for (ITabSpeig tabSpeig : tableProps) {
-			if (columnName.equals(tabSpeig.getSpalte())) {
-				return tabSpeig;
-			}
-		}
-
-		return null;
-	}
-
-	@Override
 	public OfdbEntityMapping initializeMapping(final Class<? extends AbstractMWEntity> type, final String tableName,
 			final List<ITabSpeig> tabSpeigs) {
 

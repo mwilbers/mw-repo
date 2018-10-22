@@ -37,6 +37,10 @@ public class OfdbMenuService implements IMenuService {
 	public QueryResult findMainMenus(final String userAreaName) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
+		if (null == viewHandle) {
+			return QueryResult.createEmptyQueryResult();
+		}
+
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
 
 		// FIXME: idea: instead of tabSpeigs here create ReadOnlyOfdbField inherited
@@ -72,6 +76,10 @@ public class OfdbMenuService implements IMenuService {
 	public IEntity findMenuByUrlPath(String urlPath) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
+		if (null == viewHandle) {
+			return null;
+		}
+
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
 
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").fromEntity(ConfigOfdb.T_MENU, "aMenu")

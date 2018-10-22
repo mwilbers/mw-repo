@@ -23,7 +23,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="false" />
 		<property name="order" value="2" />
 	</bean>
-	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory" init-method="init">
+	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.TestApplicationFactory" init-method="init">
 	 	<property name="ofdbService" ref="ofdbService" />
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
@@ -36,7 +36,7 @@
 	</bean>
 	
 	<bean id="core.crudDefaultInterceptor" class="de.mw.mwdata.core.intercept.DefaultCrudInterceptor" />
-	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService">
+	<bean id="crudService" class="de.mw.mwdata.core.service.CrudService">
 		<property name="crudInterceptors"> 
 			<list>
 				<ref bean="core.crudDefaultInterceptor" />

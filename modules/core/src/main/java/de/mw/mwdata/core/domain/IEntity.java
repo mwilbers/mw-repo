@@ -7,7 +7,6 @@ package de.mw.mwdata.core.domain;
  * Common interface for persistable entities in MWData. Every entity has an
  * unique id and an unique name. The unique name is important for mapping same
  * entities between different systems.<br>
- * FIXME: interface should be extended from JsonConvertible
  * 
  * @author Wilbers, Markus
  * @version 2.0

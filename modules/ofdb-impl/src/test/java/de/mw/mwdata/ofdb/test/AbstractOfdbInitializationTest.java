@@ -19,7 +19,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
@@ -43,7 +42,8 @@ import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
-import de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory;
+import de.mw.mwdata.ofdb.test.impl.ConfigurableApplicationFactory;
+import de.mw.mwdata.ofdb.test.impl.TestApplicationFactory;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTestNGSpringContextTests {
@@ -59,7 +59,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 	private ICrudService crudService;
 
 	@Autowired
-	protected ApplicationFactory applicationFactory;
+	protected ConfigurableApplicationFactory applicationFactory;
 
 	// entnommen aus zeb-hasql-dbscript:
 	// SET DATABASE SQL SYNTAX ORA TRUE
@@ -138,7 +138,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		this.ofdbSequenceDao.insert(sequence);
 		this.sequenceCache.add(sequence);
 
-		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
+		TestApplicationFactory appFactory = (TestApplicationFactory) this.applicationFactory;
 		this.testBereich = DomainMockFactory.createBenutzerBereichMock(
 				appFactory.getApplicationConfigService().getPropertyValue(ApplicationConfigService.KEY_USERAREA));
 		this.benutzerBereichDao.insert(this.testBereich);
@@ -199,7 +199,7 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 		OfdbEntityMapping entityMapping = this.getOfdbDao().initializeMapping(type, tableName);
 
 		// save TabDef
-		TabDef tabDef = (TabDef) this.getCrudDao().findByName(TabDef.class, tableName);
+		TabDef tabDef = (TabDef) this.getCrudService().findByName((Class<T>) TabDef.class, tableName);
 
 		// ... flush an hibernate crudDao.delete löscht alle tabDefs...
 		// http://stackoverflow.com/questions/26597440/how-do-you-test-spring-transactional-without-just-hitting-hibernate-level-1-cac
@@ -218,7 +218,8 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			this.getCrudDao().update(tabDef);
 		}
 
-		AnsichtDef ansichtDefMock = (AnsichtDef) this.getCrudDao().findByName(AnsichtDef.class, tableName);
+		AnsichtDef ansichtDefMock = (AnsichtDef) this.getCrudService().findByName((Class<T>) AnsichtDef.class,
+				tableName);
 		AnsichtTab ansichtTabMock = null;
 		if (null == ansichtDefMock) {
 			ansichtDefMock = DomainMockFactory.createAnsichtDefMock(tableName, this.getTestBereich(),
@@ -238,11 +239,25 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 			ansichtDefMock.setUrlPath(urlPath);
 			this.getCrudDao().update(ansichtDefMock);
 
-			ansichtTabMock = (AnsichtTab) this.getCrudDao().findByName(AnsichtTab.class, tableName);
+			ansichtTabMock = (AnsichtTab) this.getCrudService().findByName((Class<T>) AnsichtTab.class, tableName);
 
 		}
 
 		return ansichtTabMock;
+	}
+
+	private ITabSpeig loadTablePropByTableName(final String tableName, final String columnName) {
+
+		// FIXME: method only used in tests
+
+		List<ITabSpeig> tableProps = this.getOfdbService().loadTablePropListByTableName(tableName);
+		for (ITabSpeig tabSpeig : tableProps) {
+			if (columnName.equals(tabSpeig.getSpalte())) {
+				return tabSpeig;
+			}
+		}
+
+		return null;
 	}
 
 	private void saveOrUpdateAllViewProps(final OfdbEntityMapping entityMapping, final AnsichtDef ansichtDefMock,
@@ -250,13 +265,11 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 		for (OfdbPropMapper mapper : entityMapping.getMappings()) {
 
-			ITabSpeig tabProp = this.ofdbService.loadTablePropByTableName(ansichtTabMock.getTabDef().getName(),
-					mapper.getColumnName());
+			ITabSpeig tabProp = loadTablePropByTableName(ansichtTabMock.getTabDef().getName(), mapper.getColumnName());
 			AnsichtSpalten viewColumn = DomainMockFactory.createAnsichtSpalteMock(ansichtDefMock, tabProp,
 					ansichtTabMock);
 
-			ITabSpeig tableProp = this.ofdbService.loadTablePropByTableName(mapper.getTableName(),
-					mapper.getColumnName());
+			ITabSpeig tableProp = loadTablePropByTableName(mapper.getTableName(), mapper.getColumnName());
 			viewColumn.setTabSpEig(tableProp);
 			viewColumn.setViewTab(ansichtTabMock);
 

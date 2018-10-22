@@ -20,7 +20,6 @@ import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.impl.TabDef;
-import de.mw.mwdata.ofdb.domain.impl.TabSpeig;
 import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
@@ -73,15 +72,6 @@ public interface IOfdbService {
 	 * @return a java-ArrayList of TabSpeigs for the given tableName
 	 */
 	public List<ITabSpeig> loadTablePropListByTableName(final String table);
-
-	/**
-	 * Finds a single {@link TabSpeig} by given tablename and columnname of TabSpeig
-	 *
-	 * @param tableName
-	 * @param columnName
-	 * @return
-	 */
-	public ITabSpeig loadTablePropByTableName(final String tableName, final String columnName);
 
 	/**
 	 * Initializes a property mapping between table columns (tabSpeig.spalte as

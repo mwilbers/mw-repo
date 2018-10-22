@@ -20,18 +20,18 @@ public class CrudChainTest {
 	@Test
 	public void testCrudChain() {
 
-		ICrudInterceptable crudService = new AbstractCrudService<>();
+		ICrudInterceptable crudService = new CrudService<>();
 		BenutzerBereich testBereich = CoreMockFactory.createBenutzerBereichMock("Testbereich");
 
 		// 1. test empty crud chain list
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		List<CrudChain> chainItems = new ArrayList<>();
 		crudService.setCrudInterceptors(chainItems);
 		crudService.doActionsBeforeCheck(testBereich, CRUD.UPDATE);
 		Assert.assertEquals(testBereich.getName(), "Testbereich");
 
 		// 2. test with one crud chain item
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 		chainItems.add(new SetNameTestbereichCrudChain("1"));
@@ -41,7 +41,7 @@ public class CrudChainTest {
 		Assert.assertEquals(testBereich.getName(), "1");
 
 		// 3. test with two crud chain items
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 		chainItems.add(new SetNameTestbereichCrudChain("1"));
@@ -53,7 +53,7 @@ public class CrudChainTest {
 
 		// 4. test with additional registered chain item at the end of the chain and no
 		// default item
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 
@@ -64,7 +64,7 @@ public class CrudChainTest {
 
 		// 5. test with one default chain item and additional registered item at the
 		// start of the chain
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 		chainItems.add(new SetNameTestbereichCrudChain("1"));
@@ -74,7 +74,7 @@ public class CrudChainTest {
 		Assert.assertEquals(testBereich.getName(), "21");
 
 		// 6. test with one default chain item and additional registered item
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 		chainItems.add(new SetNameTestbereichCrudChain("1"));
@@ -88,7 +88,7 @@ public class CrudChainTest {
 
 		// 7. test with one default chain item and additional registered item at the end
 		// of the chain
-		crudService = new AbstractCrudService<>();
+		crudService = new CrudService<>();
 		testBereich.setName("");
 		chainItems.clear();
 		chainItems.add(new SetNameTestbereichCrudChain("1"));

@@ -10,7 +10,6 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.to.OfdbField;
 
 /**
- * FIXME: mark all these ui classes as JsonConvertable
  * 
  * @author WilbersM
  *
@@ -18,23 +17,18 @@ import de.mw.mwdata.core.to.OfdbField;
  */
 public class UiEntityList<E extends AbstractMWEntity> {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -955049299999002273L;
-
-	private List<UiInputConfig> uiConfigItems;
+	private List<UiInputConfig> uiInputConfigs = new ArrayList<UiInputConfig>();
 	private List<EntityTO<E>> entityTOs = new ArrayList<EntityTO<E>>();
 	private PagingModel pagingModel;
 
 	public UiEntityList(final List<IEntity[]> entities, final List<OfdbField> ofdbFieldList,
 			final PagingModel pagingModel) {
-		this.uiConfigItems = new ArrayList<>();
+		// this.uiConfigItems = new ArrayList<>();
 		this.pagingModel = pagingModel;
 
 		for (OfdbField field : ofdbFieldList) {
 			UiInputConfig item = new UiInputConfig(field);
-			this.uiConfigItems.add(item);
+			this.uiInputConfigs.add(item);
 		}
 
 		for (Object[] entity : entities) {
@@ -51,16 +45,13 @@ public class UiEntityList<E extends AbstractMWEntity> {
 
 	}
 
-	private UiEntityList() {
-		this.uiConfigItems = new ArrayList<>();
+	public UiEntityList(final PagingModel pagingModel) {
+		this.pagingModel = pagingModel;
+		// this.uiConfigItems = new ArrayList<>();
 	}
 
-	public static UiEntityList createEmptyUiEntityList() {
-		return new UiEntityList<AbstractMWEntity>();
-	}
-
-	public List<UiInputConfig> getUiInputConfigs() {
-		return this.uiConfigItems;
+	public static UiEntityList createEmptyUiEntityList(PagingModel pagingModel) {
+		return new UiEntityList(pagingModel);
 	}
 
 	public List<EntityTO<E>> getEntityTOs() {

@@ -64,7 +64,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 			return;
 	}
 	
-	console.log('Promise is now resolved: '+appConfigService.getApplicationConfig().data);
+	console.log('Promise is now resolved: '+appConfigService.getApplicationConfig());
 	
 	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
     self.edit = edit;
@@ -117,6 +117,10 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		}
 	};
 	
+	$scope.hasEntityRows = function() {
+		return $scope.state.entityRows.length > 0;
+	};
+	
     fetchAllEntities();
 	
 	function applyFilteredEntity( entity ) {
@@ -138,7 +142,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		return $scope.appConfig.currentUrl;		
 	}
 	
-    function loadGridRows( entityTOs, uiInputConfigs ){
+    function loadGridRows( entityTOs ){
     	
     	for(var i = 0; i < entityTOs.length; i++){            
     		var entityTO = entityTOs[i].item;
@@ -163,6 +167,10 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
                 
 				$scope.state.entityRows = [];
 				
+//				if( undefined === d.uiInputConfigs ) {
+//					return;
+//				}
+				
 				if(d.uiInputConfigs.length == 0) {
 					console.warn('Could not load Ofdb informations.');
 				}
@@ -170,7 +178,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
 				
 				mwGrid.initialize();
-				loadGridRows( d.entityTOs, d.uiInputConfigs );
+				loadGridRows( d.entityTOs );
 				mwGrid.load( $scope.state.entityRows, d.uiInputConfigs, $scope.appConfig );
 				console.log(d.pagingModel.count);
 				$scope.state.pagingModel = d.pagingModel;

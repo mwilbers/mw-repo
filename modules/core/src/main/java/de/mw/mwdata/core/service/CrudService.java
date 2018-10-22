@@ -21,10 +21,9 @@ import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.Utils;
 
-// FIXME: rename class to CrudService
-public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptable {
+public class CrudService<T> implements ICrudService<T>, ICrudInterceptable {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrudService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CrudService.class);
 
 	@Autowired
 	private ICrudDao<T> crudDao;
@@ -57,8 +56,6 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 		// TODO: all check-methods have to be called in insert-context. implement !
 
 		try {
-			// FIXME: if needed: if ( this.applicationFactory.getState().equals(
-			// ApplicationState.RUNNING ) ) {
 			// FIXME: do equalize arguments IFxPersistable and AbstractMWEntity here and in
 			// update method
 			doActionsBeforeCheck((AbstractMWEntity) entity, CRUD.INSERT);
@@ -86,11 +83,6 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 		// TODO: all check-methods have to be called in update-context. implement !
 
 		try {
-
-			// FIXME: if needed:
-			// if ( this.applicationFactory.getState().equals( ApplicationState.RUNNING ) )
-			// {
-
 			doActionsBeforeCheck((AbstractMWEntity) entity, CRUD.UPDATE);
 			doCheck((AbstractMWEntity) entity, CRUD.UPDATE);
 
@@ -141,8 +133,9 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public T findByName(final Class<T> clazz, final String name) {
-		return this.findByName(clazz, name);
+		return this.crudDao.findByName(clazz, name);
 	}
 
 	@Override
@@ -220,20 +213,16 @@ public class AbstractCrudService<T> implements ICrudService<T>, ICrudInterceptab
 
 	@Override
 	public void doActionsBeforeCheck(final AbstractMWEntity entity, final CRUD crud) {
-
 		if (null != this.crudChain) {
 			this.crudChain.doChainActionsBeforeCheck(entity, crud);
 		}
-
 	}
 
 	@Override
 	public void doCheck(final AbstractMWEntity entity, final CRUD crud) throws InvalidChainCheckException {
-
 		if (null != this.crudChain) {
 			this.crudChain.doChainCheck(entity, crud);
 		}
-
 	}
 
 	@Override

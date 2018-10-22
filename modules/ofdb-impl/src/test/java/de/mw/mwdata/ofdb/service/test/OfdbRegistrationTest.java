@@ -9,9 +9,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.daos.ICrudDao;
 import de.mw.mwdata.core.daos.PagingModel;
@@ -26,6 +26,7 @@ import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
+import de.mw.mwdata.ofdb.domain.ITabDef;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtDef;
 import de.mw.mwdata.ofdb.domain.impl.AnsichtSpalten;
@@ -35,7 +36,8 @@ import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
-import de.mw.mwdata.ofdb.test.impl.ApplicationTestFactory;
+import de.mw.mwdata.ofdb.test.impl.ConfigurableApplicationFactory;
+import de.mw.mwdata.ofdb.test.impl.TestApplicationFactory;
 
 /**
  * @author Wilbers, Markus
@@ -55,26 +57,26 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 	private IOfdbService ofdbService;
 
 	@Autowired
-	private ApplicationFactory applicationFactory;
+	private ConfigurableApplicationFactory applicationFactory;
 
 	@Autowired
 	private ICrudDao crudDao;
 
-	@Test(enabled = true)
-	public void testEmptyRegistration() throws OfdbMissingMappingException {
+	@BeforeMethod
+	public void prepareOfdb() {
 
 		this.applicationFactory.configure();
-		this.applicationFactory.init();
-
-		boolean registered = this.getOfdbCacheManger().isViewRegistered(TestConstants.TABLENAME_TABDEF);
-		Assert.assertFalse(registered, "View already registered.");
-
-		this.applicationFactory.configure();
-
+		IAnsichtTab a2 = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH, "benutzerBereich",
+				BenutzerBereich.class);
+		saveForTest(a2.getTabDef());
 		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
-
 		saveForTest(ansichtTab.getTabDef());
 		this.applicationFactory.init();
+
+	}
+
+	@Test(enabled = true)
+	public void testEmptyRegistration() throws OfdbMissingMappingException {
 
 		Assert.assertTrue(this.getOfdbCacheManger().isViewRegistered(TestConstants.TABLENAME_TABDEF),
 				"Table should be registered.");
@@ -82,7 +84,8 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Map<String, String> sortColums = new HashMap<String, String>();
 		sortColums.put("name", "asc");
 		List<TabDef> tabDefs = this.crudDao.findAll(TabDef.class, sortColums);
-		TabDef t = tabDefs.get(0);
+		Assert.assertTrue(tabDefs.size() == 2);
+		TabDef t = tabDefs.get(1);
 		Assert.assertEquals(t.getFullClassName(), TabDef.class.getName());
 
 	}
@@ -90,17 +93,18 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 	@Test
 	public void testRegisterViewWithMissingUrlPath() throws OfdbMissingMappingException {
 
+		this.getOfdbCacheManger().unregisterView(TestConstants.TABLENAME_TABDEF);
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
+		IAnsichtTab viewTab_tableDef = (IAnsichtTab) this.getCrudService().findByName(IAnsichtTab.class,
+				TestConstants.TABLENAME_TABDEF);
 
-		AnsichtDef ansichtDef = (AnsichtDef) ansichtTab.getAnsichtDef();
+		AnsichtDef ansichtDef = (AnsichtDef) viewTab_tableDef.getAnsichtDef();
 		ansichtDef.setUrlPath(StringUtils.EMPTY);
 		saveForTest(ansichtDef);
 
 		try {
 			this.applicationFactory.init();
-			// this.ofdbInitializer.init( "admin" );
 		} catch (OfdbInvalidConfigurationException e) {
 			// ok, because TabDef.fullClassName is missing
 		}
@@ -112,16 +116,16 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 	@Test
 	public void testRegisterViewWithMissingFullClassName() throws OfdbMissingMappingException {
 
+		this.getOfdbCacheManger().unregisterView(TestConstants.TABLENAME_TABDEF);
 		this.applicationFactory.configure();
 
-		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
-
-		ansichtTab.getTabDef().setFullClassName(StringUtils.EMPTY);
-		saveForTest(ansichtTab.getTabDef());
+		ITabDef tabDef_tabDef = (ITabDef) this.getCrudService().findByName(TabDef.class,
+				TestConstants.TABLENAME_TABDEF);
+		tabDef_tabDef.setFullClassName(StringUtils.EMPTY);
+		saveForTest(tabDef_tabDef);
 
 		try {
 			this.applicationFactory.init();
-			// this.ofdbInitializer.init( "admin" );
 			Assert.fail();
 		} catch (OfdbInvalidConfigurationException e) {
 			// ok, because TabDef.fullClassName is missing
@@ -134,11 +138,15 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 	@Test(enabled = true)
 	public void testRegistration_And_1JoinResult() throws OfdbMissingMappingException {
 
+		this.getOfdbCacheManger().unregisterView(TestConstants.TABLENAME_TABDEF);
+		this.getOfdbCacheManger().unregisterView(TestConstants.TABLENAME_BENUTZERBEREICH);
+
 		this.applicationFactory.configure();
 
-		IAnsichtTab viewTab_BenutzerBereich = this.setUpAnsichtAndTab(TestConstants.TABLENAME_BENUTZERBEREICH,
-				"benutzerBereich", BenutzerBereich.class);
-		IAnsichtTab viewTab_tableDef = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
+		IAnsichtTab viewTab_BenutzerBereich = (IAnsichtTab) this.getCrudService().findByName(IAnsichtTab.class,
+				TestConstants.TABLENAME_BENUTZERBEREICH);
+		IAnsichtTab viewTab_tableDef = (IAnsichtTab) this.getCrudService().findByName(IAnsichtTab.class,
+				TestConstants.TABLENAME_TABDEF);
 
 		this.applicationFactory.init();
 
@@ -184,7 +192,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		viewColumn_bereichsId.setVerdeckenDurchTabAKey(TestConstants.TABLENAME_BENUTZERBEREICH);
 		viewColumn_bereichsId.setVerdeckenDurchSpalteAKey("NAME");
 
-		// AnsichtTab TableDef -> BenutzerBereich
+		// create AnsichtTab TableDef -> BenutzerBereich
 		IAnsichtTab viewTab_tableDef_BenBereich = DomainMockFactory.createAnsichtTabMock(
 				(AnsichtDef) viewTab_tableDef.getAnsichtDef(), (TabDef) viewTab_BenutzerBereich.getTabDef(), 2, "=",
 				"BEREICHSID", "BEREICHSID", "FX_TabDef_K", !isAppInitialized());
@@ -208,7 +216,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		Assert.assertEquals(paginatedResult.size(), 2);
 		Assert.assertTrue(paginatedResult.getEntityByRowIndex(0) instanceof TabDef);
 
-		ApplicationTestFactory appFactory = (ApplicationTestFactory) this.applicationFactory;
+		TestApplicationFactory appFactory = (TestApplicationFactory) this.applicationFactory;
 
 		// ... hier fehler, da Bereich.name über die AnsichtSpalten noch nicht
 		// eingeblendet ist.

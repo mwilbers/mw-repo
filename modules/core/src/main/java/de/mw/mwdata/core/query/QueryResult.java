@@ -41,6 +41,10 @@ public class QueryResult {
 		return new QueryResult(rows);
 	}
 
+	public static QueryResult createEmptyQueryResult() {
+		return new QueryResult(new ArrayList<IEntity[]>());
+	}
+
 	public boolean isEmpty() {
 		return CollectionUtils.isEmpty(this.rows);
 	}

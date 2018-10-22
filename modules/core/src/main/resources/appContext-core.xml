@@ -58,7 +58,7 @@
 	
 	<bean id="core.crudDefaultInterceptor" class="de.mw.mwdata.core.intercept.DefaultCrudInterceptor" />
 
-	<bean id="crudService" class="de.mw.mwdata.core.service.AbstractCrudService" >
+	<bean id="crudService" class="de.mw.mwdata.core.service.CrudService" >
 		<!-- add interceptors for chain of responsibility in crud process -->
 		<property name="crudInterceptors"> 
 			<list>

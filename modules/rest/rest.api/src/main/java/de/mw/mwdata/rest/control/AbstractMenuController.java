@@ -60,8 +60,10 @@ public abstract class AbstractMenuController {
 	// protected abstract UiMenuNode convertToUiMenu(final EntityTO menuEntity);
 
 	protected List<UiMenuNode> convertToUiMenuNodes(final QueryResult menuResult) {
-
 		List<UiMenuNode> menuList = new ArrayList<>();
+		if (menuResult.isEmpty()) {
+			return menuList;
+		}
 
 		// List<IEntity[]> objectArray = Utils.toObjectArray(menuResult.getRows());
 		for (Object[] row : menuResult.getRows()) {
@@ -109,7 +111,7 @@ public abstract class AbstractMenuController {
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findMainMenus(userAreaName);
 
-		List<UiMenuNode> menuList = convertToUiMenuNodes(menuResult); // convertToUiMenuList(entityTOs);
+		List<UiMenuNode> menuList = convertToUiMenuNodes(menuResult);
 
 		if (!CollectionUtils.isEmpty(selectedNodes)) {
 			List<UiMenuNode> currentNodes = menuList;
@@ -203,7 +205,6 @@ public abstract class AbstractMenuController {
 	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listChildMenus(@PathVariable("parentMenuId") int parentMenuId) {
 
-		// // FIXME: compare with where-restrictions from OfdbDao.findMenues()
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findChildMenus(parentMenuId, userAreaName);
 		List<UiMenuNode> menuList = convertToUiMenuNodes(menuResult);

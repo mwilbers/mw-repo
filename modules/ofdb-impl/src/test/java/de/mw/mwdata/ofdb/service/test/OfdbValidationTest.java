@@ -10,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.intercept.InvalidChainCheckException;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
@@ -25,6 +24,7 @@ import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
+import de.mw.mwdata.ofdb.test.impl.ConfigurableApplicationFactory;
 
 @Test
 @ContextConfiguration(locations = { "classpath:/appContext-ofdb.xml", "classpath:/appContext-ofdb-test.xml",
@@ -34,7 +34,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfdbValidationTest.class);
 
 	@Autowired
-	private ApplicationFactory applicationFactory;
+	private ConfigurableApplicationFactory applicationFactory;
 
 	@Test
 	public void testRegisterViewWithEmptyAnsichtDef() throws OfdbMissingMappingException {
