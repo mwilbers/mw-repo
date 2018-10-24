@@ -4,8 +4,10 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.IFxEnum;
 
 /**
- * Each entity is represented as dataset in one table. This can be a databased or filebased table. 
- * A table belongs to a database. The entity is identified by its full qualified classname.
+ * Each entity is represented as dataset in one table. This can be a databased
+ * or filebased table. A table belongs to a database. The entity is identified
+ * by its full qualified classname.
+ * 
  * @author mwilbers
  *
  */
@@ -15,21 +17,21 @@ public interface ITabDef extends IEntity {
 
 		K("K"), M("M"), OF("OF"), X("X"), FW("FW"), WS("WS");
 
-		private String	description;
+		private String description;
 
 		private DATENBANK() {
 
 		}
 
 		private DATENBANK(final String description) {
-			this.setDescription( description );
+			this.setDescription(description);
 		}
 
 		// public boolean isNullValue() {
 		// return false;
 		// }
 
-		public void setDescription( final String description ) {
+		public void setDescription(final String description) {
 			this.description = description;
 		}
 
@@ -44,18 +46,8 @@ public interface ITabDef extends IEntity {
 			return getDescription();
 		}
 
-		// // @Override
-		// public DATENBANK getValue( final String value ) {
-		// return DATENBANK.valueOf( value );
-		// }
-
-		// // @Override
-		// public IFxEnum[] getValues() {
-		// return DATENBANK.values();
-		// }
-
 		public boolean isEmpty() {
-			return ("".equals( this.getDescription() ));
+			return ("".equals(this.getDescription()));
 		}
 
 		public Object getName() {
@@ -63,39 +55,32 @@ public interface ITabDef extends IEntity {
 		}
 
 	}
-	
+
 	public enum ZEITTYP implements IFxEnum {
 
 		GUELTIGVON("gueltigVon"), VONBIS("vonBis"), DATUM("datum");
 
-		private String	description;
+		private String description;
 
 		private ZEITTYP(final String description) {
-			this.setDescription( description );
+			this.setDescription(description);
 		}
 
-		public void setDescription( final String description ) {
+		public void setDescription(final String description) {
 			this.description = description;
 		}
 
-		// @Override
 		public String getDescription() {
 			return this.description;
 		}
 
-		// // @Override
-		// public IFxEnum getValue( final String value ) {
-		// return ZEITTYP.valueOf( value );
-		// }
-
-		// @Override
 		@Override
 		public String toString() {
 			return getDescription();
 		}
 
 		public boolean isEmpty() {
-			return ("".equals( this.getDescription() ));
+			return ("".equals(this.getDescription()));
 		}
 
 		public Object getName() {
@@ -103,16 +88,16 @@ public interface ITabDef extends IEntity {
 		}
 
 	}
-	
-	public void setZeittyp( final ZEITTYP zeittyp );
-	
+
+	public void setZeittyp(final ZEITTYP zeittyp);
+
 	public ZEITTYP getZeittyp();
 
-	public void setDatenbank( final DATENBANK datenbank );
+	public void setDatenbank(final DATENBANK datenbank);
 
 	public DATENBANK getDatenbank();
-	
-	public void setFullClassName( final String fullClassName );
+
+	public void setFullClassName(final String fullClassName);
 
 	public String getFullClassName();
 
@@ -121,5 +106,5 @@ public interface ITabDef extends IEntity {
 	 * @return the alias of the table name
 	 */
 	public String getAlias();
-	
+
 }

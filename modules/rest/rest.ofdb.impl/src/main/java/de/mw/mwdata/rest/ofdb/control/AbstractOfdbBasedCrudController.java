@@ -63,21 +63,19 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 			@RequestParam("pageSize") int pageSize) {
 
 		String entityName = readEntityNameFromUrl();
-		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
-
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
+		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
 		if (null == viewDef) {
 			UiEntityList<E> uiEntities = new UiEntityList<E>(pagingModel);
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
+		// FIXME: PaginatedList no more necessary here
 		QueryResult entityResult = this.viewService.executeViewQuery(viewDef.getName(), pagingModel,
 				new ArrayList<SortKey>());
-		// List<OfdbField> ofdbFieldList =
-		// this.ofdbService.initializeOfdbFields(viewDef.getName());
+
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getRows(), entityResult.getMetaData(),
 				pagingModel);
-		// entityResult.getMetaData()
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 	}
@@ -107,7 +105,7 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		Object foundEntity = this.crudService.findById(entity.getClass(), id);
 
 		if (foundEntity == null) {
-			LOGGER.warn("Entity with id '" + id + "' not found");
+			LOGGER.warn("Entity with id " + id + " not found");
 			return new ResponseEntity<EntityTO<E>>(HttpStatus.NOT_FOUND);
 		}
 
@@ -135,17 +133,16 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		LOGGER.info("Filter Entity " + entity.toString());
 
 		String entityName = readEntityNameFromUrl();
-
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel(loadPageSize(), 1);
 		if (null == viewDef) {
-			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList(pagingModel);
+			UiEntityList<E> uiEntities = new UiEntityList<E>(pagingModel);
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
-		EntityTO<AbstractMWEntity> entityTO = new EntityTO<AbstractMWEntity>(entity);
+		EntityTO entityTO = new EntityTO<AbstractMWEntity>(entity);
 		PaginatedList<IEntity[]> entityResult = this.viewService.executePaginatedViewQuery(viewDef.getName(), entityTO,
 				pagingModel, new ArrayList<SortKey>());
 		pagingModel.setCount(entityResult.getCount());

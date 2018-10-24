@@ -1,5 +1,8 @@
 package de.mw.mwdata.ofdb.service;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.MetaDataQueryBuilder;
@@ -7,9 +10,9 @@ import de.mw.mwdata.core.query.OperatorEnum;
 import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
-import de.mw.mwdata.core.service.IMenuService;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
+import de.mw.mwdata.ofdb.domain.IMenue;
 import de.mw.mwdata.ofdb.domain.impl.Menue;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.query.impl.OfdbMetaDataQueryBuilder;
@@ -34,6 +37,7 @@ public class OfdbMenuService implements IMenuService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public QueryResult findMainMenus(final String userAreaName) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
@@ -56,15 +60,40 @@ public class OfdbMenuService implements IMenuService {
 	}
 
 	@Override
-	public QueryResult findChildMenus(final long parentMenuId, final String userAreaName) {
+	public IMenue findMenuById(long menuId) {
+		return this.crudService.findById(Menue.class, menuId);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public QueryResult findChildMenus(final IMenue menu, final String userAreaName) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
 
+		Menue mainMenu = (Menue) menu; // this.crudService.findById(Menue.class, parentMenuId);
+		// List<Menue> subMenus = mainMenu.getUnterMenues();
+		//
+		// List<IEntity[]> rows = new ArrayList<IEntity[]>(subMenus.size());
+		//
+		// for (int i = 0; i < subMenus.size(); i++) {
+		// IEntity[] e = (IEntity[]) new Object[] { subMenus.get(i),
+		// subMenus.get(i).getAnsichtDef().getUrlPath() };
+		// rows.add(e);
+		// }
+		// return new QueryResult(builder.buildMetaData(), rows);
+
+		// String sql = builder.selectEntity(ConfigOfdb.T_MENU,
+		// "aMenu").selectAlias("aView", "urlPath")
+		// .fromEntity(ConfigOfdb.T_MENU, "aMenu").andWhereRestriction("aMenu",
+		// "hauptMenueId", OperatorEnum.Eq,
+		// String.valueOf(mainMenu.getId()), ValueType.NUMBER)
+		// .orderBy("aMenu", "anzeigeName", "asc").buildSQL();
+
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromEntity(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
 				.joinEntity("bereich", "bBereich")
-				.andWhereRestriction("aMenu", "hauptMenueId", OperatorEnum.Eq, String.valueOf(parentMenuId),
+				.andWhereRestriction("aMenu", "hauptMenueId", OperatorEnum.Eq, String.valueOf(mainMenu.getId()),
 						ValueType.NUMBER)
 				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, userAreaName, ValueType.STRING)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
@@ -93,13 +122,6 @@ public class OfdbMenuService implements IMenuService {
 		}
 
 		return result.getEntityByRowIndex(0);
-	}
-
-	@Override
-	public IEntity findParentMenu(long mainMenuId) {
-		Menue menu = this.crudService.findById(Menue.class, mainMenuId);
-
-		return menu;
 	}
 
 }

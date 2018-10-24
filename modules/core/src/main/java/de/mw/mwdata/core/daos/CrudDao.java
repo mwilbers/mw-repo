@@ -47,7 +47,6 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
 	public T update(final T entity) {
 		LOGGER.debug("update [" + entity + "]");
 		// this.getHibernateTemplate().flush();

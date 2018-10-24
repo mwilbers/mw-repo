@@ -20,6 +20,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,6 +36,7 @@ import de.mw.mwdata.ofdb.domain.IMenue;
  * @version 1.0
  * @since Feb, 2012
  */
+@TypeDefs({ @TypeDef(name = "enumMenuetyp", typeClass = de.mw.mwdata.ofdb.domain.enums.TypeMENUETYP.class) })
 @Entity
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 @Table(name = "FX_Menues_K" /* , schema = Constants.DB_SCHEMA */, uniqueConstraints = {
@@ -66,27 +69,21 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	@Column(name = "HAUPTMENUEID", insertable = true, updatable = true, nullable = true, unique = false)
 	private Long hauptMenueId;
 
-	// @Transient()
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "HAUPTMENUEID", referencedColumnName = "DSID", insertable = false, updatable = false, nullable = true)
+	private Menue hauptMenue;
+
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY)
-	// ... hier foreign key von untermenue.DSID auf FX_Menues_K.DSID in DAtenbank
-	// anlegen und association ändern
 	@JoinColumn(name = "HAUPTMENUEID", referencedColumnName = "DSID", insertable = false, updatable = false)
 	private List<Menue> unterMenues;
-
-	public List<Menue> getUnterMenues() {
-		return this.unterMenues;
-	}
-
-	public void setUnterMenues(final List<Menue> unterMenues) {
-		this.unterMenues = unterMenues;
-	}
 
 	@Column(name = "ANZEIGENAME", nullable = false)
 	private String anzeigeName;
 
-	@Column(name = "TYP", nullable = false)
+	@Column(name = "TYP", updatable = true, nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Type(type = "enumMenuetyp")
 	private MENUETYP typ;
 
 	@Column(name = "EBENE", nullable = false)
@@ -103,15 +100,8 @@ public class Menue extends AbstractMWEntity implements IMenue {
 	private Long ansichtDefId;
 	//
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
-	// @PrimaryKeyJoinColumn
-	// @NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "ANSICHTDEFID", referencedColumnName = "DSID", updatable = false, insertable = false, nullable = true)
 	private AnsichtDef ansichtDef;
-
-	// @ManyToOne(fetch = FetchType.EAGER)
-	// @JoinColumn(name = "TABDEFID", referencedColumnName = "DSID", updatable =
-	// false, insertable = false)
-	// private TabDef tabDef;
 
 	@Column(name = "LIZENZ", nullable = true)
 	private String lizenz;
@@ -130,6 +120,14 @@ public class Menue extends AbstractMWEntity implements IMenue {
 
 	public void setAnzeigeName(final String anzeigeName) {
 		this.anzeigeName = anzeigeName;
+	}
+
+	public List<Menue> getUnterMenues() {
+		return this.unterMenues;
+	}
+
+	public void setUnterMenues(final List<Menue> unterMenues) {
+		this.unterMenues = unterMenues;
 	}
 
 	@Override
@@ -182,51 +180,26 @@ public class Menue extends AbstractMWEntity implements IMenue {
 		this.gruppe = gruppe;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getSequenceKey()
-	 */
 	@Override
 	public String getSequenceKey() {
 		return this.SEQUENCE_KEY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getId()
-	 */
 	@Override
 	public Long getId() {
 		return this.id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#setId(java.lang.Long)
-	 */
 	@Override
 	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#getName()
-	 */
 	@Override
 	public String getName() {
 		return this.name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mw.mwdata.core.domain.AbstractMWOFDBEntity#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(final String name) {
 		this.name = name;
@@ -248,14 +221,6 @@ public class Menue extends AbstractMWEntity implements IMenue {
 		return this.aktiv;
 	}
 
-	// public void setBereichsId( final Long bereichsId ) {
-	// this.bereichsId = bereichsId;
-	// }
-	//
-	// public Long getBereichsId() {
-	// return this.bereichsId;
-	// }
-
 	public void setAnsichtDef(final AnsichtDef ansichtDef) {
 		this.ansichtDef = ansichtDef;
 		this.ansichtDefId = ansichtDef.getId();
@@ -265,20 +230,21 @@ public class Menue extends AbstractMWEntity implements IMenue {
 		return this.ansichtDef;
 	}
 
-	// public void setAnsichtDefId( final Long ansichtDefId ) {
-	// this.ansichtDefId = ansichtDefId;
-	// }
-	//
-	// public Long getAnsichtDefId() {
-	// return this.ansichtDefId;
-	// }
-
 	public void setHauptMenueId(final Long hauptMenueId) {
 		this.hauptMenueId = hauptMenueId;
 	}
 
 	public Long getHauptMenueId() {
 		return this.hauptMenueId;
+	}
+
+	public Menue getHauptMenue() {
+		return hauptMenue;
+	}
+
+	public void setHauptMenue(Menue hauptMenue) {
+		this.hauptMenue = hauptMenue;
+		this.hauptMenueId = hauptMenue.getId();
 	}
 
 	// TODO: implement equals, hashCode here and in other domain-classes
