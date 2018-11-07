@@ -20,7 +20,6 @@ import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.to.OfdbField;
-import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.service.IOfdbService;
@@ -66,7 +65,8 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
 		if (null == viewDef) {
-			UiEntityList<E> uiEntities = new UiEntityList<E>(pagingModel);
+			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList(pagingModel); // new
+																							// UiEntityList<E>(pagingModel);
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
@@ -136,18 +136,18 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel(loadPageSize(), 1);
 		if (null == viewDef) {
-			UiEntityList<E> uiEntities = new UiEntityList<E>(pagingModel);
+			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList(pagingModel);
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
 		List<OfdbField> ofdbFieldList = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
 		EntityTO entityTO = new EntityTO<AbstractMWEntity>(entity);
-		PaginatedList<IEntity[]> entityResult = this.viewService.executePaginatedViewQuery(viewDef.getName(), entityTO,
-				pagingModel, new ArrayList<SortKey>());
-		pagingModel.setCount(entityResult.getCount());
+		QueryResult queryResult = this.viewService.executePaginatedViewQuery(viewDef.getName(), entityTO, pagingModel,
+				new ArrayList<SortKey>());
+		pagingModel.setCount(queryResult.size());
 
-		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getItems(), ofdbFieldList, pagingModel);
+		UiEntityList<E> uiEntities = new UiEntityList<E>(queryResult.getRows(), ofdbFieldList, pagingModel);
 
 		return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 

@@ -3,6 +3,7 @@ package de.mw.mwdata.ofdb.cache;
 import java.util.List;
 
 import de.mw.mwdata.ofdb.domain.ITabDef;
+import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public interface OfdbCacheManager {
@@ -42,5 +43,7 @@ public interface OfdbCacheManager {
 	public ViewConfigHandle findViewConfigByTableName(String name);
 
 	public void unregisterView(String name);
+
+	public String mapTabSpeig2Property(final ITabSpeig tabSpeig);
 
 }

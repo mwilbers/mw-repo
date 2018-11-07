@@ -74,7 +74,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 			IAnsichtTab ansichtTab = this.viewHandle.findAnsichtTabByTabAKey(this.viewColumn.getSuchwertAusTabAKey());
 
-			// FIXME: null-check no more needed when we use db-foreign-keys on ansichtDefId
 			if (null == ansichtTab) {
 				String msg = MessageFormat.format(
 						"Fehlende Tabelle für Verknüpfung in FX_AnsichtTab_K zum Feld FX_AnsichtSpalten_K.SuchWertAusTabAKey für Ansicht: {0}, Spalte: {1}",
@@ -82,7 +81,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 				throw new OfdbInvalidConfigurationException(msg);
 			}
 
-			// ... replace genericofdbdao with ofdbDao
 			ITabDef tabDef = null;
 			if (this.viewColumn.getSuchwertAusTabAKey().equals(this.viewColumn.getTabAKey())) {
 				tabDef = this.viewHandle.getMainAnsichtTab().getTabDef();

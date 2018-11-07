@@ -58,8 +58,6 @@ public abstract class AbstractMenuController {
 		this.applicationConfigService = applicationConfigService;
 	}
 
-	// protected abstract UiMenuNode convertToUiMenu(final EntityTO menuEntity);
-
 	protected List<UiMenuNode> convertToUiMenuNodes(final QueryResult menuResult) {
 
 		List<UiMenuNode> menuList = new ArrayList<>();
@@ -67,7 +65,6 @@ public abstract class AbstractMenuController {
 			return menuList;
 		}
 
-		// List<IEntity[]> objectArray = Utils.toObjectArray(menuResult.getRows());
 		for (Object[] row : menuResult.getRows()) {
 			UiMenuNode menu = convertToUiMenu((IEntity) row[0]);
 
@@ -108,8 +105,6 @@ public abstract class AbstractMenuController {
 				.getPropertyValue(ApplicationConfigService.KEY_DEFAULT_ENTITY);
 		List<Menue> menuPath = loadMenuPath(defaultEntity);
 
-		// FIXME: return UI-object of menunodes with additional ofdb-infos (visible,
-		// filterable, editable, etc.)
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findMainMenus(userAreaName);
 

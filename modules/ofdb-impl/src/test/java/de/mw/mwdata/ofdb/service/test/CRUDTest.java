@@ -152,8 +152,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		List<TabDef> tabDefs = new ArrayList<TabDef>();
 		for (int i = 0; i < result.size(); i++) {
-			IEntity[] entityArray = result.getRows().get(i);
-			tabDefs.add((TabDef) entityArray[0]);
+			tabDefs.add((TabDef) result.getEntityByRowIndex(0));
 		}
 
 		Assert.assertEquals(tabDefs.size(), 1);

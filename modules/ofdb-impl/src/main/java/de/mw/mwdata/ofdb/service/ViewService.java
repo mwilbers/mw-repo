@@ -14,7 +14,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.QueryResult;
-import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.utils.PaginatedList;
@@ -25,18 +24,17 @@ import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.ITabSpeig;
+import de.mw.mwdata.ofdb.query.IOfdbQueryModelService;
+import de.mw.mwdata.ofdb.query.OfdbQueryModel;
 
 public class ViewService implements IViewService<IEntity> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ViewService.class);
 
 	private OfdbCacheManager ofdbCacheManager;
-
 	private IOfdbService ofdbService;
-
 	private ICrudService<IEntity> crudService;
-
-	private ApplicationConfigService applicationConfigService;
+	private IOfdbQueryModelService ofdbQueryModelService;
 
 	public void setOfdbService(final IOfdbService ofdbService) {
 		this.ofdbService = ofdbService;
@@ -46,8 +44,8 @@ public class ViewService implements IViewService<IEntity> {
 		this.crudService = crudService;
 	}
 
-	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
-		this.applicationConfigService = applicationConfigService;
+	public void setOfdbQueryModelService(IOfdbQueryModelService ofdbQueryModelService) {
+		this.ofdbQueryModelService = ofdbQueryModelService;
 	}
 
 	protected IOfdbService getOfdbService() {
@@ -73,7 +71,7 @@ public class ViewService implements IViewService<IEntity> {
 			for (IAnsichtOrderBy orderBy : ansichtOrderList) {
 
 				ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtOrderBy(orderBy);
-				String propName = this.ofdbService.mapTabSpeig2Property(tabSpeig);
+				String propName = this.ofdbCacheManager.mapTabSpeig2Property(tabSpeig);
 
 				SORTDIRECTION dir = (orderBy.getAufsteigend() ? SORTDIRECTION.ASC : SORTDIRECTION.DESC);
 				cols.add(new SortKey(propName, dir.getName()));
@@ -89,20 +87,22 @@ public class ViewService implements IViewService<IEntity> {
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public PaginatedList<IEntity[]> executePaginatedViewQuery(final String viewName,
+	public QueryResult executePaginatedViewQuery(final String viewName,
 			final EntityTO<? extends AbstractMWEntity> entityTO, final PagingModel pagingModel,
 			final List<SortKey>... sortKeys) {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
 
-		QueryResult queryResult = this.getOfdbService().executeFilteredQueryModel(viewName, cols, pagingModel,
-				entityTO);
+		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
+		OfdbQueryModel queryModel = viewHandle.getQueryModel();
+		QueryResult queryResult = this.ofdbQueryModelService.executeFilteredQueryModel(queryModel, viewHandle, cols,
+				pagingModel, entityTO);
 		List<IEntity[]> objectArray = Utils.toObjectArray(queryResult.getRows());
 		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray,
 				queryResult.getCountWithoutPaging(), pagingModel);
 
 		// FIXME: better return QueryResult instead of PaginatedList<IEntity[]>
-		return pagingList;
+		return queryResult;
 
 	}
 
@@ -111,11 +111,12 @@ public class ViewService implements IViewService<IEntity> {
 			final List<SortKey>... sortKeys) {
 
 		List<SortKey> cols = prepareSortColumns(viewName, sortKeys);
+
+		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
+		OfdbQueryModel queryModel = viewHandle.getQueryModel();
+
 		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
-		QueryResult queryResult = getOfdbService().executeQueryModel(viewName, cols, pagingModel);
-
-		return queryResult;
-
+		return this.ofdbQueryModelService.executeQueryModel(queryModel, viewHandle, cols, pagingModel);
 	}
 
 }

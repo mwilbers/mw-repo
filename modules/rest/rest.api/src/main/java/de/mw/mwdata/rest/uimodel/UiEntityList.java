@@ -18,11 +18,6 @@ import de.mw.mwdata.core.to.OfdbField;
  */
 public class UiEntityList<E extends AbstractMWEntity> {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -955049299999002273L;
-
 	private List<UiInputConfig> uiConfigItems;
 	private List<EntityTO<E>> entityTOs = new ArrayList<EntityTO<E>>();
 	private PagingModel pagingModel;
@@ -51,15 +46,14 @@ public class UiEntityList<E extends AbstractMWEntity> {
 
 	}
 
-	public UiEntityList(final PagingModel pagingModel) {
+	private UiEntityList(final PagingModel pagingModel) {
 		this.uiConfigItems = new ArrayList<>();
 		this.pagingModel = pagingModel;
 	}
 
-	// public UiEntityList<E> createEmptyUiEntityList(final PagingModel paginModel)
-	// {
-	// return new UiEntityList<E>(paginModel);
-	// }
+	public static UiEntityList createEmptyUiEntityList(final PagingModel pagingModel) {
+		return new UiEntityList(pagingModel);
+	}
 
 	public List<UiInputConfig> getUiInputConfigs() {
 		return this.uiConfigItems;

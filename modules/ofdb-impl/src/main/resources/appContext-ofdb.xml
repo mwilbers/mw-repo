@@ -26,7 +26,13 @@
 		<property name="ofdbDao" ref="ofdbDao" />
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="crudService" ref="crudService" />
-		
+		<property name="ofdbQueryModelService" ref="ofdbQueryModelService" />
+	</bean>
+	
+	<bean id="ofdbQueryModelService" class="de.mw.mwdata.ofdb.query.impl.OfdbQueryModelService">
+		<property name="ofdbDao" ref="ofdbDao" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="crudService" ref="crudService" />
 	</bean>
 	
 	<bean id="ofdbCacheManager" class="de.mw.mwdata.ofdb.cache.DefaultOfdbCacheManager">
@@ -54,7 +60,7 @@
 		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 		<property name="ofdbService" ref="ofdbService" />		
 		<property name="crudService" ref="crudService" />
-		<property name="applicationConfigService" ref="${app.spring.appConfigService.springBeanId}" />
+		<property name="ofdbQueryModelService" ref="ofdbQueryModelService" />
 	</bean>
 	
 	<!-- TypeZEITTYP -->

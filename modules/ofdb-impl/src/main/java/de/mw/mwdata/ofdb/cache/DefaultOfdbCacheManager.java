@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
 import de.mw.mwdata.ofdb.domain.ITabDef;
+import de.mw.mwdata.ofdb.domain.ITabSpeig;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 
 public class DefaultOfdbCacheManager implements OfdbCacheManager {
@@ -167,6 +168,12 @@ public class DefaultOfdbCacheManager implements OfdbCacheManager {
 		}
 
 		return viewConfigs;
+	}
+
+	@Override
+	public String mapTabSpeig2Property(final ITabSpeig tabSpeig) {
+		OfdbEntityMapping entityMapping = getEntityMapping(tabSpeig.getTabDef().getName());
+		return entityMapping.getMapper(tabSpeig).getPropertyName();
 	}
 
 }

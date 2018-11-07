@@ -248,8 +248,6 @@ public class AbstractOfdbInitializationTest<T> extends AbstractTransactionalTest
 
 	private ITabSpeig loadTablePropByTableName(final String tableName, final String columnName) {
 
-		// FIXME: method only used in tests
-
 		List<ITabSpeig> tableProps = this.getOfdbService().loadTablePropListByTableName(tableName);
 		for (ITabSpeig tabSpeig : tableProps) {
 			if (columnName.equals(tabSpeig.getSpalte())) {

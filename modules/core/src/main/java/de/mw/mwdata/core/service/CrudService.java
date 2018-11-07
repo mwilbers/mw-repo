@@ -123,7 +123,6 @@ public class CrudService<T> implements ICrudService<T>, ICrudInterceptable {
 
 	@Override
 	public T findById(final Class<T> clazz, final Long id) {
-
 		return this.crudDao.findById(clazz, id);
 	}
 

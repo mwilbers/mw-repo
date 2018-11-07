@@ -50,7 +50,9 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	public T update(final T entity) {
 		LOGGER.debug("update [" + entity + "]");
 		// this.getHibernateTemplate().flush();
-		this.getCurrentSession().update(entity); // .save( entity );
+		this.getCurrentSession().merge(entity);
+		// this.getCurrentSession().update(entity);
+		// .save( entity );
 		// this.getHibernateTemplate().saveOrUpdate( entity );
 		// ... testen
 

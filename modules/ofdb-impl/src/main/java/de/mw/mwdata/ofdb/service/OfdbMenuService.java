@@ -47,8 +47,6 @@ public class OfdbMenuService implements IMenuService {
 
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
 
-		// FIXME: idea: instead of tabSpeigs here create ReadOnlyOfdbField inherited
-		// from IOfdbField (or IFieldMetaData)
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromEntity(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
 				.joinEntity("bereich", "bBereich")
@@ -70,26 +68,7 @@ public class OfdbMenuService implements IMenuService {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
-
 		Menue mainMenu = (Menue) menu; // this.crudService.findById(Menue.class, parentMenuId);
-		// List<Menue> subMenus = mainMenu.getUnterMenues();
-		//
-		// List<IEntity[]> rows = new ArrayList<IEntity[]>(subMenus.size());
-		//
-		// for (int i = 0; i < subMenus.size(); i++) {
-		// IEntity[] e = (IEntity[]) new Object[] { subMenus.get(i),
-		// subMenus.get(i).getAnsichtDef().getUrlPath() };
-		// rows.add(e);
-		// }
-		// return new QueryResult(builder.buildMetaData(), rows);
-
-		// String sql = builder.selectEntity(ConfigOfdb.T_MENU,
-		// "aMenu").selectAlias("aView", "urlPath")
-		// .fromEntity(ConfigOfdb.T_MENU, "aMenu").andWhereRestriction("aMenu",
-		// "hauptMenueId", OperatorEnum.Eq,
-		// String.valueOf(mainMenu.getId()), ValueType.NUMBER)
-		// .orderBy("aMenu", "anzeigeName", "asc").buildSQL();
-
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromEntity(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
 				.joinEntity("bereich", "bBereich")
@@ -110,11 +89,9 @@ public class OfdbMenuService implements IMenuService {
 		}
 
 		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
-
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").fromEntity(ConfigOfdb.T_MENU, "aMenu")
 				.leftJoinTable("aMenu", "ansichtDef", "aView")
 				.andWhereRestriction("aView", "urlPath", OperatorEnum.Eq, urlPath, ValueType.STRING).buildSQL();
-
 		QueryResult result = this.crudService.executeSql(sql, builder.buildMetaData());
 
 		if (result.isEmpty()) {

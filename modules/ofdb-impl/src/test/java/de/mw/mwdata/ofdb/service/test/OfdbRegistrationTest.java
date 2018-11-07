@@ -22,7 +22,6 @@ import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.test.data.TestConstants;
-import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
 import de.mw.mwdata.ofdb.domain.IAnsichtTab;
@@ -178,7 +177,6 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		ITabSpeig tablePropBereichName = viewHandleBereich.findTablePropByProperty(viewTab_BenutzerBereich.getTabDef(),
 				"name", false);
 
-		// FIXME: method configure should only be inherited from test based interface
 		this.applicationFactory.configure();
 
 		// 2.test: reset cache
@@ -236,10 +234,10 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 
 		pagingModel = new PagingModel(100, 0);
 
-		PaginatedList<IEntity[]> items = this.entityService.executePaginatedViewQuery(TestConstants.TABLENAME_TABDEF,
-				entityTO, pagingModel, null);
+		QueryResult queryResult = this.entityService.executePaginatedViewQuery(TestConstants.TABLENAME_TABDEF, entityTO,
+				pagingModel, null);
 
-		Assert.assertEquals(items.getItems().size(), 2);
+		Assert.assertEquals(queryResult.size(), 2);
 
 		// next test changing additional property only by id: change bereichsId from 1
 		// (Administrator) to 2 (Testbereich2)

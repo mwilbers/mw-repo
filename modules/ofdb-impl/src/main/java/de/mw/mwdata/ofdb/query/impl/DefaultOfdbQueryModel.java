@@ -70,7 +70,6 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 		return list;
 	}
 
-	// @Override
 	public ITabDef getMainTable() {
 		return this.tabDef;
 	}
@@ -115,12 +114,10 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 
 	}
 
-	// @Override
 	public List<OfdbWhereRestriction> getWhereRestrictions() {
 		return this.whereRestrictions;
 	}
 
-	// @Override
 	public void resetWhereRestrictions() {
 		this.whereRestrictions.clear();
 
@@ -134,7 +131,6 @@ public class DefaultOfdbQueryModel implements OfdbQueryModel {
 		return this.orderList;
 	}
 
-	// @Override
 	public void resetOrderSet() {
 		this.orderList.clear();
 	}

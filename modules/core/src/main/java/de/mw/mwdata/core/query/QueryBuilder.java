@@ -1,6 +1,5 @@
 package de.mw.mwdata.core.query;
 
-// FIXME: rename to QueryBuilder (no deps to Ofdb)
 public interface QueryBuilder {
 
 	public QueryBuilder setCount(final boolean count);

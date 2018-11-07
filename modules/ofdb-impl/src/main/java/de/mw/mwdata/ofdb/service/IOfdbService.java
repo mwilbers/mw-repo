@@ -2,13 +2,9 @@ package de.mw.mwdata.ofdb.service;
 
 import java.util.List;
 
-import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.to.OfdbField;
-import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
@@ -122,14 +118,6 @@ public interface IOfdbService {
 	 */
 	public void checkUnique(final ITabSpeig uniqueTabSpeig, final AbstractMWEntity entity)
 			throws OfdbUniqueConstViolationException;
-
-	public String mapTabSpeig2Property(final ITabSpeig tabSpeig);
-
-	public QueryResult executeQueryModel(final String viewName, final List<SortKey> sortKeys,
-			final PagingModel pagingModel);
-
-	public QueryResult executeFilteredQueryModel(final String viewName, List<SortKey> sortKeys,
-			final PagingModel pagingModel, final EntityTO<? extends AbstractMWEntity> entityTO);
 
 	/**
 	 * Checks if all properties of the given AnsichtDef-object are valid for the

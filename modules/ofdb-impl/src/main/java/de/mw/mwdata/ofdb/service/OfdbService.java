@@ -19,13 +19,9 @@ import org.springframework.util.ObjectUtils;
 import de.mw.mwdata.core.CRUD;
 import de.mw.mwdata.core.Constants;
 import de.mw.mwdata.core.LocalizedMessages;
-import de.mw.mwdata.core.daos.PagingModel;
 import de.mw.mwdata.core.db.FxBooleanType;
 import de.mw.mwdata.core.domain.AbstractMWEntity;
-import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
-import de.mw.mwdata.core.domain.IFxEnum;
-import de.mw.mwdata.core.domain.JoinedPropertyTO;
 import de.mw.mwdata.core.intercept.AbstractCrudChain;
 import de.mw.mwdata.core.intercept.ICrudInterceptable;
 import de.mw.mwdata.core.intercept.ICrudInterceptor;
@@ -39,7 +35,6 @@ import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.ClassNameUtils;
-import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.cache.ViewConfigValidationResultSet;
@@ -63,10 +58,7 @@ import de.mw.mwdata.ofdb.exception.OfdbUniqueConstViolationException;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
 import de.mw.mwdata.ofdb.impl.OfdbEntityMapping;
 import de.mw.mwdata.ofdb.impl.OfdbPropMapper;
-import de.mw.mwdata.ofdb.impl.OfdbUtils;
-import de.mw.mwdata.ofdb.query.OfdbOrderSet;
-import de.mw.mwdata.ofdb.query.OfdbQueryModel;
-import de.mw.mwdata.ofdb.query.OfdbWhereRestriction;
+import de.mw.mwdata.ofdb.query.IOfdbQueryModelService;
 
 /**
  * Main Service for all ofdb-relevant operations. It caches the ofdb-data for
@@ -86,6 +78,12 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	private ICrudService<IEntity> crudService;
 
+	private IOfdbQueryModelService ofdbQueryModelService;
+
+	public void setOfdbQueryModelService(IOfdbQueryModelService ofdbQueryModelService) {
+		this.ofdbQueryModelService = ofdbQueryModelService;
+	}
+
 	protected IOfdbDao getOfdbDao() {
 		return this.ofdbDao;
 	}
@@ -98,7 +96,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 		this.ofdbCacheManager = ofdbCacheManager;
 	}
 
-	public void setCrudService(final ICrudService crudService) {
+	public void setCrudService(final ICrudService<IEntity> crudService) {
 		this.crudService = crudService;
 		if (this.crudService instanceof ICrudInterceptable) {
 			ICrudInterceptable interceptor = (ICrudInterceptable) this.crudService;
@@ -136,8 +134,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 		}
 
-		Object[] o = result.getRows().get(0);
-		return (IAnsichtDef) o[0];
+		return (IAnsichtDef) result.getEntityByRowIndex(0);
 	}
 
 	@Override
@@ -153,332 +150,12 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 				.andWhereRestriction("v", "name", OperatorEnum.Eq, viewName, ValueType.STRING).buildSQL();
 
 		QueryResult result = this.crudService.executeSql(sql);
-
 		if (result.isEmpty()) {
 			String message = MessageFormat.format("ViewDef {0} is not found. ", viewName);
 			throw new OfdbMissingObjectException(message);
 		}
 
-		IEntity[] entityArray = result.getRows().get(0);
-		return (IAnsichtDef) entityArray[0];
-
-	}
-
-	@Override
-	public QueryResult executeFilteredQueryModel(final String viewName, List<SortKey> sortKeys,
-			final PagingModel pagingModel, final EntityTO<? extends AbstractMWEntity> entityTO) {
-
-		OfdbQueryModel queryModel = extendQueryModelByFilters(viewName, entityTO);
-		// NOTE: queryModel was extended by filters
-
-		// first create count-sql, than add orders
-		String filteredSqlCount = buildSQLCount(viewName);
-		queryModel = extendQueryModelByOrderSets(queryModel, viewName, sortKeys);
-		String sqlFiltered = buildSQLInternal(queryModel, viewName, false);
-
-		long count = this.crudService.executeCountSql(filteredSqlCount);
-		QueryResult result = this.crudService.executeSqlPaginated(sqlFiltered, queryModel.getMetaData(), pagingModel);
-		result.setCountWithoutPaging(count);
-
-		return result;
-	}
-
-	// FIXME: move method to QueryService
-	@Override
-	public QueryResult executeQueryModel(String viewName, List<SortKey> sortKeys, final PagingModel pagingModel) {
-
-		String sqlCount = buildSQLCount(viewName);
-		long count = this.crudService.executeCountSql(sqlCount);
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		OfdbQueryModel queryModel = viewHandle.getQueryModel();
-
-		extendQueryModelByOrderSets(queryModel, viewName, sortKeys);
-		String sql = buildSQLInternal(queryModel, viewName, false);
-
-		// FIXME: here return IEntity[] array and introduce QueryService for wrapping
-		// array to QueryResult
-		QueryResult result = this.crudService.executeSqlPaginated(sql, queryModel.getMetaData(), pagingModel);
-		result.setCountWithoutPaging(count);
-		pagingModel.setCount(count);
-
-		return result;
-	}
-
-	// FIXME: buildSql methods should be moved to query builder ...
-	private String buildSQLInternal(final OfdbQueryModel queryModel, final String viewName, final boolean setCount) {
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		QueryBuilder queryBuilder = new SimpleQueryBuilder();
-		ITabDef fromTabDef = queryModel.getMainTable();
-
-		if (setCount) {
-			queryBuilder.setCount(true);
-		} else {
-			queryBuilder.selectEntity(OfdbUtils.getSimpleName(fromTabDef), fromTabDef.getAlias());
-		}
-
-		// add select-alias-columns
-		for (IAnsichtTab viewTab : queryModel.getJoinedTables())
-			for (ITabSpeig aliasTabSpeig : queryModel.getAlias(viewTab)) {
-				// FIXME ... hier funktioniert das select ..., BenB.name noch nicht
-				String aliasPropName = mapTabSpeig2Property(aliasTabSpeig);
-				queryBuilder.selectAlias(aliasTabSpeig.getTabDef().getAlias(), aliasPropName);
-			}
-
-		// build from-part
-		queryBuilder.fromEntity(OfdbUtils.getSimpleName(fromTabDef), fromTabDef.getAlias());
-
-		for (IAnsichtTab ansichtTab : queryModel.getJoinedTables()) {
-			ViewConfigHandle joinedViewHandle = this.ofdbCacheManager
-					.getViewConfig(ansichtTab.getAnsichtDef().getName());
-
-			if (ansichtTab.getJoinTyp().equalsIgnoreCase("x")) {
-				continue;
-			}
-
-			// join tables
-			ITabDef joinTabDef = ansichtTab.getTabDef();
-			queryBuilder.joinTable(OfdbUtils.getSimpleName(joinTabDef), joinTabDef.getAlias());
-
-			// FIXME: validation-check that ansichTab.join1spalteakey =
-			// ansichtSpalte.spalteakey
-			ITabSpeig tabSpeig1 = joinedViewHandle.findTabSpeigByTabAKeyAndSpalteAKey(joinTabDef.getName(),
-					ansichtTab.getJoin1SpalteAKey());
-			String join1propName = mapTabSpeig2Property(tabSpeig1);
-
-			// FIXME: validation-check that ansichTab.join2spalteakey =
-			// ansichtSpalte.spalteakey
-			ITabSpeig tabSpeig2 = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(fromTabDef.getName(),
-					ansichtTab.getJoin2SpalteAKey());
-			String join2propName = mapTabSpeig2Property(tabSpeig2);
-
-			// add where-restrictions
-			queryBuilder.whereJoin(joinTabDef.getAlias(), join1propName, fromTabDef.getAlias(), join2propName);
-
-		}
-
-		// add where-restrictions to queryBuilder
-		for (OfdbWhereRestriction whereRes : queryModel.getWhereRestrictions()) {
-
-			ITabSpeig whereTabSpeig = whereRes.getWhereTabSpeig();
-			String whereColumnPropName = mapTabSpeig2Property(whereTabSpeig);
-
-			QueryValue wValue = convertValueToQueryValue(whereRes.getWhereValue(), whereTabSpeig);
-
-			queryBuilder.andWhereRestriction(whereRes.getWhereTabDef().getAlias(), whereColumnPropName,
-					whereRes.getWhereOperator(), wValue.getData(), wValue.getType());
-
-		}
-
-		// add order-items to queryBuilder
-		for (OfdbOrderSet orderSet : queryModel.getOrderSet()) {
-
-			String propName = mapTabSpeig2Property(orderSet.getOrderTabSpeig());
-			queryBuilder.orderBy(orderSet.getOrderTabDef().getAlias(), propName, orderSet.getOrderDirection());
-		}
-
-		return queryBuilder.buildSQL();
-
-	}
-
-	private OfdbQueryModel extendQueryModelByFilters(final String viewName,
-			final EntityTO<? extends AbstractMWEntity> filterEntityTO) {
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		OfdbQueryModel queryModel = viewHandle.getQueryModel();
-		queryModel.resetWhereRestrictions();
-
-		// --- neu
-		List<IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
-		for (IAnsichtSpalte ansichtSpalte : viewColumns) {
-			ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte(ansichtSpalte);
-
-			if (!StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchTabAKey())
-					&& !StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchSpalteAKey())) {
-
-				ITabSpeig suchTabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(
-						ansichtSpalte.getVerdeckenDurchTabAKey(), ansichtSpalte.getVerdeckenDurchSpalteAKey());
-
-				String mappedPropName = mapTabSpeig2Property(suchTabSpeig);
-
-				// FIXME: cleanUp: remove itemKey and from ofdbfield ...
-				// String itemKey = OfdbUtils.generateItemKey(suchTabSpeig.getTabDef(),
-				// mappedPropName);
-
-				OfdbEntityMapping entityMapping = this.ofdbCacheManager
-						.getEntityMapping(tabSpeig.getTabDef().getName());
-				OfdbPropMapper propMapping = entityMapping.findPropertyMapperByTabProp(tabSpeig);
-				JoinedPropertyTO joinedProp = findJoinedProperty(queryModel, propMapping.getAssociatedEntityName(),
-						mappedPropName);
-
-				String whereValue = filterEntityTO.getJoinedValue(joinedProp.getResultArrayIndex());
-				boolean toFilter = (!StringUtils.isBlank(whereValue));
-
-				if (toFilter) {
-
-					// FIXME: queryModel from viewHandle should not be changed !!!
-					queryModel.addWhereRestriction(suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Like,
-							whereValue);
-				}
-
-			} else {
-
-				boolean toFilter = false;
-
-				Object entityValue = null;
-				try {
-					OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-
-					if (null == propMapper) {
-						// FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg
-						// durch Id /
-						// verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich)
-						throw new OfdbMissingMappingException("Given TabSpeig not mapped by property.");
-					}
-					entityValue = this.getOfdbDao().getEntityValue(filterEntityTO.getItem(),
-							propMapper.getPropertyIndex());
-
-					toFilter = (null != entityValue && !StringUtils.isBlank(entityValue.toString()));
-				} catch (OfdbMissingMappingException e) {
-					LOGGER.warn(
-							"Property not mapped: Table " + tabSpeig.getName() + ", column " + tabSpeig.getSpalte());
-
-				}
-				if (toFilter) {
-					queryModel.addWhereRestriction(tabSpeig.getTabDef(), tabSpeig, OperatorEnum.Like, entityValue);
-				}
-
-			}
-
-		}
-
-		return queryModel;
-	}
-
-	private QueryValue convertValueToQueryValue(final Object value, final ITabSpeig whereTabSpeig) {
-
-		QueryValue wValue = null;
-
-		switch (whereTabSpeig.getDbDatentyp()) {
-		case STRING: {
-			wValue = new QueryValue(value.toString(), ValueType.STRING);
-			break;
-		}
-		case BOOLEAN: {
-			if (value.equals(Boolean.TRUE)) {
-				wValue = new QueryValue(Integer.valueOf(Constants.SYS_VAL_TRUE).toString(), ValueType.NUMBER);
-				break;
-			} else if (value.equals(Boolean.FALSE)) {
-				wValue = new QueryValue(Integer.valueOf(Constants.SYS_VAL_FALSE).toString(), ValueType.NUMBER);
-				break;
-			}
-		}
-		case ENUM: {
-
-			if (value instanceof IFxEnum) {
-				// note: whereRes.getWhereValue() contains the enum-description-value here
-
-				IFxEnum mwEnum = (IFxEnum) value;
-				// ... 1. falsch: hier muss VONBIS von whereRes.getWhereValue() gezogen werden,
-				// aber wie ?
-				// 2. Prüfung in registerOfdb(): wenn DBTYPE ENUM dann prüfung, dass mapping auf
-				// IMWEnum geht
-				wValue = new QueryValue(mwEnum.getName().toString(), ValueType.STRING);
-			} else {
-				String msg = LocalizedMessages.getString(ConfigOfdb.BUNDLE_NAME_OFDB, "missingMWEnumMapping",
-						whereTabSpeig.getTabDef().getName(), whereTabSpeig.getSpalte());
-				throw new OfdbInvalidConfigurationException(msg);
-			}
-			break;
-		}
-		default: {
-			wValue = new QueryValue(value.toString(), ValueType.NUMBER);
-			break;
-		}
-		}
-
-		return wValue;
-	}
-
-	private JoinedPropertyTO findJoinedProperty(OfdbQueryModel queryModel, String associatedEntityName,
-			String mappedPropName) {
-
-		for (OfdbField field : queryModel.getMetaData()) {
-			if (!field.hasJoinedProperty()) {
-				continue;
-			}
-
-			if (field.getJoinedProperty().getEntityName().equals(associatedEntityName)
-					&& field.getJoinedProperty().getPropName().equals(mappedPropName)) {
-				return field.getJoinedProperty();
-			}
-
-		}
-
-		return null;
-	}
-
-	private String buildSQLCount(final String viewName) {
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		OfdbQueryModel queryModel = viewHandle.getQueryModel();
-		return buildSQLInternal(queryModel, viewName, true);
-	}
-
-	// FIXME: viewName argument necessary here ? and viewHandle ?
-	private OfdbQueryModel extendQueryModelByOrderSets(final OfdbQueryModel queryModel, final String viewName,
-			final List<SortKey> sortKeys) {
-
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		queryModel.resetOrderSet();
-
-		List<IAnsichtSpalte> viewColumns = viewHandle.getViewColumns();
-		for (IAnsichtSpalte ansichtSpalte : viewColumns) {
-			ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte(ansichtSpalte);
-
-			OfdbEntityMapping entityMapping = ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName()); // viewHandle.getEntityMapping();
-			if (!entityMapping.hasMapping(tabSpeig)) {
-				continue;
-			}
-
-			if (!StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchTabAKey())
-					&& !StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchSpalteAKey())) {
-
-				String mappedPropertyName = mapTabSpeig2Property(tabSpeig);
-				SortKey sortKey = OfdbUtils.findSortKeyByColumnName(sortKeys, mappedPropertyName);
-				boolean toSort = (null != sortKey);
-
-				if (toSort) {
-
-					ITabSpeig suchTabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(
-							ansichtSpalte.getVerdeckenDurchTabAKey(), ansichtSpalte.getVerdeckenDurchSpalteAKey());
-					queryModel.addOrderSet(suchTabSpeig.getTabDef(), suchTabSpeig,
-							sortKey.getSortDirection().getName());
-
-				}
-
-			} else {
-
-				String mappedPropertyName = mapTabSpeig2Property(tabSpeig);
-				SortKey sortKey = OfdbUtils.findSortKeyByColumnName(sortKeys, mappedPropertyName);
-				boolean toSort = (null != sortKey);
-				if (toSort) {
-					queryModel.addOrderSet(tabSpeig.getTabDef(), tabSpeig, sortKey.getSortDirection().getName());
-				}
-
-			}
-
-		} // end for ofFields
-
-		return queryModel;
-
-	}
-
-	@Override
-	public String mapTabSpeig2Property(final ITabSpeig tabSpeig) {
-		OfdbEntityMapping entityMapping = this.ofdbCacheManager.getEntityMapping(tabSpeig.getTabDef().getName());
-		return entityMapping.getMapper(tabSpeig).getPropertyName();
+		return (IAnsichtDef) result.getEntityByRowIndex(0);
 	}
 
 	private Object getOfdbDefault(final ITabSpeig tabSpeig) throws OfdbNullValueException {
@@ -882,7 +559,7 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 					}
 				}
 
-				QueryValue queryValue = convertValueToQueryValue(entityValue, tabSpeig);
+				QueryValue queryValue = this.ofdbQueryModelService.convertValueToQueryValue(entityValue, tabSpeig);
 				builder = builder.andWhereRestriction("tAlias", uniquePropNameItem, OperatorEnum.Eq,
 						queryValue.getData(), ValueType.STRING);
 				uniquePropsToCheck = true;
