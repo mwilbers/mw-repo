@@ -41,7 +41,6 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 		LOGGER.debug("insert [" + entity + "]");
 		this.getHibernateTemplate().save(entity);
 
-		// FIXME: necessary for CRUDTest, but needed in general ?
 		this.getHibernateTemplate().flush();
 		return entity;
 	}
@@ -49,14 +48,8 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	@Override
 	public T update(final T entity) {
 		LOGGER.debug("update [" + entity + "]");
-		// this.getHibernateTemplate().flush();
-		this.getCurrentSession().merge(entity);
-		// this.getCurrentSession().update(entity);
-		// .save( entity );
-		// this.getHibernateTemplate().saveOrUpdate( entity );
-		// ... testen
+		this.getCurrentSession().merge(entity); // repaced update by merge because of NonUniqueObjectException
 
-		// FIXME: necessary for CRUDTest, but needed in general ?
 		this.getHibernateTemplate().flush();
 		return entity;
 	}
@@ -66,7 +59,6 @@ public class CrudDao<T> extends HibernateDaoSupport implements ICrudDao<T> {
 	public void delete(final T entity) {
 		LOGGER.debug("delete [" + entity + "]");
 		this.getHibernateTemplate().delete(entity);
-		// FIXME: necessary for CRUDTest, but needed in general ?
 		this.getHibernateTemplate().flush();
 	}
 

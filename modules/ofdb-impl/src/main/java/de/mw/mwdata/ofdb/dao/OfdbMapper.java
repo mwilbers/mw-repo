@@ -215,8 +215,6 @@ public class OfdbMapper extends HibernateDaoSupport {
 
 	public List<Object> getEnumValues(final Class<? extends AbstractMWEntity> entityClassType, final String propName) {
 
-		// FIXME: enum constants could be also loaded in initializeMapper()
-
 		AbstractEntityPersister persister = getEntityPersister(entityClassType);
 		Type t = persister.getPropertyType(propName);
 		Class<?> c = t.getReturnedClass();
@@ -225,7 +223,7 @@ public class OfdbMapper extends HibernateDaoSupport {
 		return ox;
 	}
 
-	// TODO: wahnsinn ! warum geht das ?
+	// FIXME: wahnsinn ! warum geht das ?
 	public Class<Enum> getEnumType(final String propName, final Class<? extends AbstractMWEntity> entityClassType) {
 
 		AbstractEntityPersister persister = getEntityPersister(entityClassType);

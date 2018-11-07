@@ -16,10 +16,8 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.core.service.IViewService;
-import de.mw.mwdata.core.utils.PaginatedList;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.core.utils.SortKey.SORTDIRECTION;
-import de.mw.mwdata.core.utils.Utils;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
@@ -97,13 +95,8 @@ public class ViewService implements IViewService<IEntity> {
 		OfdbQueryModel queryModel = viewHandle.getQueryModel();
 		QueryResult queryResult = this.ofdbQueryModelService.executeFilteredQueryModel(queryModel, viewHandle, cols,
 				pagingModel, entityTO);
-		List<IEntity[]> objectArray = Utils.toObjectArray(queryResult.getRows());
-		PaginatedList<IEntity[]> pagingList = new PaginatedList<IEntity[]>(objectArray,
-				queryResult.getCountWithoutPaging(), pagingModel);
 
-		// FIXME: better return QueryResult instead of PaginatedList<IEntity[]>
 		return queryResult;
-
 	}
 
 	@Override
