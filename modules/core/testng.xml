@@ -4,9 +4,6 @@
 
 		<classes>
 
-
-			<class name="de.mw.mwdata.core.utils.PaginatedListTest" />
-
 		</classes>
 
 	</test>

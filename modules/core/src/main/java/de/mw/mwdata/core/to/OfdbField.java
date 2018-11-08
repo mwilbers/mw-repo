@@ -66,20 +66,12 @@ public class OfdbField {
 
 	/* data needed for list of values */
 	private List<Object> listOfValues;
-	private String itemValue;
-	private String itemLabel;
 	private int resultIndex;
 
 	/* common properties for view control */
 	private boolean nullable;
 	private boolean visible;
 	private boolean filterable;
-
-	/**
-	 * itemKey is needed for unique Key-Identifier for storing in MapValue if e.g.
-	 * there are two referenced tables in view with the same columnname
-	 */
-	private String itemKey;
 
 	private JoinedPropertyTO joinedProperty;
 
@@ -221,23 +213,6 @@ public class OfdbField {
 		return this.dbtype;
 	}
 
-	public void setItemValue(final String itemValue) {
-		this.itemValue = itemValue;
-	}
-
-	public String getItemValue() {
-		return this.itemValue;
-	}
-
-	public void setItemLabel(final String itemLabel) {
-		this.itemLabel = itemLabel;
-
-	}
-
-	public String getItemLabel() {
-		return this.itemLabel;
-	}
-
 	public void setResultIndex(final int resultIndex) {
 		this.resultIndex = resultIndex;
 	}
@@ -265,14 +240,6 @@ public class OfdbField {
 
 	public boolean isVerdeckenDurchSpalte() {
 		return (this.getResultIndex() > 0);
-	}
-
-	public void setItemKey(final String itemKey) {
-		this.itemKey = itemKey;
-	}
-
-	public String getItemKey() {
-		return this.itemKey;
 	}
 
 	// following unused getters, setters, just needed for json conversion

@@ -44,16 +44,8 @@ public class TableMetaDataGenerator extends AbstractMetaDataGenerator {
 		ofField.setMinlength(calculateMinLength(this.tabProp));
 
 		if (ofField.isEnum()) {
-			ofField.setItemLabel(propName);
-			ofField.setItemValue(propName);
-			ofField.setItemKey(propName);
-
 			List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, this.tabProp, null, null);
 			ofField.setListOfValues(listOfValues);
-			// this.ofdbDao.setListOfValues( ofField, tabSpeig, null, null );
-
-		} else {
-
 		}
 		ofField.setResultIndex(0);
 

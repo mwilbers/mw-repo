@@ -116,7 +116,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 				String listPropValueName = suchPropMapper.getPropertyName();
 				String itemKey = null;
-				ofField.setItemValue(listPropValueName);
 
 				if (!StringUtils.isEmpty(this.viewColumn.getVerdeckenDurchTabAKey())
 						&& !StringUtils.isEmpty(this.viewColumn.getVerdeckenDurchSpalteAKey())) {
@@ -135,7 +134,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 					ofField.setResultIndex(highestResultIndex + 1);
 					ofField.setColumnTitle(suchWertTabSpeig.getSpaltenkopf());
-					ofField.setItemValue(listPropValueName);
 					itemKey = OfdbUtils.generateItemKey(suchWertTabSpeig.getTabDef(), listPropValueName);
 
 					JoinedPropertyTO joinedProperty = new JoinedPropertyTO(propMapper.getAssociatedEntityName(),
@@ -149,8 +147,6 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 
 				}
 				this.viewHandle.getQueryModel().addJoinTable(ansichtTab);
-				ofField.setItemLabel(listPropValueName);
-				ofField.setItemKey(itemKey);
 
 			} else {
 				// no index needed here
@@ -159,15 +155,8 @@ public class ViewMetaDataGenerator extends AbstractMetaDataGenerator {
 		} else { // AnsichtSuchen is empty
 
 			if (ofField.isEnum()) {
-				ofField.setItemLabel(propName);
-				ofField.setItemValue(propName);
-				ofField.setItemKey(propName);
-
 				List<Object> listOfValues = this.ofdbService.getListOfValues(ofField, this.tabProp, null, null);
 				ofField.setListOfValues(listOfValues);
-
-			} else {
-
 			}
 			ofField.setResultIndex(0);
 		}
