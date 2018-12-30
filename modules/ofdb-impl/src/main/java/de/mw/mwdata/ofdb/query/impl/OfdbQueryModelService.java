@@ -13,7 +13,6 @@ import de.mw.mwdata.core.domain.AbstractMWEntity;
 import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.domain.IFxEnum;
-import de.mw.mwdata.core.domain.JoinedPropertyTO;
 import de.mw.mwdata.core.query.OperatorEnum;
 import de.mw.mwdata.core.query.QueryBuilder;
 import de.mw.mwdata.core.query.QueryResult;
@@ -21,7 +20,6 @@ import de.mw.mwdata.core.query.QueryValue;
 import de.mw.mwdata.core.query.SimpleQueryBuilder;
 import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
-import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
@@ -192,8 +190,8 @@ public class OfdbQueryModelService implements IOfdbQueryModelService {
 		extendQueryModelByOrderSets(queryModel, viewHandle, sortKeys);
 		String sql = buildSQL(queryModel, viewHandle, false);
 
-		// FIXME: here return IEntity[] array and introduce QueryService for wrapping
-		// array to QueryResult
+		// #ViewLayout# 1. here load systemwide order of layout columns from queryModel,
+		// should never be changed
 		QueryResult result = this.crudService.executeSqlPaginated(sql, queryModel.getMetaData(), pagingModel);
 		result.setCountWithoutPaging(count);
 		pagingModel.setCount(count);
@@ -230,56 +228,38 @@ public class OfdbQueryModelService implements IOfdbQueryModelService {
 		for (IAnsichtSpalte ansichtSpalte : viewColumns) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByAnsichtSpalte(ansichtSpalte);
 
+			boolean toFilter = false;
+
+			Object entityValue = null;
+			try {
+				OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
+
+				if (null == propMapper) {
+					// FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg
+					// durch Id /
+					// verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich, TabSpeig.Tabelle)
+					throw new OfdbMissingMappingException("Given TabSpeig not mapped by property.");
+				}
+				entityValue = this.ofdbDao.getEntityValue(filterEntityTO.getItem(), propMapper.getPropertyIndex());
+
+				toFilter = (null != entityValue && !StringUtils.isBlank(entityValue.toString()));
+			} catch (OfdbMissingMappingException e) {
+				LOGGER.warn("Property not mapped: Table " + tabSpeig.getName() + ", column " + tabSpeig.getSpalte());
+
+			}
+
+			// we imply getting id of base entity here (not name of associated entity). That
+			// means filtering on column headers with list of values only allows select from
+			// list of values (not free text field)
 			if (!StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchTabAKey())
 					&& !StringUtils.isEmpty(ansichtSpalte.getVerdeckenDurchSpalteAKey())) {
 
-				ITabSpeig suchTabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(
-						ansichtSpalte.getVerdeckenDurchTabAKey(), ansichtSpalte.getVerdeckenDurchSpalteAKey());
-
-				String mappedPropName = this.ofdbCacheManager.mapTabSpeig2Property(suchTabSpeig);
-
-				// FIXME: cleanUp: remove itemKey and from ofdbfield ...
-				// String itemKey = OfdbUtils.generateItemKey(suchTabSpeig.getTabDef(),
-				// mappedPropName);
-
-				OfdbEntityMapping entityMapping = this.ofdbCacheManager
-						.getEntityMapping(tabSpeig.getTabDef().getName());
-				OfdbPropMapper propMapping = entityMapping.findPropertyMapperByTabProp(tabSpeig);
-				JoinedPropertyTO joinedProp = findJoinedProperty(queryModel, propMapping.getAssociatedEntityName(),
-						mappedPropName);
-
-				String whereValue = filterEntityTO.getJoinedValue(joinedProp.getResultArrayIndex());
-				boolean toFilter = (!StringUtils.isBlank(whereValue));
-
 				if (toFilter) {
-
-					// FIXME: queryModel from viewHandle should not be changed !!!
-					queryModel.addWhereRestriction(suchTabSpeig.getTabDef(), suchTabSpeig, OperatorEnum.Like,
-							whereValue);
+					queryModel.addWhereRestriction(tabSpeig.getTabDef(), tabSpeig, OperatorEnum.Eq, entityValue);
 				}
 
 			} else {
 
-				boolean toFilter = false;
-
-				Object entityValue = null;
-				try {
-					OfdbPropMapper propMapper = viewHandle.findPropertyMapperByTabProp(tabSpeig);
-
-					if (null == propMapper) {
-						// FIXME: should not be happen. Tritt auf bei Namensspalten, die langfristg
-						// durch Id /
-						// verdeckenDurch ersetzt werden sollten (z.B. TabDef.bereich)
-						throw new OfdbMissingMappingException("Given TabSpeig not mapped by property.");
-					}
-					entityValue = this.ofdbDao.getEntityValue(filterEntityTO.getItem(), propMapper.getPropertyIndex());
-
-					toFilter = (null != entityValue && !StringUtils.isBlank(entityValue.toString()));
-				} catch (OfdbMissingMappingException e) {
-					LOGGER.warn(
-							"Property not mapped: Table " + tabSpeig.getName() + ", column " + tabSpeig.getSpalte());
-
-				}
 				if (toFilter) {
 					queryModel.addWhereRestriction(tabSpeig.getTabDef(), tabSpeig, OperatorEnum.Like, entityValue);
 				}
@@ -288,24 +268,6 @@ public class OfdbQueryModelService implements IOfdbQueryModelService {
 
 		}
 
-	}
-
-	private JoinedPropertyTO findJoinedProperty(OfdbQueryModel queryModel, String associatedEntityName,
-			String mappedPropName) {
-
-		for (OfdbField field : queryModel.getMetaData()) {
-			if (!field.hasJoinedProperty()) {
-				continue;
-			}
-
-			if (field.getJoinedProperty().getEntityName().equals(associatedEntityName)
-					&& field.getJoinedProperty().getPropName().equals(mappedPropName)) {
-				return field.getJoinedProperty();
-			}
-
-		}
-
-		return null;
 	}
 
 	private void extendQueryModelByOrderSets(final OfdbQueryModel queryModel, final ViewConfigHandle viewHandle,

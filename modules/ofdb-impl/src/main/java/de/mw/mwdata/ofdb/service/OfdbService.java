@@ -284,11 +284,8 @@ public class OfdbService extends AbstractCrudChain implements IOfdbService, ICru
 
 	@Override
 	public List<OfdbField> initializeOfdbFields(final String viewName) {
-
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
-		List<OfdbField> ofFields = viewHandle.getOfdbFieldList();
-
-		return ofFields;
+		return viewHandle.getQueryModel().getMetaData();
 	}
 
 	@Override

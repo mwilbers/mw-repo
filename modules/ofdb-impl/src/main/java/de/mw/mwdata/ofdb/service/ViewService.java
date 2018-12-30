@@ -110,6 +110,10 @@ public class ViewService implements IViewService<IEntity> {
 
 		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
 		return this.ofdbQueryModelService.executeQueryModel(queryModel, viewHandle, cols, pagingModel);
+
+		// #ViewLayout# here re-order layout-columns by user specific preferences: maybe
+		// new userService.loadViewLayout(viewName, userId)
+
 	}
 
 }

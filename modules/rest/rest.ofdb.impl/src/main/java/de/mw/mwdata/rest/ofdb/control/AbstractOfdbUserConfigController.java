@@ -32,6 +32,10 @@ public abstract class AbstractOfdbUserConfigController extends AbstractUserConfi
 			return configs;
 		}
 
+		// #ViewLayout# FIXME: Use userService.applyViewLayout(
+		// ofdbFields, userId, viewName )
+		// better replace ofdbService - call here by userService.loadViewLayout(
+		// viewName, userId, )
 		List<OfdbField> ofdbFields = this.ofdbService.initializeOfdbFields(viewDef.getName());
 
 		for (OfdbField field : ofdbFields) {
@@ -39,6 +43,11 @@ public abstract class AbstractOfdbUserConfigController extends AbstractUserConfi
 		}
 
 		return configs;
+	}
+
+	public void updateViewLayout(final String viewName, final List<UiInputConfig> uiFields, final int userId) {
+		// #ViewLayout# 3. save new view Layout here and synchronice client and server
+		// states
 	}
 
 }

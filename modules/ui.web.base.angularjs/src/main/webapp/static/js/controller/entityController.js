@@ -1,8 +1,9 @@
 'use strict';
 
-function OfdbFieldEvaluator() {
+function OfdbFieldHandle() {
 	
-	this.isShowColumn = function( uiInputConfig, appConfig ) {
+	var self = this;
+	self.isShowColumn = function( uiInputConfig, appConfig ) {
 		
 		if(uiInputConfig.mapped) {
 			return true;
@@ -14,6 +15,10 @@ function OfdbFieldEvaluator() {
 			}
 		}
 		
+	};
+	
+	self.hasListOfValues = function( ofdbField ) {
+		return (undefined != ofdbField.listOfValues && null != ofdbField.listOfValues);
 	};
 	
 }
@@ -175,6 +180,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 					console.warn('Could not load Ofdb informations.');
 				}
 				
+				// #ViewLayout# here save uiInputConfigs in controller and get them later ...
 				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
 				
 				mwGrid.initialize();
@@ -411,4 +417,4 @@ var globalEntityController = null;
 var globalEntityInsertController = null;
 
 var mwGrid = new mwGrid();
-var evaluator = new OfdbFieldEvaluator(  );
+var ofdbFieldHandle = new OfdbFieldHandle();

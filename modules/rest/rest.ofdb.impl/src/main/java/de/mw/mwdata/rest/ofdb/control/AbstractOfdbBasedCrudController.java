@@ -65,15 +65,12 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
 		if (null == viewDef) {
-			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList(pagingModel); // new
-																							// UiEntityList<E>(pagingModel);
+			UiEntityList<E> uiEntities = UiEntityList.createEmptyUiEntityList(pagingModel);
 			return new ResponseEntity<UiEntityList<E>>(uiEntities, HttpStatus.OK);
 		}
 
-		// FIXME: PaginatedList no more necessary here
 		QueryResult entityResult = this.viewService.executeViewQuery(viewDef.getName(), pagingModel,
 				new ArrayList<SortKey>());
-
 		UiEntityList<E> uiEntities = new UiEntityList<E>(entityResult.getRows(), entityResult.getMetaData(),
 				pagingModel);
 

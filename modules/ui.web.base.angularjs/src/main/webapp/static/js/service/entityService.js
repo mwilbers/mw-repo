@@ -67,7 +67,7 @@ App.factory('EntityService',  ['$http', '$q',  function($http, $q){
 	function filterEntities( entity, restUrl) {
         var deferred = $q.defer();
 		
-        $http.put(restUrl, entity)
+        $http.post(restUrl, entity)
             .then(
             function (response) {
                 deferred.resolve(response.data);

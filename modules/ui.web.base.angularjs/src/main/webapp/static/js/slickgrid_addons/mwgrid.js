@@ -1,73 +1,7 @@
 
-
-function mwGrid() {
+function ColumnHandle() {
 	var self = this;
-	var grid = {};
-	var columns = [];
-	var columnFilters = {};
-	self.data = [];
-	var dataView;
-
-	var options = {};
-	var scope = {};
-	
-	/* private functions */
-	
-	function initializeColumns( uiInputConfigs, appConfig ) {
-		
-		var columnCounter = 0;
-		columns = [];	// FIXME: why to clear local columns array here ?
-		
-		if(uiInputConfigs.length > 0) {
-			columns[columnCounter] = {};
-			columns[columnCounter]["id"] = "btnDelete";
-			columns[columnCounter]["name"] = "Delete";
-			columns[columnCounter]["field"] = "btnDelete";
-			columns[columnCounter]["width"] = 50;
-			columns[columnCounter]["formatter"] = Slick.Formatters.DeleteButton;
-			columnCounter++;
-		}
-		
-		for(var i = 0; i < uiInputConfigs.length; i++) {
-			var ofdbField = uiInputConfigs[i];
-	
-			if( evaluator.isShowColumn( ofdbField, appConfig ) ) {
-				columns[columnCounter] = {};
-				
-				columns[columnCounter]["id"] = ofdbField.propName;
-				columns[columnCounter]["name"] = ofdbField.columnTitle;
-				
-				if( ofdbField.joinedProperty ) {
-					columns[columnCounter]["field"] = ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName;
-				} else {
-					columns[columnCounter]["field"] = ofdbField.propName;
-				}
-				
-				
-				
-				
-				if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
-					var result = buildListOfValuesString( ofdbField.listOfValues, ofdbField.joinedProperty );
-					columns[columnCounter]["options"] = result;
-					columns[columnCounter]["editor"] = SelectCellEditor;
-				}
-				
-				columnCounter++;
-			} 
-		}
-		
-		if(uiInputConfigs.length > 0) {
-			columns[columnCounter] = {};
-			columns[columnCounter]["id"] = "type";
-			columns[columnCounter]["name"] = "type";
-			columns[columnCounter]["field"] = "type";
-			columns[columnCounter]["width"] = 1;
-			columnCounter++;
-		}
-		
-	}
-	
-	
+	// var columns = cols;
 	
 	function buildListOfValuesString( listOfValuesArray, joinedProperty ) {
 		var result = "";
@@ -84,16 +18,146 @@ function mwGrid() {
 		return result.substring(0, result.length - 1);	
 	}
 	
+	self.initializeColumnButtonDelete =function () {
+		var col = {};
+		// columns[colIndex] = {};
+		col["id"] = "btnDelete";
+		col["name"] = "Delete";
+		col["field"] = "btnDelete";
+		col["width"] = 50;
+		col["formatter"] = Slick.Formatters.DeleteButton;
+		return col;
+	};
+	
+	self.initializeColumnOfdbField = function( ofdbField ) {
+		var col = {};				
+		col["id"] = ofdbField.propName;
+		col["name"] = ofdbField.columnTitle;
+		
+		if( ofdbField.joinedProperty ) {
+			col["field"] = ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName;
+		} else {
+			col["field"] = ofdbField.propName;
+		}
+		
+		if(undefined != ofdbField.listOfValues && null != ofdbField.listOfValues) {
+			var result = buildListOfValuesString( ofdbField.listOfValues, ofdbField.joinedProperty );
+			col["options"] = result;
+			col["editor"] = SelectCellEditor;
+		}
+		
+		return col;
+	};
+	
+	self.initializeColumnType = function() {
+		var col = {};
+		col["id"] = "type";
+		col["name"] = "type";
+		col["field"] = "type";
+		col["width"] = 1;
+		
+		return col;
+	};
+	
+}
+
+function mwGrid() {
+	var self = this;
+	var grid = {};
+	var columns = [];
+	var columnFilters = {};
+	self.data = [];
+	var dataView;
+
+	var options = {};
+	var scope = {};
+	
+	var columnHandle = new ColumnHandle();
+	
+	/* private functions */
+	
+	function compareValues(untypedValue, sCompareValue) {
+		
+		if( null === untypedValue && sCompareValue === null) {
+			return true;
+		} else  if(null === untypedValue && sCompareValue !== null) {
+			return false;
+		} else if( typeof untypedValue === "number" ) {
+			if( untypedValue.toString() !== sCompareValue  ) {
+				return false;
+			}
+			return true;
+		} else {
+			if( untypedValue.indexOf( sCompareValue ) === -1  ) {
+				return false;
+			}
+			return true;
+		}
+		
+	}
+	
+	function findFilterValueByColumnId( columnId ) {
+		
+		if( mwGrid.getColumnFilters()[columnId] === undefined ) {
+			return null;
+		} else {
+			return mwGrid.getColumnFilters()[columnId];
+		}
+		
+	}
+	
+	function initializeColumns( uiInputConfigs, appConfig ) {
+		
+		var columnCounter = 0;
+
+		if(uiInputConfigs.length > 0) {
+			var col = columnHandle.initializeColumnButtonDelete();
+			columns[columnCounter] = col;
+			columnCounter++;
+		}
+		
+		for(var i = 0; i < uiInputConfigs.length; i++) {
+			var ofdbField = uiInputConfigs[i];
+	
+			if( ofdbFieldHandle.isShowColumn( ofdbField, appConfig ) ) {
+				var col = columnHandle.initializeColumnOfdbField( ofdbField );
+				columns[columnCounter] = col;
+				columnCounter++;
+			} 
+		}
+		
+		if(uiInputConfigs.length > 0) {
+			var col = columnHandle.initializeColumnType();
+			columns[columnCounter] = col;
+			columnCounter++;
+		}
+		
+	}
+
+	/* public functions */
+	
 	self.getControllerScope = function () {
 		return angular.element($("#controllerScope")).scope();
 	};
 	
-	
-	
-	/* public functions */
-	
 	self.getColumns = function () {
 		return columns;
+	};
+	
+	self.getColumnByKey = function( key ) {
+		return self.grid.getColumns()[self.grid.getColumnIndex(key)];
+	};
+	
+	self.getColumnFilterValueByKey = function( key ) {
+		if(undefined === self.getColumnFilters()[key]) {
+			return null;
+		} else {
+			return self.getColumnFilters()[key];
+		}
+	};
+	
+	self.setColumnFilterValueByKey = function( key, value) {
+		self.getColumnFilters()[key] = value;
 	};
 	
 	self.getColumnFilters = function() {
@@ -105,7 +169,7 @@ function mwGrid() {
 
 		this.options = {
 			enableCellNavigation: true,
-			enableColumnReorder: false,
+			enableColumnReorder: true, // #ViewLayout#
 			asyncEditorLoading: false,
 			showHeaderRow: true,
 			headerRowHight: 30,
@@ -126,20 +190,34 @@ function mwGrid() {
 	
 	self.filter = function (item) {
 		
-		var gridFiltersArray = mwGrid.getColumnFilters();
-		for (var columnId in gridFiltersArray ) {
+		var gridColumnFilters = mwGrid.getColumnFilters();
+		for (var columnId in gridColumnFilters ) {
 			
-		    if (columnId !== undefined && gridFiltersArray[columnId] !== "") {
-				var c = mwGrid.grid.getColumns()[mwGrid.grid.getColumnIndex(columnId)];			
-				if (item[c.field] === null) {
+			if(columnId === 'type') {
+				continue;
+		    } else {
+				var col = mwGrid.getColumnByKey(columnId);		
+				if (item[col.id] === null) {
 					return false;
-				} else if( item[c.field].indexOf( gridFiltersArray[columnId] ) === -1  ) {
-				    return false;
+				} else {					
+					if( !compareValues(item[col.id], mwGrid.getColumnFilterValueByKey(columnId) ) ) {
+						return false;
+					}					
 				}
 		    }
 		  
 		}
 		return true;
+	};
+	
+	self.hasFilters = function() {		
+		for(var key in self.getColumnFilters()) {	
+			if(key === "type") {
+				continue;
+			}			
+			return true;
+		}		
+		return false;
 	};
 	
 	self.load = function( rows, uiInputConfigs, appConfig ) {
@@ -154,28 +232,22 @@ function mwGrid() {
 				self.data[i] = {};			
 			}
 			
-			mwGrid.getColumnFilters()['type'] = rows[0].type;
+			mwGrid.setColumnFilterValueByKey( 'type', rows[0].type);
+			// mwGrid.getColumnFilters()['type'] = rows[0].type;
 			
 		}
 		
 		for (var i = 0; i < rows.length; i++) {
 			var entityTO = rows[i];
 			
-			
 			for(var j=0; j < uiInputConfigs.length; j++) {
 				var ofdbField = uiInputConfigs[j];
 				if( ofdbField.joinedProperty ) {
-					entityTO[ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName] = entityTO[ofdbField.joinedProperty.entityName][ofdbField.joinedProperty.propName];
-					//self.data[i][ofdbField.propName] = entityTO[ofdbField.joinedProperty.entityName][ofdbField.joinedProperty.propName];	
-					
+					entityTO[ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName] = entityTO[ofdbField.joinedProperty.entityName][ofdbField.joinedProperty.propName];		
 				}
-				
 			}
 			
-			
 			if(uiInputConfigs.length > 0) {
-				//self.data[i]["type"] = entityTO.type;
-				//self.data[i]["btnDelete"] = "";
 				entityTO["btnDelete"] = "";
 			}
 		}
@@ -193,7 +265,7 @@ function mwGrid() {
 				globalEntityController.reset();
 				mwGrid.getControllerScope().$apply();
 			} else if (args.grid.getColumns()[args.cell].field == 'btnDelete') {
-			   // FIXME: perform real delete
+			   // TODO: perform real delete
 			   alert('delete not yet implemented');
 			   // assume delete function uses data field id; simply pass args.row if row number is accepted for delete
 			   mwGrid.dataView.deleteItem(args.grid.getDataItem(args.row).id);
@@ -226,30 +298,51 @@ function mwGrid() {
 			
 		  // NOTE: do not replace this by self here, because this in function body here references different objects ...
 		  var columnId = $(this).data("columnId");
-		  if (columnId != null) {
-			mwGrid.getColumnFilters()[columnId] = $.trim($(this).val());
+		  if (columnId != null && columnId !== undefined) {
+			mwGrid.setColumnFilterValueByKey( columnId, $.trim($(this).val()) );
 			globalEntityController.applyFilteredEntity( mwGrid.getColumnFilters() );
 			
 		  }
 		});
-		
-		
+
 		self.grid.onHeaderRowCellRendered.subscribe(function(e, args) {
 			
-			if( args.column.id === "type") {
+			if( args.column.id === "type") {	// columnInvisible
 				$(args.node).empty();
-				// columnInvisible
-			} else if(args.column.id === "btnDelete") {
+				
+			} else if(args.column.options !== null && args.column.options !== undefined) {	// list of values
+				$(args.node).empty();
+				var selectNode = $("<select class='" + args.column.id + "_select'>")
+				.data("columnId", args.column.id)
+				.val(mwGrid.getColumnFilterValueByKey(args.column.id));
+				selectNode.appendTo(args.node);
+				
+				var filterValue = null;
+				if( mwGrid.hasFilters() ) {
+					var filterValue = mwGrid.getColumnFilterValueByKey(args.column['id']);					
+				}
+				
+				
+				// empty option first
+				$("<option value=''>---</option>").appendTo(selectNode);
+				var options = args.column.options.split(',');
+				for(var i=0; i<options.length; i++) {
+					var idNamePair = options[i].split(':');
+					var sSelected = ( compareValues(filterValue, idNamePair[1]) ? ' selected ': '' );
+					$("<option value='" + idNamePair[1] + "' " + sSelected + ">" + idNamePair[0] + "</option>").appendTo(selectNode);
+				}
+				   
+			} else if(args.column.id === "btnDelete") {	// button delete
 				$(args.node).empty();
 				$("<input type='submit' value='Filter' class='btn-primary' ng-disabled='gridFilterForm.$invalid'>")
 				   .addClass('buttonGrid')
 				   .appendTo(args.node);
-				   // <input type="submit" value="Filter" class="btn btn-primary btn-sm" ng-disabled="gridFilterForm.$invalid">
+				   
 			} else if(args.column.id !== undefined) {
 				$(args.node).empty();
 				$("<input type='text'>")
 				   .data("columnId", args.column.id)
-				   .val(mwGrid.getColumnFilters()[args.column.id])
+				   .val(mwGrid.getColumnFilterValueByKey(args.column.id))
 				   .appendTo(args.node);
 			}
 		});

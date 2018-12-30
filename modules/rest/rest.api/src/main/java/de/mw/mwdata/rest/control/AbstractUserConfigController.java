@@ -18,6 +18,7 @@ import de.mw.mwdata.rest.uimodel.UiUserConfig;
 import de.mw.mwdata.rest.url.RestUrl;
 import de.mw.mwdata.rest.utils.SessionUtils;
 
+// FIXME: session scope correct here?
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public abstract class AbstractUserConfigController implements IUserConfigController {
 

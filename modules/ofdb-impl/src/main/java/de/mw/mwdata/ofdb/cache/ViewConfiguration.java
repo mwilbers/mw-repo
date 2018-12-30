@@ -3,7 +3,6 @@ package de.mw.mwdata.ofdb.cache;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -46,7 +45,6 @@ public class ViewConfiguration {
 	private List<TableConfig> tableDefs = new ArrayList<TableConfig>();
 
 	private OfdbQueryModel queryModel;
-	private List<OfdbField> ofdbFields = new ArrayList<OfdbField>();
 
 	/**
 	 * private constructor. Use Builder for creation
@@ -80,11 +78,6 @@ public class ViewConfiguration {
 
 		public Builder addViewOrderBy(final IAnsichtOrderBy viewOrderBy) {
 			this.viewConfig.viewOrders.add(viewOrderBy);
-			return this;
-		}
-
-		public Builder setOfdbFields(final List<OfdbField> ofdbFields) {
-			this.viewConfig.ofdbFields = ofdbFields;
 			return this;
 		}
 
@@ -167,10 +160,6 @@ public class ViewConfiguration {
 
 	OfdbQueryModel getQueryModel() {
 		return this.queryModel;
-	}
-
-	List<OfdbField> getOfdbFieldList() {
-		return this.ofdbFields;
 	}
 
 	@Override

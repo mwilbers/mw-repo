@@ -67,7 +67,6 @@ public final class Constants {
 	/**
 	 * global constant for User KHEIS
 	 */
-	public static final String SYS_USER_KHEIS = "kheis";
 	public static final String USERNAME_ADMIN = "Administrator";
 	public static final String USERNAME_GUEST = "Gast";
 

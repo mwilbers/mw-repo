@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.util.CollectionUtils;
 
-import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.domain.IAnsichtOrderBy;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -197,10 +196,6 @@ public class ViewConfigHandle {
 
 		return null;
 
-	}
-
-	public List<OfdbField> getOfdbFieldList() {
-		return this.viewConfig.getOfdbFieldList();
 	}
 
 	public ITabSpeig findTabSpeigByAnsichtOrderBy(final IAnsichtOrderBy ansichtOrderBy) {

@@ -182,10 +182,21 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		builder.setViewColumns(resultSpalten);
 
 		// ... FIXME: no mainAnsichtTab for ADAnsichtenDef
-		initQueryModel(viewName, builder);
+		OfdbQueryModel queryModel = new DefaultOfdbQueryModel();
 
+		IAnsichtTab ansichtTab = builder.buildHandle().getMainAnsichtTab();
+		if (null == ansichtTab) {
+			String msg = LocalizedMessages.getString(ConfigOfdb.BUNDLE_NAME_OFDB, "missingAnsichtTabJoinTypX",
+					viewName);
+			throw new OfdbInvalidConfigurationException(msg);
+		}
+
+		queryModel.setMainTable(ansichtTab.getTabDef());
+		// FIXME: getTabDef WRONG !!! We have to use T entity from method-argument here.
+
+		builder.setQueryModel(queryModel);
 		List<OfdbField> ofFieldList = createViewMetaData(builder.buildHandle());
-		builder.setOfdbFields(ofFieldList);
+		queryModel.addMetaData(ofFieldList);
 
 		return builder.buildHandle();
 	}
@@ -227,23 +238,25 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 		return entityClassType;
 	}
 
-	private void initQueryModel(final String viewName, final Builder builder) {
-
-		OfdbQueryModel queryModel = new DefaultOfdbQueryModel();
-
-		IAnsichtTab ansichtTab = builder.buildHandle().getMainAnsichtTab();
-		if (null == ansichtTab) {
-			String msg = LocalizedMessages.getString(ConfigOfdb.BUNDLE_NAME_OFDB, "missingAnsichtTabJoinTypX",
-					viewName);
-			throw new OfdbInvalidConfigurationException(msg);
-		}
-
-		queryModel.setMainTable(ansichtTab.getTabDef());
-		// FIXME: getTabDef WRONG !!! We have to use T entity from method-argument here.
-
-		builder.setQueryModel(queryModel);
-
-	}
+	// private void initQueryModel(final String viewName, final Builder builder) {
+	//
+	// OfdbQueryModel queryModel = new DefaultOfdbQueryModel();
+	//
+	// IAnsichtTab ansichtTab = builder.buildHandle().getMainAnsichtTab();
+	// if (null == ansichtTab) {
+	// String msg = LocalizedMessages.getString(ConfigOfdb.BUNDLE_NAME_OFDB,
+	// "missingAnsichtTabJoinTypX",
+	// viewName);
+	// throw new OfdbInvalidConfigurationException(msg);
+	// }
+	//
+	// queryModel.setMainTable(ansichtTab.getTabDef());
+	// // FIXME: getTabDef WRONG !!! We have to use T entity from method-argument
+	// here.
+	//
+	// builder.setQueryModel(queryModel);
+	//
+	// }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	private List<OfdbField> createViewMetaData(final ViewConfigHandle viewHandle) {
@@ -251,7 +264,6 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 		List<IAnsichtSpalte> ansichtSpalten = viewHandle.getViewColumns();
 		int resultIndex = 0;
-		OfdbQueryModel queryModel = viewHandle.getQueryModel();
 
 		for (IAnsichtSpalte ansichtSpalte : ansichtSpalten) {
 			ITabSpeig tabSpeig = viewHandle.findTabSpeigByTabAKeyAndSpalteAKey(ansichtSpalte.getTabAKey(),
@@ -275,8 +287,9 @@ public class ViewConfigFactoryBean implements ViewConfigFactory {
 
 		}
 
+		// OfdbQueryModel queryModel = viewHandle.getQueryModel();
 		Collections.sort(ofFields, new OfdbFieldComparator());
-		queryModel.addMetaData(ofFields);
+		// queryModel.addMetaData(ofFields);
 
 		return ofFields;
 
