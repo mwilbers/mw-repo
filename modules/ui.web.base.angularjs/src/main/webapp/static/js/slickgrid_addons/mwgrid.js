@@ -76,36 +76,6 @@ function mwGrid() {
 	
 	/* private functions */
 	
-	function compareValues(untypedValue, sCompareValue) {
-		
-		if( null === untypedValue && sCompareValue === null) {
-			return true;
-		} else  if(null === untypedValue && sCompareValue !== null) {
-			return false;
-		} else if( typeof untypedValue === "number" ) {
-			if( untypedValue.toString() !== sCompareValue  ) {
-				return false;
-			}
-			return true;
-		} else {
-			if( untypedValue.indexOf( sCompareValue ) === -1  ) {
-				return false;
-			}
-			return true;
-		}
-		
-	}
-	
-	function findFilterValueByColumnId( columnId ) {
-		
-		if( mwGrid.getColumnFilters()[columnId] === undefined ) {
-			return null;
-		} else {
-			return mwGrid.getColumnFilters()[columnId];
-		}
-		
-	}
-	
 	function initializeColumns( uiInputConfigs, appConfig ) {
 		
 		var columnCounter = 0;
@@ -166,6 +136,8 @@ function mwGrid() {
 	
 	self.initialize = function() {
 		console.log("mwGrid: initialize");
+		
+		// self.clear();
 
 		this.options = {
 			enableCellNavigation: true,
@@ -200,7 +172,7 @@ function mwGrid() {
 				if (item[col.id] === null) {
 					return false;
 				} else {					
-					if( !compareValues(item[col.id], mwGrid.getColumnFilterValueByKey(columnId) ) ) {
+					if( !JsUtils.compareValues(item[col.id], mwGrid.getColumnFilterValueByKey(columnId) ) ) {
 						return false;
 					}					
 				}
@@ -328,7 +300,7 @@ function mwGrid() {
 				var options = args.column.options.split(',');
 				for(var i=0; i<options.length; i++) {
 					var idNamePair = options[i].split(':');
-					var sSelected = ( compareValues(filterValue, idNamePair[1]) ? ' selected ': '' );
+					var sSelected = ( JsUtils.compareValues(filterValue, idNamePair[1]) ? ' selected ': '' );
 					$("<option value='" + idNamePair[1] + "' " + sSelected + ">" + idNamePair[0] + "</option>").appendTo(selectNode);
 				}
 				   

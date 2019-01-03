@@ -13,6 +13,8 @@ import de.mw.mwdata.rest.uimodel.UiUserConfig;
  */
 public interface IUserConfigController {
 
-	public ResponseEntity<UiUserConfig> loadSystemProperties();
+	public ResponseEntity<UiUserConfig> loadUserConfiguration(final int userId);
+
+	public String loadUserBasedUrlPathToken();
 
 }

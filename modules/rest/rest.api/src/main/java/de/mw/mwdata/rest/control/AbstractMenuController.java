@@ -37,6 +37,7 @@ public abstract class AbstractMenuController {
 	private IMenuService menuService;
 	private RestUrlService urlService;
 	private ApplicationConfigService applicationConfigService;
+	private IUserConfigController userConfigController;
 
 	public void setUrlService(RestUrlService urlService) {
 		this.urlService = urlService;
@@ -52,6 +53,10 @@ public abstract class AbstractMenuController {
 
 	public ApplicationConfigService getApplicationConfigService() {
 		return applicationConfigService;
+	}
+
+	public void setUserConfigController(IUserConfigController userConfigController) {
+		this.userConfigController = userConfigController;
 	}
 
 	public void setApplicationConfigService(ApplicationConfigService applicationConfigService) {
@@ -101,9 +106,11 @@ public abstract class AbstractMenuController {
 	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
-		String defaultEntity = this.applicationConfigService
-				.getPropertyValue(ApplicationConfigService.KEY_DEFAULT_ENTITY);
-		List<Menue> menuPath = loadMenuPath(defaultEntity);
+		// String defaultEntity = this.applicationConfigService
+		// .getPropertyValue(ApplicationConfigService.KEY_DEFAULT_ENTITY);
+
+		String currentUrlPathToken = this.userConfigController.loadUserBasedUrlPathToken();
+		List<Menue> menuPath = loadMenuPath(currentUrlPathToken);
 
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findMainMenus(userAreaName);

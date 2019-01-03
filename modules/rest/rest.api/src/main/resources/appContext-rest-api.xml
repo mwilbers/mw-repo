@@ -20,6 +20,10 @@
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 	
+	<bean abstract="true" id="rest.api.abstractMenuController" parent="rest.api.abstractUserConfigController" >
+<!-- 		<property name="userConfigController" ref="" /> -->
+	</bean>
+	
 	<context:annotation-config />
    		<context:component-scan base-package="de.mw.mwdata.rest.control" >
 	</context:component-scan>

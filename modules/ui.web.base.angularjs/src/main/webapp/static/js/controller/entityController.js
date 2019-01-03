@@ -21,43 +21,7 @@ function OfdbFieldHandle() {
 		return (undefined != ofdbField.listOfValues && null != ofdbField.listOfValues);
 	};
 	
-}
-
-/**
- * Definition for routeProvider: Before loading EntityGridController and showing grid load all user 
- * specific server based properties for configuring client based constants
- *
- */
-App.config(function($routeProvider){
-  $routeProvider
-    .when('/',{
-		controller:'EntityGridController',
-		templateUrl:'../static/includes/mwgrid_include.html',
-		resolve:{
-			'MyServiceData':function(AppConfigService){
-				return AppConfigService.promise;
-			}
-		}})
-  });
-  
-
-App.service('AppConfigService', function($http) {
-    var appConfig = null;
-
-	var promiseConfig = $http.get('userConfig/').success(function (data) {
-		appConfig = data;
-    });
-	
-    return {
-      promise:promiseConfig,
-      setData: function (data) {
-    	  appConfig = data;
-      },
-      getApplicationConfig: function () {
-          return appConfig;
-      }
-    };
-});
+};
 
 App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigService', function($scope, entityService, appConfigService) {
     console.log("EntityGridController");
@@ -171,10 +135,6 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
             function(d) {
                 
 				$scope.state.entityRows = [];
-				
-//				if( undefined === d.uiInputConfigs ) {
-//					return;
-//				}
 				
 				if(d.uiInputConfigs.length == 0) {
 					console.warn('Could not load Ofdb informations.');
@@ -416,5 +376,6 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
 var globalEntityController = null;
 var globalEntityInsertController = null;
 
+var JsUtils = new JsUtils();
 var mwGrid = new mwGrid();
 var ofdbFieldHandle = new OfdbFieldHandle();

@@ -4,7 +4,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.mw.mwdata.core.Constants;
-import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.MetaDataQueryBuilder;
 import de.mw.mwdata.core.query.OperatorEnum;
 import de.mw.mwdata.core.query.QueryResult;
@@ -81,7 +80,7 @@ public class OfdbMenuService implements IMenuService {
 	}
 
 	@Override
-	public IEntity findMenuByUrlPath(String urlPath) {
+	public IMenue findMenuByUrlPath(String urlPath) {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
 		if (null == viewHandle) {
@@ -98,7 +97,7 @@ public class OfdbMenuService implements IMenuService {
 			return null;
 		}
 
-		return result.getEntityByRowIndex(0);
+		return (IMenue) result.getEntityByRowIndex(0);
 	}
 
 }

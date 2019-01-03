@@ -71,67 +71,21 @@
 		<script src="./../static/js/slickgrid_addons/mwgrid.js"></script>
 		 
 		<script src="./../static/js/app.js"></script>
-		  
+		<script src="./../static/js/JsUtils.js"></script>		
+		
 		<script src="./../static/js/angular/angular-tree-control.js"></script>
+		
+		<script src="./../static/js/service/appConfigService.js"></script>
 		<script src="./../static/js/service/entityService.js"></script>
 		<script src="./../static/js/controller/entityController.js"></script>
+		<script src="./../static/js/controller/mainController.js"></script>		
 		<script src="./../static/js/controller/menuController.js"></script>
 	 
     </head>
   
   <!-- FIXME: build responsive design of html5: see https://www.youtube.com/watch?v=g2taIe7ZFUA -->
   
-    <body ng-app="angWebApp" class="ng-cloak" >
-  
-		<div class="generic-container" style="width:300px;display:inline-block;vertical-align:top;height:1000px;" >		
-			<div class='container' style="width:100%;" ng-controller="MenuController as menuCtrl">
-			  <div class="panel-heading"><span class="lead">Menu</span></div>
-				
-			  <br>
-			  <treecontrol class="tree-classic" on-selection="menuCtrl.callNode(node, selected)"
-				tree-model="menuCtrl.treeModel" on-node-toggle="menuCtrl.fetchChildNodes(node, expanded)"
-				options="menuCtrl.treeOptions" expanded-nodes="menuCtrl.getExpandedNodes()" selected-node="menuCtrl.selectedNode"  >
-				{{node.name}}
-			  </treecontrol>
-			</div>
-		</div>
-	
-        <div class="generic-container" style="width:800px;display:inline-block;"  >
-            <div class="panel panel-default">
-          
-				<!-- bootstrap example for showing modal info panel with ofdb relevant validation infos -->
-				<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-				  Launch demo modal
-				</button>
-				
-				<!-- Modal -->
-				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-				  <div class="modal-dialog" role="document">
-					<div class="modal-content">
-					  <div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel">Example: Ofdb validation results</h4>
-					  </div>
-					  <div class="modal-body">
-						...
-					  </div>
-					  <div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					  </div>
-					</div>
-				  </div>
-				</div>
-          
-				<div class="formcontainer" >
-					<div ng-view ng-controller="EntityGridController as ctrl" id="controllerScope">
-						
-					</div>
-				</div>
-            </div>
-          
-            <!-- slickgrid grid -->
-		    
-        </div>      
+    <body ng-app="angWebApp" ng-controller="MainController" ng-view class="ng-cloak" >
+		      
     </body>
 </html>
