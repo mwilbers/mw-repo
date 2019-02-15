@@ -13,8 +13,12 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 <!-- FIXME: id should be fixed in abstract base spring bean -->
-	<bean id="app.applicationConfigService" class="de.mw.mwdata.app.calendar.server.config.CalAdminAppConfigService" >
-    	<constructor-arg index="0" value="de.mw.mwdata.app.calendar.config" />    	
+	<bean id="app.applicationConfigService" class="de.mw.mwdata.app.calendar.server.config.CalAdminAppConfigService" 
+			init-method="initApplication">
+    	<constructor-arg index="0" value="de.mw.mwdata.app.calendar.config" />  
+    	<property name="ofdbService" ref="ofdbService" />
+	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
+	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />  	
     </bean>
     
     <bean id="app.calendar.admin.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

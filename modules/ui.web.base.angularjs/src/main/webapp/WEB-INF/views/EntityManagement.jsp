@@ -35,6 +35,14 @@
 		  .columnInvisible {
 			display: none;  
 		  }
+		  .expandedGrid {
+			  width:100%;
+			  height:300px;
+		  }
+		  .collapsedGrid {
+			  width:100%;
+			  height:100px;
+		  }
 
 		</style>
 		<!-- simple angularjs readonly table -->

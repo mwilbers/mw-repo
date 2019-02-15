@@ -71,15 +71,19 @@ public abstract class AbstractMenuController {
 		}
 
 		for (Object[] row : menuResult.getRows()) {
-			UiMenuNode menu = convertToUiMenu((IEntity) row[0]);
+			UiMenuNode menuNode = convertToUiMenu((IEntity) row[0]);
 
 			// FIXME: row[1] should be gained by result.metaData
 			String urlPath = (String) row[1];
 			if (!StringUtils.isEmpty(urlPath)) {
 				String restUrl = this.urlService.createUrlForReadEntities(getServletName(), urlPath);
-				menu.setRestUrl(restUrl);
+				menuNode.setRestUrl(restUrl);
+
+				// get entityFullClassName for preparing empty filter objects in view
+				menuNode.setEntityFullClassName(this.userConfigController.getEntityNameByUrlPathToken(urlPath));
 			}
-			menuList.add(menu);
+
+			menuList.add(menuNode);
 		}
 		return menuList;
 
@@ -106,11 +110,16 @@ public abstract class AbstractMenuController {
 	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
-		// String defaultEntity = this.applicationConfigService
-		// .getPropertyValue(ApplicationConfigService.KEY_DEFAULT_ENTITY);
-
 		String currentUrlPathToken = this.userConfigController.loadUserBasedUrlPathToken();
 		List<Menue> menuPath = loadMenuPath(currentUrlPathToken);
+
+		// ... 1. applicationFactory aus AppConfigService und aus gesamten Programm
+		// entfernen
+		// 2. fullClassName aus urlToken hier ermitteln und in UiMenuNode stecken, zudem
+		// in menuController.js, zeile 109 type an
+		// entityController übergeben
+		// 3. Rückbau: entityFullClassName in UserConfigController entfernen und evt.
+		// aus $scope.appConfig
 
 		String userAreaName = this.applicationConfigService.getPropertyValue(ApplicationConfigService.KEY_USERAREA);
 		QueryResult menuResult = this.menuService.findMainMenus(userAreaName);
@@ -128,7 +137,7 @@ public abstract class AbstractMenuController {
 
 					QueryResult childResult = this.menuService.findChildMenus(currentMenu, userAreaName);
 
-					List<UiMenuNode> uiChildNodes = this.convertToUiMenuNodes(childResult); // convertToUiMenuList(childEntityTOs);
+					List<UiMenuNode> uiChildNodes = convertToUiMenuNodes(childResult); // convertToUiMenuList(childEntityTOs);
 					parentNode.addAllChildren(uiChildNodes);
 
 					currentNodes = uiChildNodes;

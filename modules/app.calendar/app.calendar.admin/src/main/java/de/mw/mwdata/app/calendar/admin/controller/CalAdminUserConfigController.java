@@ -9,7 +9,7 @@ import de.mw.mwdata.rest.ofdb.control.AbstractOfdbUserConfigController;
  * constants. <br>
  * 
  */
-@RequestMapping("/caladmin/userConfig/**")
+@RequestMapping("/caladmin/userConfig/")
 public class CalAdminUserConfigController extends AbstractOfdbUserConfigController {
 
 }

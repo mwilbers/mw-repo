@@ -1,20 +1,19 @@
 package de.mw.mwdata.ofdb.service;
 
+import org.apache.commons.collections.ListUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.mw.mwdata.core.Constants;
-import de.mw.mwdata.core.query.MetaDataQueryBuilder;
 import de.mw.mwdata.core.query.OperatorEnum;
+import de.mw.mwdata.core.query.QueryBuilder;
 import de.mw.mwdata.core.query.QueryResult;
+import de.mw.mwdata.core.query.SimpleQueryBuilder;
 import de.mw.mwdata.core.query.ValueType;
 import de.mw.mwdata.core.service.ICrudService;
 import de.mw.mwdata.ofdb.cache.OfdbCacheManager;
-import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IMenue;
 import de.mw.mwdata.ofdb.domain.impl.Menue;
 import de.mw.mwdata.ofdb.impl.ConfigOfdb;
-import de.mw.mwdata.ofdb.query.impl.OfdbMetaDataQueryBuilder;
 
 // FIXME: not necessary named OfdbMenuService in ofdb-impl, better DefaultMenuService in core
 public class OfdbMenuService implements IMenuService {
@@ -39,12 +38,19 @@ public class OfdbMenuService implements IMenuService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public QueryResult findMainMenus(final String userAreaName) {
 
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
-		if (null == viewHandle) {
-			return QueryResult.createEmptyQueryResult();
-		}
+		// ... fehler hier: MenuService holt nur Informationen zur Darstellugn des
+		// Menues, aber nicht der View im Contentbereich,
+		// daher darf MenuService nicht den OfdbMetaDataQueryBuilder und die viewHandle
+		// verwenden
 
-		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
+		// ViewConfigHandle viewHandle =
+		// this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
+		// if (null == viewHandle) {
+		// return QueryResult.createEmptyQueryResult();
+		// }
+
+		QueryBuilder builder = new SimpleQueryBuilder(); // new OfdbMetaDataQueryBuilder(viewHandle,
+															// this.ofdbService);
 
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromEntity(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
@@ -53,7 +59,7 @@ public class OfdbMenuService implements IMenuService {
 				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, userAreaName, ValueType.STRING)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
-		return this.crudService.executeSql(sql, builder.buildMetaData());
+		return this.crudService.executeSql(sql, ListUtils.EMPTY_LIST);
 	}
 
 	@Override
@@ -65,8 +71,11 @@ public class OfdbMenuService implements IMenuService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public QueryResult findChildMenus(final IMenue menu, final String userAreaName) {
 
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
-		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
+		// ViewConfigHandle viewHandle =
+		// this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
+		QueryBuilder builder = new SimpleQueryBuilder();
+		// new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
+
 		Menue mainMenu = (Menue) menu; // this.crudService.findById(Menue.class, parentMenuId);
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").selectAlias("aView", "urlPath")
 				.fromEntity(ConfigOfdb.T_MENU, "aMenu").leftJoinTable("aMenu", "ansichtDef", "aView")
@@ -76,22 +85,24 @@ public class OfdbMenuService implements IMenuService {
 				.andWhereRestriction("bBereich", "name", OperatorEnum.Eq, userAreaName, ValueType.STRING)
 				.orderBy("aMenu", "anzeigeName", "asc").buildSQL();
 
-		return this.crudService.executeSql(sql, builder.buildMetaData());
+		return this.crudService.executeSql(sql, ListUtils.EMPTY_LIST);
 	}
 
 	@Override
 	public IMenue findMenuByUrlPath(String urlPath) {
 
-		ViewConfigHandle viewHandle = this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
-		if (null == viewHandle) {
-			return null;
-		}
+		// ViewConfigHandle viewHandle =
+		// this.ofdbCacheManager.findViewConfigByTableName(Constants.SYS_TAB_MENUS);
+		// if (null == viewHandle) {
+		// return null;
+		// }
 
-		MetaDataQueryBuilder builder = new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
+		QueryBuilder builder = new SimpleQueryBuilder();
+		// new OfdbMetaDataQueryBuilder(viewHandle, this.ofdbService);
 		String sql = builder.selectEntity(ConfigOfdb.T_MENU, "aMenu").fromEntity(ConfigOfdb.T_MENU, "aMenu")
 				.leftJoinTable("aMenu", "ansichtDef", "aView")
 				.andWhereRestriction("aView", "urlPath", OperatorEnum.Eq, urlPath, ValueType.STRING).buildSQL();
-		QueryResult result = this.crudService.executeSql(sql, builder.buildMetaData());
+		QueryResult result = this.crudService.executeSql(sql, ListUtils.EMPTY_LIST);
 
 		if (result.isEmpty()) {
 			return null;

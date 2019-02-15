@@ -50,9 +50,11 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
 	if(uiMenuNode.url !== null) {
 		currentNode["url"] = uiMenuNode.url; //"nav/menu/" + uiEntity.getId();
 	} 
-
 	if(uiMenuNode.restUrl !== null) {
 		currentNode["restUrl"] = uiMenuNode.restUrl;
+	}
+	if(uiMenuNode.entityFullClassName !== null) {
+		currentNode["entityFullClassName"] = uiMenuNode.entityFullClassName;
 	}
 	
 	return currentNode;
@@ -106,7 +108,7 @@ App.controller('MenuController', ['$http', '$timeout', 'AppConfigService', funct
   
   self.callNode = function (node, selected) {
 	if(undefined !== node.restUrl) {
-		globalEntityController.setCurrentUrl( node.restUrl );
+		globalEntityController.applyViewProperties( node );
 		globalEntityController.fetchAllEntities( globalEntityInsertController );	
 	}
   };

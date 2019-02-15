@@ -1,8 +1,16 @@
 package de.mw.mwdata.ofdb.mocks;
 
-import de.mw.mwdata.core.service.ApplicationConfigService;
+import java.util.ResourceBundle;
 
-public class ApplicationConfigServiceMock implements ApplicationConfigService {
+import de.mw.mwdata.core.service.ApplicationConfigService;
+import de.mw.mwdata.ofdb.impl.AbstractOfdbAppConfigService;
+
+public class ApplicationConfigServiceMock extends AbstractOfdbAppConfigService implements ApplicationConfigService {
+
+	public ApplicationConfigServiceMock(String bundleName) {
+		super(bundleName);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public String getPropertyValue(String key) {
@@ -19,6 +27,12 @@ public class ApplicationConfigServiceMock implements ApplicationConfigService {
 
 	@Override
 	public String createIdentifier(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResourceBundle getResourceBundle() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,15 +3,13 @@
 App.service('AppConfigService', function($http) {
     var appConfig = null;
 
-	var promiseConfig = $http.get('userConfig/').success(function (data) {
+    // FIXME: replace concrete userId
+	var promiseConfig = $http.get('userConfig/userId/1').success(function (data) {
 		appConfig = data;
     });
 	
     return {
       promise:promiseConfig,
-      setData: function (data) {
-    	  appConfig = data;
-      },
       getApplicationConfig: function () {
           return appConfig;
       }

@@ -107,6 +107,7 @@ public class ViewService implements IViewService<IEntity> {
 
 		ViewConfigHandle viewHandle = this.ofdbCacheManager.getViewConfig(viewName);
 		OfdbQueryModel queryModel = viewHandle.getQueryModel();
+		queryModel.resetWhereRestrictions();
 
 		// FIXME: hast to be adjusted for datasets greater than pageSize and paging ...
 		return this.ofdbQueryModelService.executeQueryModel(queryModel, viewHandle, cols, pagingModel);

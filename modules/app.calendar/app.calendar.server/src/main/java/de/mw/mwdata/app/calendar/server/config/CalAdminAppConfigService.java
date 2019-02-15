@@ -2,9 +2,9 @@ package de.mw.mwdata.app.calendar.server.config;
 
 import java.util.ResourceBundle;
 
-import de.mw.mwdata.core.service.AbstractApplicationConfigService;
+import de.mw.mwdata.ofdb.impl.AbstractOfdbAppConfigService;
 
-public class CalAdminAppConfigService extends AbstractApplicationConfigService {
+public class CalAdminAppConfigService extends AbstractOfdbAppConfigService {
 
 	private final String APPLICATION_ID = "MW.APP.CALENDAR.ADMIN";
 

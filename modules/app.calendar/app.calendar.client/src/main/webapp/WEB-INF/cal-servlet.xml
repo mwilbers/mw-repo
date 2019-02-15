@@ -37,12 +37,12 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-		 	<constructor-arg index="0"  value="cal" />		 	
-		 	<property name="ofdbService" ref="ofdbService"></property>
-		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
-		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-		</bean>
+<!-- 		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init"> -->
+<!-- 		 	<constructor-arg index="0"  value="cal" />		 	 -->
+<!-- 		 	<property name="ofdbService" ref="ofdbService"></property> -->
+<!-- 		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property> -->
+<!-- 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property> -->
+<!-- 		</bean> -->
 
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<!-- 

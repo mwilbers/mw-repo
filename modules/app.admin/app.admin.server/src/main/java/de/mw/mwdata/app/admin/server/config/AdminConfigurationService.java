@@ -2,9 +2,9 @@ package de.mw.mwdata.app.admin.server.config;
 
 import java.util.ResourceBundle;
 
-import de.mw.mwdata.core.service.AbstractApplicationConfigService;
+import de.mw.mwdata.ofdb.impl.AbstractOfdbAppConfigService;
 
-public class AdminConfigurationService extends AbstractApplicationConfigService {
+public class AdminConfigurationService extends AbstractOfdbAppConfigService {
 
 	private final String APPLICATION_ID = "MW.APP.ADMIN";
 

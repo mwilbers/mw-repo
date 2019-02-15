@@ -204,10 +204,12 @@ function mwGrid() {
 				self.data[i] = {};			
 			}
 			
-			mwGrid.setColumnFilterValueByKey( 'type', rows[0].type);
+//			mwGrid.setColumnFilterValueByKey( 'type', rows[0].type);
 			// mwGrid.getColumnFilters()['type'] = rows[0].type;
 			
 		}
+		
+		mwGrid.setColumnFilterValueByKey( 'type', appConfig.viewConfig.entityFullClassName);
 		
 		for (var i = 0; i < rows.length; i++) {
 			var entityTO = rows[i];
@@ -333,9 +335,8 @@ function mwGrid() {
 	};
 	
 	self.clear = function() {
-		mwGrid.data = [];
-		var cols = mwGrid.getColumns();
-		cols = [];
+		self.data = [];
+		columns = [];
 		columnFilters = {};
 	}
 	

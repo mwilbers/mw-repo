@@ -3,6 +3,7 @@ package de.mw.mwdata.ofdb.test.impl;
 import de.mw.mwdata.core.ApplicationState;
 import de.mw.mwdata.ofdb.impl.DefaultApplicationFactory;
 
+// FIXME: remove complete ApplicationFactory from app / tests
 public class TestApplicationFactory extends DefaultApplicationFactory implements ConfigurableApplicationFactory {
 
 	private ApplicationState state;

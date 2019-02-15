@@ -11,6 +11,7 @@ public class UiMenuNode implements UiJsonConvertable {
 	private String nodeType;
 	private long id;
 	private boolean selected = false;
+	private String entityFullClassName;
 
 	private List<UiMenuNode> children = new ArrayList<>();
 
@@ -72,6 +73,14 @@ public class UiMenuNode implements UiJsonConvertable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public String getEntityFullClassName() {
+		return entityFullClassName;
+	}
+
+	public void setEntityFullClassName(String entityFullClassName) {
+		this.entityFullClassName = entityFullClassName;
 	}
 
 }

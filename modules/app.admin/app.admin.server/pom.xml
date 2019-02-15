@@ -25,6 +25,10 @@
 		<groupId>de.mw.mwdata.core</groupId>
 		<artifactId>core</artifactId>
 	</dependency>
+	<dependency>
+		<groupId>de.mw.mwdata.core</groupId>
+		<artifactId>ofdb-impl</artifactId>
+	</dependency>
 
      <!-- Test-Utils -->
 

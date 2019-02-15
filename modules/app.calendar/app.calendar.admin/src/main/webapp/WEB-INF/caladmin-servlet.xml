@@ -37,28 +37,28 @@
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
     	
-		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init">
-		 	<property name="ofdbService" ref="ofdbService"></property>
-		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property>
-		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property>
-		 	<property name="applicationConfigService" ref="app.applicationConfigService" />
-		</bean>
+<!-- 		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init"> -->
+<!-- 		 	<property name="ofdbService" ref="ofdbService"></property> -->
+<!-- 		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property> -->
+<!-- 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property> -->
+<!-- 		 	<property name="applicationConfigService" ref="app.applicationConfigService" /> -->
+<!-- 		</bean> -->
 
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
   	<bean id="requestMappingHandlerMapping" 
   		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
   	
-  	<!-- FIXME: standardize following four controllers for every web admin application by abstract spring base beans or better by @Controller annotation -->
   	<bean id="app.calendar.admin.indexController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminIndexController" />
 
-	<bean parent="rest.api.abstractUserConfigController" id="app.calendar.admin.userConfigController" 
-		class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
-<!-- 		<property name="urlService" ref="rest.UrlService" /> -->
-<!-- 		<property name="applicationConfigService" ref="app.applicationConfigService" /> -->
+	<bean id="app.calendar.admin.userConfigController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
 		<property name="ofdbService" ref="ofdbService" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>	
 	<bean id="app.calendar.admin.menuController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminMenuController">
 		<property name="menuService" ref="ofdbMenuService" />
+		<property name="userConfigController" ref="app.calendar.admin.userConfigController" />
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>	

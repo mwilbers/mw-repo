@@ -21,4 +21,6 @@ public interface ApplicationConfigService extends Identifiable {
 
 	public String getPropertyValue(final String key);
 
+	public void initApplication();
+
 }

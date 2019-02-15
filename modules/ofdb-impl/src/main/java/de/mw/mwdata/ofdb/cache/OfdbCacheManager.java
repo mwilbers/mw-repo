@@ -38,7 +38,7 @@ public interface OfdbCacheManager {
 
 	public OfdbEntityMapping getEntityMapping(String tableName);
 
-	public ViewConfigHandle getViewConfig(String ansichtSuchen);
+	public ViewConfigHandle getViewConfig(String viewName);
 
 	public ViewConfigHandle findViewConfigByTableName(String name);
 

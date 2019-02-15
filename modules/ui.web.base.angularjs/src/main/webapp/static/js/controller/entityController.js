@@ -48,7 +48,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	self.processChange = processChange;
 	self.setRows = setRows;
 	self.fetchAllEntities = fetchAllEntities;
-	self.setCurrentUrl = setCurrentUrl;
+	self.applyViewProperties = applyViewProperties;
 	self.applyFilteredEntity = applyFilteredEntity;
 
     self.entity = {};
@@ -64,7 +64,14 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	$scope.appConfig = {
 		showNotMappedColumns: appConfigService.getApplicationConfig().showNotMappedColumnsInGrid,
 		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl,
-		uiInputConfigs: appConfigService.getApplicationConfig().uiInputConfigs
+		uiInputConfigs: appConfigService.getApplicationConfig().uiInputConfigs,
+		viewConfig: {
+			entityFullClassName: null
+		}
+	};
+	
+	$scope.viewConfig = {
+		entityFullClassName: null
 	};
 	
 	$scope.reloadGrid = function() {
@@ -72,6 +79,10 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
         mwGrid.clear();
 		fetchAllEntities( undefined, $scope.state.pagingModel.pageIndex, $scope.state.pagingModel.pageSize ); 
     };
+    
+    $scope.hasColumns = function() {
+		return $scope.appConfig.uiInputConfigs.length > 0;
+	};
 	
 	$scope.updatePagingModel = function( newPageIndex, newPageSize ) {
 		$scope.state.pagingModel.pageIndex = newPageIndex;
@@ -103,8 +114,9 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		$scope.state.entityRows = newRows;
 	}
 	
-	function setCurrentUrl( newUrl ) {
-		$scope.appConfig.currentUrl = newUrl;
+	function applyViewProperties( menuNode ) {
+		$scope.appConfig.currentUrl = menuNode.restUrl;
+		$scope.appConfig.viewConfig.entityFullClassName = menuNode.entityFullClassName;
 	}
 	
 	function getCurrentUrl() {		
@@ -143,6 +155,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				// #ViewLayout# here save uiInputConfigs in controller and get them later ...
 				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
 				
+				mwGrid.clear();
 				mwGrid.initialize();
 				loadGridRows( d.entityTOs );
 				mwGrid.load( $scope.state.entityRows, d.uiInputConfigs, $scope.appConfig );

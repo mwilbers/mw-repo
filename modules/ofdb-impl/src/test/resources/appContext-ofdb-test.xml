@@ -17,7 +17,6 @@
 		<property name="order" value="2" />
 	</bean>
 	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.TestApplicationFactory" init-method="init">
-	 	<property name="ofdbService" ref="ofdbService" />
 	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />
 	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
 	 	<property name="applicationConfigService" ref="app.applicationConfigService" />
@@ -37,6 +36,11 @@
 		</property>
 	</bean>
 	
-	<bean id="app.applicationConfigService" class="de.mw.mwdata.ofdb.mocks.ApplicationConfigServiceMock" />
+	<bean id="app.applicationConfigService" class="de.mw.mwdata.ofdb.mocks.ApplicationConfigServiceMock" >
+		<constructor-arg index="0" value="dummy" />
+		<property name="ofdbService" ref="ofdbService" />
+	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
+	</bean>
 
 </beans>

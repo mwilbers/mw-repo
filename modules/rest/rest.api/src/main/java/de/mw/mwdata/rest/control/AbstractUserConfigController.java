@@ -2,7 +2,6 @@ package de.mw.mwdata.rest.control;
 
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.rest.RestUrlService;
-import de.mw.mwdata.rest.uimodel.UiInputConfig;
 import de.mw.mwdata.rest.uimodel.UiUserConfig;
+import de.mw.mwdata.rest.uimodel.UiViewConfig;
 import de.mw.mwdata.rest.utils.SessionUtils;
 import de.mw.mwdata.rest.utils.UrlUtils;
 
@@ -32,7 +31,7 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 	private RestUrlService urlService;
 	private ApplicationConfigService applicationConfigService;
 
-	public abstract List<UiInputConfig> loadUiInputConfigurations(final String viewName);
+	public abstract UiViewConfig loadUiInputConfigurations(final String viewName);
 
 	public void setUrlService(RestUrlService urlService) {
 		this.urlService = urlService;
@@ -59,8 +58,8 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 		UiUserConfig userConfig = new UiUserConfig();
 		userConfig.setDefaultRestUrl(restUrl);
 
-		List<UiInputConfig> uiInputConfigs = loadUiInputConfigurations(lastUrlPathToken);
-		userConfig.setUiInputConfigs(uiInputConfigs);
+		UiViewConfig uiViewConfig = loadUiInputConfigurations(lastUrlPathToken);
+		userConfig.setUiInputConfigs(uiViewConfig.getUiInputConfigs());
 
 		String sShowNotMappedColumnsInGrid = this.applicationConfigService
 				.getPropertyValue(ApplicationConfigService.KEY_SHOW_NOT_MAPPED_COLS);
@@ -78,8 +77,6 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 
 	public String loadUserBasedUrlPathToken() {
 
-		// RestUrl url = new
-		// RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
 		String identifierUrlPathToken = this.applicationConfigService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
 		String lastUrlPathToken = (String) SessionUtils.getAttribute(SessionUtils.getHttpServletRequest().getSession(),
 				identifierUrlPathToken);

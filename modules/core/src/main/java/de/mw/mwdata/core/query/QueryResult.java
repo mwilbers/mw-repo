@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.to.OfdbField;
 
 public class QueryResult {
 
+	@JsonInclude(value = Include.ALWAYS)
 	private List<OfdbField> queryMetaData = new ArrayList<>();
 	private List<IEntity[]> rows;
 	private long countWithoutPaging;

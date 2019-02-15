@@ -1,8 +1,9 @@
 						
 						<div>
 						
+							<div ng-if="!hasColumns()">There is no column configuration.</div>
 							<form ng-submit="submitFilter()" name="gridFilterForm" class="form-horizontal" id="filterForm">
-							<div id="innerGrid" style="width:100%;height:300px;" >
+							<div id="innerGrid" ng-class="{expandedGrid: hasEntityRows(), collapsedGrid: !hasEntityRows()}" >
 									Loading ...								  
 							</div> 
 							</form>

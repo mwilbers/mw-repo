@@ -12,8 +12,12 @@
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <bean id="app.applicationConfigService" class="de.mw.mwdata.app.admin.server.config.AdminConfigurationService" >
-    	<constructor-arg index="0" value="de.mw.mwdata.app.admin.config" />    	
+    <bean id="app.applicationConfigService" class="de.mw.mwdata.app.admin.server.config.AdminConfigurationService" 
+    		init-method="initApplication">
+    	<constructor-arg index="0" value="de.mw.mwdata.app.admin.config" />   
+    	<property name="ofdbService" ref="ofdbService" />
+	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
+	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" /> 	
     </bean>
     
     <bean id="app.propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

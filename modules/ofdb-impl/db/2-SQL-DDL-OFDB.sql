@@ -319,6 +319,8 @@ to_date('22.06.18','DD.MM.RR'),'0','-1');
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'BenutzerBereicheDef:BereichsID';
 
+commit;
+
 -- DML: insert TabDefs
 Insert into FX_TABDEF_K (TABELLE,ALIAS,DATENBANK,BEZEICHNUNG,ZEITTYP,EINDEUTIGERSCHLUESSEL,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,BEREICHSID,FULLCLASSNAME) 
 values ('FX_Menues_K','FXMenK','K','Sys_FX_Menues_K',null,'DSID','MW',to_date('05.04.06','DD.MM.RR'),'-1',
@@ -450,7 +452,7 @@ update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name
 -- INSERT FX_ANSICHTTAB_K datasets
 Insert into FX_ANSICHTTAB_K (ANSICHT,REIHENFOLGE,TABAKEY,TABELLE,JOIN1SPALTEAKEY,JOIN2TABAKEY,JOIN2SPALTEAKEY,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,ANSICHTDEFID,TABDEFID, JOINTYP) 
 values ('BenutzerBereicheDef','0','BenutzerBereicheDef',null,'x','x','x','MW',to_date('02.07.18','DD.MM.RR'),'-1',
-(select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_AnsichtDef_K:DSID'),
+(select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_AnsichtTab_K:DSID'),
 (select a.dsid from FX_AnsichtDef_K a where a.ansicht = 'BenutzerBereicheDef'),
 (select a.dsid from FX_TabDef_K a where a.tabelle = 'BenutzerBereicheDef'), 'x');
 
@@ -569,6 +571,7 @@ values ('6','Bezeichnung','Bezeichnung','STRING','0',null,'0','-1','0',null,'0',
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_TabSpEig_K:DSID';
 
+commit;
 
 Insert into FX_TABSPEIG_K (REIHENFOLGE,SPALTE,SPALTENKOPF,DBDATENTYP,PS,EINDEUTIG,EINGABENOTWENDIG,BEARBERLAUBT,SYSTEMWERT,DEFAULTWERT,MINIMUM,MAXIMUM,SPALTENTYP,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,TABDEFID) 
 values ('20','DSID','DSID','LONGINTEGER','-1',null,'-1','-1','-1',null,null,null,'LaufendeNummer','MW',to_date('03.07.18','DD.MM.RR'),'-1',
@@ -993,6 +996,8 @@ values ('2','Reihenfolge','Reihenfolge','LONGINTEGER','0',null,'-1','-1','0',nul
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_TabSpEig_K:DSID';
 
+commit;
+
 Insert into FX_TABSPEIG_K (REIHENFOLGE,SPALTE,SPALTENKOPF,DBDATENTYP,PS,EINDEUTIG,EINGABENOTWENDIG,BEARBERLAUBT,SYSTEMWERT,MINIMUM,MAXIMUM,SPALTENTYP,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,TABDEFID) 
 values ('6','Alias','Alias','STRING','0',null,'0','-1','0','0','255',null,'MW',to_date('03.07.18','DD.MM.RR'),'-1',
 (select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_TabSpEig_K:DSID'),
@@ -1410,6 +1415,8 @@ values ('256','zuletztBearbeitetVon','bearb_von','LONGINTEGER','0',null,'0','-1'
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_TabSpEig_K:DSID';
 
+commit;
+
 Insert into FX_TABSPEIG_K (REIHENFOLGE,SPALTE,SPALTENKOPF,DBDATENTYP,PS,EINDEUTIG,EINGABENOTWENDIG,BEARBERLAUBT,SYSTEMWERT,MINIMUM,MAXIMUM,SPALTENTYP,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,TABDEFID) 
 values ('257','zuletztGeaendertAm','bearb_am','DATETIME','0',null,'0','-1','-1',null,null,'ZuletztGeaendertAm','KG',to_date('10.09.07','DD.MM.RR'),'-1',
 (select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_TabSpEig_K:DSID'),
@@ -1516,12 +1523,6 @@ Insert into FX_ANSICHTSPALTEN_K (INDEXGRID,TABAKEY,SPALTEAKEY,INGRIDANZEIGEN,ING
 (select FX_TabSpEig_K.dsid from FX_TabSpEig_K join FX_TabDef_K on FX_TabSpEig_K.TABDEFID = FX_TabDef_K.DSID where FX_TabDef_K.tabelle = 'BenutzerBereicheDef' and FX_TabSpEig_K.spalte = 'Name'));
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_AnsichtSpalten_K:DSID';
-
-Insert into FX_ANSICHTSPALTEN_K (INDEXGRID,TABAKEY,SPALTEAKEY,INGRIDANZEIGEN,INGRIDLADEN,FILTER,ANZAHLNACHKOMMASTELLEN,BEARBHINZUFZUGELASSEN,BEARBZUGELASSEN,EINGABENOTWENDIG,ANSICHTSUCHEN,SUCHWERTAUSTABAKEY,SUCHWERTAUSSPALTEAKEY,WHERETABAKEY,WHERESPALTEAKEY,VERDECKENDURCHTABAKEY,VERDECKENDURCHSPALTEAKEY,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,ANSICHTDEFID,ANSICHTTABID,TABSPEIGID) values ('12','BenutzerBereicheDef','Vergebbar',null,null,'-1',null,'-1','-1',null,null,null,null,null,null,null,null,'MW',to_date('04.07.18','DD.MM.RR'),'-1',
-(select s.letztebelegtenr + s.inkrement from SysSequenz s where s.name = 'FX_AnsichtSpalten_K:DSID'),
-(select dsid from FX_AnsichtDef_K where ansicht = 'BenutzerBereicheDef'),
-(select dsid from FX_AnsichtTab_K where ansicht = 'BenutzerBereicheDef'),
-(select FX_TabSpEig_K.dsid from FX_TabSpEig_K join FX_TabDef_K on FX_TabSpEig_K.TABDEFID = FX_TabDef_K.DSID where FX_TabDef_K.tabelle = 'BenutzerBereicheDef' and FX_TabSpEig_K.spalte = 'Vergebbar'));
 
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_AnsichtSpalten_K:DSID';
 
@@ -2325,6 +2326,8 @@ values ('100130','AdminMenues','Menüs','ANSICHT','2','AdminOberflaeche',null,nul
 (select dsid from FX_AnsichtDef_K where URLPATH = 'menues'),
 (select dsid from FX_Menues_K where anzeigename = 'Oberfläche'));
 
+commit; 
+
 update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name = 'FX_Menues_K:DSID';
 
 Insert into FX_MENUES_K (MENUEID,MENUE,ANZEIGENAME,TYP,EBENE,UNTERMENUEVON,LIZENZ,GRUPPE,ANGELEGTVON,ANGELEGTAM,SYSTEM,DSID,URLPATH,BEREICHSID,AKTIV,ANSICHTDEFID,HAUPTMENUEID) 
@@ -2503,13 +2506,13 @@ update SysSequenz set letztebelegtenr = (letztebelegtenr + inkrement) where name
 
 -- fix bereich of menues of "Administrator"
 update FX_Menues_K 
-set Bereich = 'Administrator',
-Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
+--set Bereich = 'Administrator',
+set Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
 where menue = 'AdminOberflaeche';
 
 update FX_Menues_K 
-set Bereich = 'Administrator',
-Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
+--set Bereich = 'Administrator',
+set Bereichsid = (select b.BereichsID from BenutzerBereicheDef b where b.name = 'Administrator')
 where menue = 'Admin';
 
 -- drop menues column urlPath
