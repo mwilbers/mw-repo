@@ -8,12 +8,14 @@ App.service('AppConfigService', function($http) {
 		appConfig = data;
     });
 	
-    return {
+	var factory = {
       promise:promiseConfig,
       getApplicationConfig: function () {
           return appConfig;
       }
     };
+	
+	return factory;
 });
 
 

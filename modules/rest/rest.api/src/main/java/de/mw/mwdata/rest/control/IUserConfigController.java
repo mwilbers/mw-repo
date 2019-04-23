@@ -16,8 +16,10 @@ public interface IUserConfigController {
 
 	public ResponseEntity<UiUserConfig> loadUserConfiguration(final int userId);
 
-	public String loadUserBasedUrlPathToken();
+	public String loadUrlPathToken();
 
 	public String getEntityNameByUrlPathToken(final String urlPath);
+
+	public String applyUrlPathToken(final String sUrl);
 
 }

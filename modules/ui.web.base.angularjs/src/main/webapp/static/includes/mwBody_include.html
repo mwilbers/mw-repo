@@ -1,5 +1,5 @@
 		<div class="generic-container" style="width:300px;display:inline-block;vertical-align:top;height:1000px;" >		
-			<div ng-include="'./../static/includes/mwMenu_include.html'">
+			<div ng-include="'./../static/includes/mwMenu_include.html?count=1'">
 				
 				  
 				
@@ -38,7 +38,8 @@
 			
 			<div class="formcontainer" >
 				<!-- slickgrid grid -->
-				<div ng-controller="EntityGridController as ctrl" id="controllerScope" ng-include="'./../static/includes/mwgrid_include.html'">
+				<div ng-controller="EntityGridController as ctrl" id="controllerScope" 
+					ng-include="'./../static/includes/mwgrid_include.html?count=2'">
 	
 				</div>
 			</div>

@@ -50,6 +50,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 	self.fetchAllEntities = fetchAllEntities;
 	self.applyViewProperties = applyViewProperties;
 	self.applyFilteredEntity = applyFilteredEntity;
+	self.applyUiInputConfigs = applyUiInputConfigs;
 
     self.entity = {};
 	self.filteredEntity = null;
@@ -61,6 +62,8 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
     $scope.state.entityRows = [];
 	$scope.state.pagingModel = {};
 	
+	$scope.state.newViewName = null;
+	
 	$scope.appConfig = {
 		showNotMappedColumns: appConfigService.getApplicationConfig().showNotMappedColumnsInGrid,
 		currentUrl: appConfigService.getApplicationConfig().defaultRestUrl,
@@ -68,10 +71,6 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		viewConfig: {
 			entityFullClassName: null
 		}
-	};
-	
-	$scope.viewConfig = {
-		entityFullClassName: null
 	};
 	
 	$scope.reloadGrid = function() {
@@ -101,7 +100,11 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		return $scope.state.entityRows.length > 0;
 	};
 	
-    fetchAllEntities();
+	function applyUiInputConfigs( uiInputConfigs ) {
+		console.log("in applyUiInputConfigs");
+		$scope.appConfig.uiInputConfigs = uiInputConfigs;
+		globalEntityInsertController.applyUiInputConfigs( uiInputConfigs );
+	}
 	
 	function applyFilteredEntity( entity ) {
 			self.filteredEntity = entity;
@@ -153,7 +156,7 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 				}
 				
 				// #ViewLayout# here save uiInputConfigs in controller and get them later ...
-				globalEntityInsertController.initializeConfig( d.uiInputConfigs );
+				globalEntityInsertController.applyUiInputConfigs( d.uiInputConfigs );
 				
 				mwGrid.clear();
 				mwGrid.initialize();
@@ -338,6 +341,17 @@ App.controller('EntityGridController', ['$scope', 'EntityService', 'AppConfigSer
 		rowDirty = false;
 		rowChanged = false;
     }
+	
+	// load data of page
+	
+	fetchAllEntities();
+	//viewService.fetchAllViews('view/1');
+	
+	// $http.get('view/1')
+	// .success(function(data) {
+		// alert('call of load views successfull');
+	  // //self.treeModel = loadTreeModel( data );	  
+	// });
 
 }]);
 
@@ -353,7 +367,7 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
 	
 	self.submit = submit;		// define submit-method to self-object and set javascript-reference to function submit below
 	self.entity = {};
-	self.initializeConfig = initializeConfig;
+	self.applyUiInputConfigs = applyUiInputConfigs;
 	
 	$scope.entity = {};
 	
@@ -367,7 +381,7 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
 	    createEntity( $scope.entity );
     }
 	
-	function initializeConfig( uiInputConfigs ) {
+	function applyUiInputConfigs( uiInputConfigs ) {
 		$scope.appConfig.uiInputConfigs = uiInputConfigs;
 	}
 
@@ -388,6 +402,7 @@ App.controller('EntityInsertController', ['$scope', 'EntityService', 'AppConfigS
  */
 var globalEntityController = null;
 var globalEntityInsertController = null;
+var globalViewController = null;
 
 var JsUtils = new JsUtils();
 var mwGrid = new mwGrid();

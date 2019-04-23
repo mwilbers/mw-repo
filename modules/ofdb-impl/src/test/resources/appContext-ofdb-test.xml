@@ -16,9 +16,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="false" />
 		<property name="order" value="2" />
 	</bean>
-	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.TestApplicationFactory" init-method="init">
-	 	<property name="ofdbCacheManager" ref="ofdbCacheManager" />
-	 	<property name="viewConfigFactory" ref="viewConfigFactory" />
+	<bean id="applicationFactory"  class="de.mw.mwdata.ofdb.test.impl.TestApplicationFactory" init-method="initApplication">
 	 	<property name="applicationConfigService" ref="app.applicationConfigService" />
 	</bean>
 	

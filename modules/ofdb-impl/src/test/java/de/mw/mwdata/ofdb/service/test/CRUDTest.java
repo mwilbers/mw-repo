@@ -75,7 +75,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		TabDef tabDef2 = DomainMockFactory.createTabDefMock(TABLENAME_TAB2, this.getTestBereich(), !isAppInitialized());
 		saveForTest(tabDef2);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		// 1. test findAll-method
 		tabDefs = this.getCrudDao().findAll(TabDef.class);
@@ -141,7 +141,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 		AnsichtTab ansichtTab_TabSpeig = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABSPEIG, "tabSpeig",
 				TabSpeig.class);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		// 1. test find TabDef with "TABELLE" = "FX_TabDef_K"
 		QueryBuilder b = new SimpleQueryBuilder();
@@ -214,7 +214,7 @@ public class CRUDTest extends AbstractOfdbInitializationTest {
 
 		IAnsichtTab viewTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		ITabSpeig tabSpeigMock = DomainMockFactory.createTabSpeigMock((TabDef) viewTab.getTabDef(), "ALIAS", 1,
 				DBTYPE.STRING);

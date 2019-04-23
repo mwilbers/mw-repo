@@ -36,13 +36,6 @@
            		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 		   </mvc:message-converters>
 		</mvc:annotation-driven>
-    	
-<!-- 		<bean id="app.calendar.applicationFactory" class="de.mw.mwdata.ofdb.impl.DefaultApplicationFactory" init-method="init"> -->
-<!-- 		 	<property name="ofdbService" ref="ofdbService"></property> -->
-<!-- 		 	<property name="viewConfigFactory" ref="viewConfigFactory"></property> -->
-<!-- 		 	<property name="ofdbCacheManager" ref="ofdbCacheManager"></property> -->
-<!-- 		 	<property name="applicationConfigService" ref="app.applicationConfigService" /> -->
-<!-- 		</bean> -->
 
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
   	<bean id="requestMappingHandlerMapping" 
@@ -68,6 +61,21 @@
 		<property name="crudService" ref="crudService" />
 		<property name="urlService" ref="rest.UrlService" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
+	</bean>
+	
+	<bean id="userConfigController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminUserConfigController" >
+		<property name="urlService" ref="rest.UrlService" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="applicationConfigService" ref="app.applicationConfigService" />
+		<property name="ofdbService" ref="ofdbService" />
+	</bean>
+	
+	<bean id="app.calendar.admin.viewController" class="de.mw.mwdata.app.calendar.admin.controller.CalAdminViewController">
+		<property name="viewService" ref="viewService" />
+		<property name="crudService" ref="crudService" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="userConfigController" ref="userConfigController" />
+		<property name="ofdbService" ref="ofdbService" />
 	</bean>
 
 	<context:annotation-config />

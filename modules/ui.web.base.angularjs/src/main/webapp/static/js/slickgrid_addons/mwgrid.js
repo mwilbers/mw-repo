@@ -33,6 +33,7 @@ function ColumnHandle() {
 		var col = {};				
 		col["id"] = ofdbField.propName;
 		col["name"] = ofdbField.columnTitle;
+		col["object"] = ofdbField;
 		
 		if( ofdbField.joinedProperty ) {
 			col["field"] = ofdbField.joinedProperty.entityName + "." + ofdbField.joinedProperty.propName;
@@ -319,6 +320,22 @@ function mwGrid() {
 				   .val(mwGrid.getColumnFilterValueByKey(args.column.id))
 				   .appendTo(args.node);
 			}
+		});
+		
+		self.grid.onColumnsReordered.subscribe(function(e, args) {
+			console.log("mwgrid: onColumnsReordered");
+			
+			var uiInputConfigs = [];
+			var item;
+			for(var i=0; i<args.grid.getColumns().length; i++) {
+				item = args.grid.getColumns()[i];
+				if(item.object) {
+					uiInputConfigs[i] = item.object;
+				}
+			}
+			
+			globalEntityController.applyUiInputConfigs( uiInputConfigs );
+			
 		});
 		
 		if(columns.length > 0) {

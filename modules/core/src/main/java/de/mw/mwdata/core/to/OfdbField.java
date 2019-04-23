@@ -75,6 +75,8 @@ public class OfdbField {
 
 	private JoinedPropertyTO joinedProperty;
 
+	private long spaltenBreite;
+
 	public OfdbField() {
 	}
 
@@ -290,6 +292,14 @@ public class OfdbField {
 
 	public void setJoinedProperty(JoinedPropertyTO joinedProperty) {
 		this.joinedProperty = joinedProperty;
+	}
+
+	public long getSpaltenBreite() {
+		return spaltenBreite;
+	}
+
+	public void setSpaltenBreite(long spaltenBreite) {
+		this.spaltenBreite = spaltenBreite;
 	}
 
 }

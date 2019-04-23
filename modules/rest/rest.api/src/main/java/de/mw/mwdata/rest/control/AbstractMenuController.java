@@ -110,7 +110,7 @@ public abstract class AbstractMenuController {
 	@ResponseBody
 	public ResponseEntity<List<UiMenuNode>> listMainMenus() {
 
-		String currentUrlPathToken = this.userConfigController.loadUserBasedUrlPathToken();
+		String currentUrlPathToken = this.userConfigController.loadUrlPathToken();
 		List<Menue> menuPath = loadMenuPath(currentUrlPathToken);
 
 		// ... 1. applicationFactory aus AppConfigService und aus gesamten Programm

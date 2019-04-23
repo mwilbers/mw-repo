@@ -62,7 +62,7 @@ public class OfdbMenuServiceTest extends AbstractOfdbInitializationTest {
 		childMenu.setSystem(false);
 		this.saveForTest(childMenu);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 	}
 

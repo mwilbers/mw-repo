@@ -256,4 +256,14 @@ public class ViewConfigHandle {
 		return !(viewColumn.getViewTab().getTabAKey().equals(this.getMainAnsichtTab().getTabAKey()));
 	}
 
+	public IAnsichtSpalte findViewColumnByName(final String columnName) {
+		for (IAnsichtSpalte aspalte : this.viewConfig.getViewColumns()) {
+			if (aspalte.getName().equals(columnName)) {
+				return aspalte;
+			}
+		}
+
+		return null;
+	}
+
 }

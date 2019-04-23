@@ -19,6 +19,7 @@ import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.rest.RestUrlService;
 import de.mw.mwdata.rest.uimodel.UiUserConfig;
 import de.mw.mwdata.rest.uimodel.UiViewConfig;
+import de.mw.mwdata.rest.url.RestUrl;
 import de.mw.mwdata.rest.utils.SessionUtils;
 import de.mw.mwdata.rest.utils.UrlUtils;
 
@@ -45,7 +46,7 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 	@ResponseBody
 	public ResponseEntity<UiUserConfig> loadUserConfiguration(@PathVariable("userId") final int userId) {
 
-		String lastUrlPathToken = loadUserBasedUrlPathToken();
+		String lastUrlPathToken = loadUrlPathToken();
 		String currentUrl = SessionUtils.getHttpServletRequest().getRequestURL().toString();
 		String restUrl = org.apache.commons.lang.StringUtils.EMPTY;
 		try {
@@ -75,7 +76,7 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 
 	}
 
-	public String loadUserBasedUrlPathToken() {
+	public String loadUrlPathToken() {
 
 		String identifierUrlPathToken = this.applicationConfigService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
 		String lastUrlPathToken = (String) SessionUtils.getAttribute(SessionUtils.getHttpServletRequest().getSession(),
@@ -88,6 +89,19 @@ public abstract class AbstractUserConfigController implements IUserConfigControl
 		}
 
 		return lastUrlPathToken;
+	}
+
+	@Override
+	public String applyUrlPathToken(final String sUrl) {
+
+		RestUrl url = new RestUrl(sUrl);
+		String identifierUrlPath = this.applicationConfigService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
+
+		// save current used entity view in session
+		SessionUtils.setAttribute(SessionUtils.getHttpServletRequest().getSession(), identifierUrlPath,
+				url.getEntityName());
+
+		return url.getEntityName();
 	}
 
 }

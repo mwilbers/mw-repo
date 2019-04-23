@@ -85,7 +85,7 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 		this.getOfdbCacheManger().unregisterView(TestConstants.TABLENAME_TABDEF);
 
 		// load configuration and register table
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		// start test
 		String expected = "Testtable";
@@ -145,7 +145,7 @@ public class TabSpeigDefaultsTest extends AbstractOfdbInitializationTest {
 		saveForTest(aSpaltePS);
 
 		// load configuration and register table
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		// start test
 		String expected = "TestColumn";

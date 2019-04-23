@@ -75,6 +75,12 @@ public class UiInputConfig {
 
 	private JoinedPropertyTO joinedProperty;
 
+	private long spaltenBreite;
+
+	// for json deserialization
+	public UiInputConfig() {
+	}
+
 	public UiInputConfig(final OfdbField ofdbField) {
 		this.tabSpeigSytemWert = ofdbField.getTabSpeigSystemWert();
 		this.tabSpeigBearbErlaubt = ofdbField.getTabSpeigBearbErlaubt();
@@ -96,6 +102,7 @@ public class UiInputConfig {
 		this.filterable = ofdbField.isFilterable();
 
 		this.joinedProperty = ofdbField.getJoinedProperty();
+		this.spaltenBreite = ofdbField.getSpaltenBreite();
 	}
 
 	private void addDiagnose(final String name, final String value) {
@@ -325,6 +332,14 @@ public class UiInputConfig {
 
 	public JoinedPropertyTO getJoinedProperty() {
 		return joinedProperty;
+	}
+
+	public long getSpaltenBreite() {
+		return spaltenBreite;
+	}
+
+	public void setSpaltenBreite(long spaltenBreite) {
+		this.spaltenBreite = spaltenBreite;
 	}
 
 }

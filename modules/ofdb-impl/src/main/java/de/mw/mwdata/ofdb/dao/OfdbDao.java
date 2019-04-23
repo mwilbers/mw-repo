@@ -132,6 +132,8 @@ public class OfdbDao extends HibernateDaoSupport implements IOfdbDao {
 			String message = MessageFormat.format("TabDef by fullClassName {0} is not found. ", fullClassName);
 			throw new OfdbMissingObjectException(message);
 		}
+		
+		... Eintrag BenutzerAnsicht noch nicht in FX_TabDef
 
 		IEntity[] entityArray = result.get(0);
 		return (TabDef) entityArray[0];

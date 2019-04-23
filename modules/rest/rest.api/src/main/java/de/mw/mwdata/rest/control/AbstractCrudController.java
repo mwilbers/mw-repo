@@ -15,7 +15,7 @@ import de.mw.mwdata.rest.RestUrlService;
 import de.mw.mwdata.rest.uimodel.UiEntityList;
 
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
+public abstract class AbstractCrudController<E extends AbstractMWEntity> {
 
 	private RestUrlService urlService;
 
@@ -31,7 +31,7 @@ public abstract class AbstractRestCrudController<E extends AbstractMWEntity> {
 	public abstract ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
 			@RequestParam("pageSize") int pageSize);
 
-	@RequestMapping(value = "**/**/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "**/{id}", method = RequestMethod.PUT)
 	public abstract ResponseEntity<EntityTO<E>> updateEntity(@PathVariable("id") long id, @RequestBody E entity);
 
 	@RequestMapping(value = "**/", method = RequestMethod.POST)

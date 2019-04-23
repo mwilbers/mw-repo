@@ -69,7 +69,16 @@
 		<property name="viewService" ref="viewService" />
 		<property name="crudService" ref="crudService" />
 		<property name="urlService" ref="rest.UrlService" />
+		<property name="userConfigController" ref="userConfigController" />
 		<property name="applicationConfigService" ref="app.applicationConfigService" />
+	</bean>
+	
+	<bean id="app.admin.viewController" class="de.mw.mwdata.app.admin.client.controller.AdminViewController">
+		<property name="viewService" ref="viewService" />
+		<property name="crudService" ref="crudService" />
+		<property name="ofdbCacheManager" ref="ofdbCacheManager" />
+		<property name="userConfigController" ref="userConfigController" />
+		<property name="ofdbService" ref="ofdbService" />
 	</bean>
     
 </beans>

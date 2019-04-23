@@ -1,9 +1,9 @@
 package de.mw.mwdata.ofdb.test.impl;
 
-import de.mw.mwdata.core.ApplicationFactory;
 import de.mw.mwdata.core.ApplicationState;
+import de.mw.mwdata.core.service.ApplicationConfigService;
 
-public interface ConfigurableApplicationFactory extends ApplicationFactory {
+public interface ConfigurableApplicationFactory extends ApplicationConfigService {
 
 	public void configure();
 

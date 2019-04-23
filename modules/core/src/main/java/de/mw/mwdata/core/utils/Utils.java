@@ -5,11 +5,14 @@ package de.mw.mwdata.core.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.util.CollectionUtils;
 
+import de.mw.mwdata.core.domain.AbstractMWEntity;
+import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 
 /**
@@ -62,6 +65,26 @@ public class Utils {
 		List<IEntity> results = new ArrayList<IEntity>();
 		for (Map.Entry<String, IEntity> ansichtEntry : map.entrySet()) {
 			results.add(ansichtEntry.getValue());
+		}
+
+		return results;
+	}
+
+	public static List<? extends IEntity> entityArrayToEntity(List<IEntity[]> rows) {
+
+		List<IEntity> entities = new ArrayList<>();
+		for (IEntity[] row : rows) {
+			entities.add(row[0]);
+		}
+
+		return (List<IEntity>) entities;
+	}
+
+	public static List<EntityTO> entityListToEntityToList(final List<? extends IEntity> entities) {
+		List<EntityTO> results = new ArrayList<>();
+		for (Iterator iterator = entities.iterator(); iterator.hasNext();) {
+			IEntity iEntity = (IEntity) iterator.next();
+			results.add(new EntityTO((AbstractMWEntity) iEntity));
 		}
 
 		return results;

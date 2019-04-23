@@ -15,8 +15,8 @@ package de.mw.mwdata.core.domain;
  */
 public class JoinedPropertyTO {
 
-	private final String entityName;
-	private final String propName;
+	private String entityName;
+	private String propName;
 	private String value;
 
 	/**
@@ -24,6 +24,9 @@ public class JoinedPropertyTO {
 	 * additional column based value. Starts with 1 for first additional value
 	 */
 	private int resultArrayIndex;
+
+	public JoinedPropertyTO() {
+	}
 
 	public JoinedPropertyTO(final String entityName, final String propName, final int resultArrayIndex) {
 		this.entityName = entityName;

@@ -85,7 +85,9 @@
 		
 		<script src="./../static/js/service/appConfigService.js"></script>
 		<script src="./../static/js/service/entityService.js"></script>
+		<script src="./../static/js/service/viewService.js"></script>
 		<script src="./../static/js/controller/entityController.js"></script>
+		<script src="./../static/js/controller/viewController.js"></script>
 		<script src="./../static/js/controller/mainController.js"></script>		
 		<script src="./../static/js/controller/menuController.js"></script>
 	 

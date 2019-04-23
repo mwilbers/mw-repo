@@ -39,7 +39,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 	@Test
 	public void testRegisterViewWithEmptyAnsichtDef() throws OfdbMissingMappingException {
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		List<IAnsichtTab> ansichtTabList = new ArrayList<IAnsichtTab>();
 		IAnsichtDef ansichtDef = new AnsichtDef();
@@ -69,7 +69,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 		saveForTest(ansichtTabMock);
 
 		try {
-			this.applicationFactory.init();
+			this.applicationFactory.initApplication();
 			Assert.fail("Test failed. validation of ViewTab should alert duplicated usage of with Jointype 'x'.");
 		} catch (OfdbInvalidConfigurationException e) {
 			// ok, go on
@@ -77,7 +77,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 
 		ansichtTabMock.setJoinTyp("left");
 		saveForTest(ansichtTabMock);
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		ansichtTabList.add(ansichtTabMock);
 
@@ -125,7 +125,7 @@ public class OfdbValidationTest extends AbstractOfdbInitializationTest {
 		tabSpeig.setEindeutig(Long.valueOf(10l));
 		saveForTest(tabSpeig);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		// 2. execute test: insert table two times
 		AnsichtDef view1 = DomainMockFactory.createAnsichtDefMock("Testansicht", getTestBereich(), !isAppInitialized());

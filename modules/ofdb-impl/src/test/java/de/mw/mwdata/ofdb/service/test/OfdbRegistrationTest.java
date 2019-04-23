@@ -20,7 +20,6 @@ import de.mw.mwdata.core.domain.EntityTO;
 import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
-import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.test.data.TestConstants;
 import de.mw.mwdata.ofdb.cache.ViewConfigHandle;
 import de.mw.mwdata.ofdb.domain.IAnsichtSpalte;
@@ -34,6 +33,7 @@ import de.mw.mwdata.ofdb.exception.OfdbInvalidConfigurationException;
 import de.mw.mwdata.ofdb.exception.OfdbMissingMappingException;
 import de.mw.mwdata.ofdb.mocks.DomainMockFactory;
 import de.mw.mwdata.ofdb.service.IOfdbService;
+import de.mw.mwdata.ofdb.service.IViewService;
 import de.mw.mwdata.ofdb.test.AbstractOfdbInitializationTest;
 import de.mw.mwdata.ofdb.test.impl.ConfigurableApplicationFactory;
 import de.mw.mwdata.ofdb.test.impl.TestApplicationFactory;
@@ -70,7 +70,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		saveForTest(a2.getTabDef());
 		IAnsichtTab ansichtTab = this.setUpAnsichtAndTab(TestConstants.TABLENAME_TABDEF, "tabDef", TabDef.class);
 		saveForTest(ansichtTab.getTabDef());
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 	}
 
@@ -103,7 +103,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		saveForTest(ansichtDef);
 
 		try {
-			this.applicationFactory.init();
+			this.applicationFactory.initApplication();
 		} catch (OfdbInvalidConfigurationException e) {
 			// ok, because TabDef.fullClassName is missing
 		}
@@ -124,7 +124,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		saveForTest(tabDef_tabDef);
 
 		try {
-			this.applicationFactory.init();
+			this.applicationFactory.initApplication();
 			Assert.fail();
 		} catch (OfdbInvalidConfigurationException e) {
 			// ok, because TabDef.fullClassName is missing
@@ -147,7 +147,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		IAnsichtTab viewTab_tableDef = (IAnsichtTab) this.getCrudService().findByName(IAnsichtTab.class,
 				TestConstants.TABLENAME_TABDEF);
 
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		PagingModel pagingModel = new PagingModel(100, 1);
 
@@ -204,7 +204,7 @@ public class OfdbRegistrationTest extends AbstractOfdbInitializationTest {
 		this.saveForTest(viewColBereichName);
 
 		// register new
-		this.applicationFactory.init();
+		this.applicationFactory.initApplication();
 
 		pagingModel = new PagingModel(100, 1);
 

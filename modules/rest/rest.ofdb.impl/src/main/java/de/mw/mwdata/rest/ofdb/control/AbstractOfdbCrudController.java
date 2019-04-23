@@ -18,25 +18,25 @@ import de.mw.mwdata.core.domain.IEntity;
 import de.mw.mwdata.core.query.QueryResult;
 import de.mw.mwdata.core.service.ApplicationConfigService;
 import de.mw.mwdata.core.service.ICrudService;
-import de.mw.mwdata.core.service.IViewService;
 import de.mw.mwdata.core.to.OfdbField;
 import de.mw.mwdata.core.utils.SortKey;
 import de.mw.mwdata.ofdb.domain.IAnsichtDef;
 import de.mw.mwdata.ofdb.service.IOfdbService;
-import de.mw.mwdata.rest.control.AbstractRestCrudController;
+import de.mw.mwdata.ofdb.service.IViewService;
+import de.mw.mwdata.rest.control.AbstractCrudController;
+import de.mw.mwdata.rest.control.IUserConfigController;
 import de.mw.mwdata.rest.uimodel.UiEntityList;
-import de.mw.mwdata.rest.url.RestUrl;
 import de.mw.mwdata.rest.utils.SessionUtils;
 
-public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity>
-		extends AbstractRestCrudController<E> {
+public abstract class AbstractOfdbCrudController<E extends AbstractMWEntity> extends AbstractCrudController<E> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOfdbBasedCrudController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOfdbCrudController.class);
 
 	private IViewService<IEntity> viewService;
 	private IOfdbService ofdbService;
 	private ICrudService crudService;
 	private ApplicationConfigService configService;
+	private IUserConfigController userConfigController;
 
 	public void setViewService(IViewService viewService) {
 		this.viewService = viewService;
@@ -58,10 +58,15 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		this.crudService = crudService;
 	}
 
+	public void setUserConfigController(IUserConfigController userConfigController) {
+		this.userConfigController = userConfigController;
+	}
+
 	public ResponseEntity<UiEntityList<E>> listAllEntities(@RequestParam("pageIndex") int pageIndex,
 			@RequestParam("pageSize") int pageSize) {
 
-		String entityName = readEntityNameFromUrl();
+		String entityName = this.userConfigController
+				.applyUrlPathToken(SessionUtils.getHttpServletRequest().getRequestURL().toString());
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel((pageSize == 0 ? this.loadPageSize() : pageSize), pageIndex);
 		if (null == viewDef) {
@@ -112,24 +117,13 @@ public abstract class AbstractOfdbBasedCrudController<E extends AbstractMWEntity
 		return new ResponseEntity<EntityTO<E>>(entityTO, HttpStatus.OK);
 	}
 
-	private String readEntityNameFromUrl() {
-
-		RestUrl url = new RestUrl(SessionUtils.getHttpServletRequest().getRequestURL().toString());
-		String identifierUrlPath = this.configService.createIdentifier(SessionUtils.MW_SESSION_URLPATH);
-
-		// save current used entity view in session
-		SessionUtils.setAttribute(SessionUtils.getHttpServletRequest().getSession(), identifierUrlPath,
-				url.getEntityName());
-
-		return url.getEntityName();
-	}
-
 	@Override
 	public ResponseEntity<UiEntityList<E>> filterEntities(@RequestParam("filter") String filter,
 			@RequestBody E entity) {
 		LOGGER.info("Filter Entity " + entity.toString());
 
-		String entityName = readEntityNameFromUrl();
+		String entityName = this.userConfigController
+				.applyUrlPathToken(SessionUtils.getHttpServletRequest().getRequestURL().toString());
 		IAnsichtDef viewDef = this.ofdbService.findAnsichtByUrlPath(entityName);
 		PagingModel pagingModel = new PagingModel(loadPageSize(), 1);
 		if (null == viewDef) {

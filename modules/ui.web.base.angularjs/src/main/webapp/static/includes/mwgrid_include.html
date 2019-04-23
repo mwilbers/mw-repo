@@ -8,7 +8,7 @@
 							</div> 
 							</form>
 						
-							<div ng-if="hasEntityRows()">
+							<div class="container" ng-if="hasEntityRows()">
 								<div class="mw-pagination">
 									<pagination boundary-links="true" 
 										max-size="3" 
@@ -20,24 +20,34 @@
 								</div>
 							
 							
-								<div>Paging configuration:<br>
-									Total number of (filtered) datasets in database: {{state.pagingModel.count}}<br> 
-									Current page size: {{state.pagingModel.pageSize}}<br>
-									<br>
+								<div>
+									<div style="float:left; border-style: outset; padding:10px;">Paging configuration:<br>
+										Total number of (filtered) datasets in database: {{state.pagingModel.count}}<br> 
+										Current page size: {{state.pagingModel.pageSize}}<br>
+										<br>
+										
+										<div ng-if="appConfig.uiInputConfigs.length > 0">
+											Configure Grid:<br>
+											<input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
+											Show not mapped columns<br>
+										</div>
+										<br/>
+										
+										Change page size: <input type=number ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )" ng-model='state.pagingModel.pageSize'>
 									
-									<div ng-if="appConfig.uiInputConfigs.length > 0">
-										Configure Grid:<br>
-										<input type="checkbox" ng-model="appConfig.showNotMappedColumns" ng-change="reloadGrid()" id="ng-show-notMapped-Columns" />
-										Show not mapped columns<br>
 									</div>
-									<br/>
-									
-									Change page size: <input type=number ng-change="updatePagingModel( state.pagingModel.pageIndex, state.pagingModel.pageSize )" ng-model='state.pagingModel.pageSize'>
-								
+									<div style="float:left; border-style: outset; padding:10px;">
+										<form ng-submit="viewCtrl.createView()" name="createViewForm" class="form-horizontal" ng-controller="ViewController as viewCtrl" id="viewControllerScope">
+											User View Configuration<br>
+											New View Name <input type="text">
+											<button type="button" ng-click="viewCtrl.createView()" class="btn btn-primary btn-sm" ng-disabled="false">Save view</button>
+											<br>User Specific Views<br>
+										</form>
+									</div>
 								</div>
 							</div>
 						
-						
+							<div>
 							<span class="lead">Entity Registration Form</span>
 							<br>
 							<form ng-submit="insertCtrl.submit()" name="myForm" class="form-horizontal" ng-controller="EntityInsertController as insertCtrl" id="controllerNewScope">
@@ -104,7 +114,7 @@
 								</div>
 								</div>
 							</form>
-				
+							</div>
 							
 						
 						</div>
